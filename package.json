@@ -1,0 +1,7 @@
+{
+  "name": "@aragon/osx-plugin-template-hardhat",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
