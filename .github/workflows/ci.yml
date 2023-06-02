@@ -13,9 +13,6 @@ on:
 jobs:
   ci:
     runs-on: 'ubuntu-latest'
-    defaults:
-      run:
-        working-directory: packages/contracts
     steps:
       - name: 'Check out the repo'
         uses: 'actions/checkout@v3'
@@ -29,8 +26,12 @@ jobs:
       - name: 'Install the dependencies'
         run: 'yarn install'
 
+      - name: 'Check the code format'
+        run: yarn prettier:check
+
       - name: 'Lint the code'
         run: 'yarn lint'
+        working-directory: packages/contracts
 
       - name: 'Add lint summary'
         run: |
@@ -39,9 +40,11 @@ jobs:
 
       - name: 'Compile the contracts and generate the TypeChain bindings'
         run: 'yarn typechain'
+        working-directory: packages/contracts
 
       - name: 'Test the contracts and generate the coverage report'
         run: 'yarn coverage'
+        working-directory: packages/contracts
 
       - name: 'Add test summary'
         run: |
