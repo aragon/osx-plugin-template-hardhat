@@ -1,7 +1,7 @@
 {
   "name": "@aragon/osx-plugin-subgraph",
   "version": "1.0.0",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "scripts": {
     "lint": "eslint . --ext .ts",
     "build:contracts": "cd ../contracts && yarn build",
@@ -16,9 +16,7 @@
     "stop:dev": "docker-compose -f docker/docker-compose.yml down",
     "test:fast": "graph test",
     "test": "graph test -r",
-    "coverage": "graph test -c",
-    "formatting:check": "prettier '**/*.{json,ts,js}' -c",
-    "formatting:write": "prettier '**/*.{json,ts,js}' --write"
+    "coverage": "graph test -c"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.51.0",
