@@ -26,7 +26,7 @@ jobs:
       - name: 'Install the dependencies'
         run: 'yarn install'
 
-      - name: 'Check the code format'
+      - name: 'Check code formatting'
         run: yarn prettier:check
 
       - name: 'Lint the code'
