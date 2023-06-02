@@ -44,7 +44,7 @@
     "@openzeppelin/hardhat-upgrades": "^1.23.0"
   },
   "files": [
-    "/contracts"
+    "/src"
   ],
   "keywords": [
     "blockchain",
