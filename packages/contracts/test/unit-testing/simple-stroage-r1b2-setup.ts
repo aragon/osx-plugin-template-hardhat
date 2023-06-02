@@ -1,4 +1,4 @@
-import buildMetadata2 from '../../contracts/release1/build2/build-metadata-R1B2.json';
+import buildMetadata2 from '../../src/release1/build2/build-metadata-R1B2.json';
 import {
   DAO,
   SimpleStorageR1B1,

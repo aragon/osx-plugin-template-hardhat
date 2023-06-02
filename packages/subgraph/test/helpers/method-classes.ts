@@ -2,7 +2,6 @@
  * IMPORTANT: Do not export classes from this file.
  * The classes of this file are meant to be incorporated into the classes of ./extended-schema.ts
  */
-
 import {Address, BigInt, Bytes, ethereum} from '@graphprotocol/graph-ts';
 
 /* eslint-disable  @typescript-eslint/no-unused-vars */

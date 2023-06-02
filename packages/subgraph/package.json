@@ -16,7 +16,8 @@
     "stop:dev": "docker-compose -f docker/docker-compose.yml down",
     "test:fast": "graph test",
     "test": "graph test -r",
-    "coverage": "graph test -c"
+    "coverage": "graph test -c",
+    "clean": "echo \"TODO\""
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.51.0",

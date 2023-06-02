@@ -1,5 +1,5 @@
-import buildMetadata1 from '../../contracts/release1/build1/build-metadata-R1B1.json';
-import releaseMetadata1 from '../../contracts/release1/release-metadata.json';
+import buildMetadata1 from '../../src/release1/build1/build-metadata-R1B1.json';
+import releaseMetadata1 from '../../src/release1/release-metadata.json';
 import {
   networkNameMapping,
   osxContracts,

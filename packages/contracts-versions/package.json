@@ -1,0 +1,40 @@
+{
+  "name": "@aragon/todo-osx-plugin-versions",
+  "version": "1.0.0",
+  "description": "The Aragon OSx contract versions",
+  "main": "dist/index-cjs.js",
+  "module": "dist/index-esm.js",
+  "types": "dist/bundle.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build:contracts": "ts-node create-contract-versions.ts",
+    "build:npm": "rollup --config rollup.config.ts",
+    "build": "yarn build:contracts && yarn build:npm",
+    "test": "jest",
+    "clean": "rm -rf dist npm versions "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aragon/osx.git"
+  },
+  "author": "",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/aragon/osx/issues"
+  },
+  "homepage": "https://github.com/aragon/osx#readme",
+  "devDependencies": {
+    "@typechain/ethers-v5": "^10.2.0",
+    "@types/fs-extra": "^11.0.1",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^18.16.1",
+    "fs-extra": "^10.1.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0"
+  },
+  "dependencies": {
+    "ethers": "^5.6.2"
+  }
+}
