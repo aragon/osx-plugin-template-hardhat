@@ -17,11 +17,7 @@
   },
   "devDependencies": {
     "prettier": "^2.8.4",
-    "prettier-plugin-solidity": "^1.1.2",
-    "@typescript-eslint/eslint-plugin": "^5.44.0",
-    "@typescript-eslint/parser": "^5.44.0",
-    "eslint": "^8.28.0",
-    "eslint-config-prettier": "^8.5.0"
+    "prettier-plugin-solidity": "^1.1.2"
   },
   "scripts": {
     "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts,yml}\"",
