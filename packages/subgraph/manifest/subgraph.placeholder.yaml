@@ -1,18 +1,18 @@
 {{info}}
 specVersion: 0.0.2
-description: A template for Aragon subgraphs
-repository: https://github.com/aragon/osx
+description: A template for Plugin subgraphs
+repository: https://github.com/aragon/osx-plugin-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
-  # PluginRepoRegistry
+  # PluginRepo
   - kind: ethereum/contract
-    name: {{dataSources.PluginRepoRegistry.name}}
+    name: {{dataSources.PluginRepo.name}}
     network: {{network}}
     source:
-      abi: PluginRepoRegistry
-      address: '{{dataSources.PluginRepoRegistry.address}}'
-      startBlock: {{dataSources.PluginRepoRegistry.startBlock}}
+      abi: PluginRepo
+      address: '{{dataSources.PluginRepo.address}}'
+      startBlock: {{dataSources.PluginRepo.startBlock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -20,12 +20,14 @@ dataSources:
       entities:
         - PluginRepo
       abis:        
-        - name: PluginRepoRegistry
-          file: $ARAGON_OSX_MODULE/artifacts/src/framework/plugin/repo/PluginRepoRegistry.sol/PluginRepoRegistry.json
+        - name: PluginRepo
+          file: ./abis/PluginRepo.json
       eventHandlers:
-        - event: PluginRepoRegistered(string,address)
-          handler: handlePluginRepoRegistered
-      file: ./src/registries/pluginRepoRegistry.ts
+        - event: VersionCreated(uint8,uint16,indexed address,bytes)
+          handler: handleVersionCreated
+        - event: ReleaseMetadataUpdated(uint8,bytes)
+          handler: handleReleaseMetadataUpdated
+      file: ./src/mapping.ts
   {{#dataSources.PluginSetupProcessors}}
   # PluginSetupProcessor
   - kind: ethereum/contract
@@ -45,15 +47,7 @@ dataSources:
         - PluginPermission
       abis:        
         - name: PluginSetupProcessor
-          file: $ARAGON_OSX_MODULE/artifacts/src/framework/plugin/setup/PluginSetupProcessor.sol/PluginSetupProcessor.json
-        - name: ERC20
-          file: $ARAGON_OSX_MODULE/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
-        - name: ERC165
-          file: $ARAGON_OSX_MODULE/artifacts/@openzeppelin/contracts/utils/introspection/ERC165.sol/ERC165.json
-        - name: TokenVoting
-          file: $ARAGON_OSX_MODULE/artifacts/src/plugins/governance/majority-voting/token/TokenVoting.sol/TokenVoting.json
-        - name: AddresslistVoting
-          file: $ARAGON_OSX_MODULE/artifacts/src/plugins/governance/majority-voting/addresslist/AddresslistVoting.sol/AddresslistVoting.json
+          file: ./abis/PluginSetupProcessor.json
       eventHandlers:
         - event: InstallationPrepared(indexed address,indexed address,bytes32,indexed address,(uint8,uint16),bytes,address,(address[],(uint8,address,address,address,bytes32)[]))
           handler: handleInstallationPrepared
@@ -67,30 +61,25 @@ dataSources:
           handler: handleUninstallationPrepared
         - event: UninstallationApplied(indexed address,indexed address,bytes32)
           handler: handleUninstallationApplied
-      file: ./src/plugin/pluginSetupProcessor.ts
+      file: ./src/mapping.ts
   {{/dataSources.PluginSetupProcessors}}
 # templates
 templates:
   # Plugin (package)
-  - name: TokenVoting
+  - name: Plugin
     kind: ethereum/contract
     network: {{network}}
     source:
-      abi: TokenVoting
+      abi: Plugin
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
-      file: ./src/packages/token/token-voting.ts
       entities:
         - Dao
       abis:
-        - name: ERC20
-          file: $ARAGON_OSX_MODULE/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
-        - name: GovernanceWrappedERC20
-          file: $ARAGON_OSX_MODULE/artifacts/src/token/ERC20/governance/GovernanceWrappedERC20.sol/GovernanceWrappedERC20.json
-        - name: TokenVoting
-          file: $ARAGON_OSX_MODULE/artifacts/src/plugins/governance/majority-voting/token/TokenVoting.sol/TokenVoting.json
+        - name: Plugin
+          file: $PLUGIN_MODULE/artifacts/contracts/release1/build1/Plugin.sol/Plugin.json
       eventHandlers:
         - event: MembershipContractAnnounced(indexed address)
           handler: handleMembershipContractAnnounced
@@ -102,24 +91,5 @@ templates:
           handler: handleProposalCreated
         - event: VotingSettingsUpdated(uint8,uint32,uint32,uint64,uint256)
           handler: handleVotingSettingsUpdated
-  # PluginRepo
-  - name: PluginRepoTemplate
-    kind: ethereum/contract
-    network: {{network}}
-    source:
-      abi: PluginRepo
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      file: ./src/plugin/pluginRepo.ts
-      entities:
-        - PluginRepo
-      abis:
-        - name: PluginRepo
-          file: $ARAGON_OSX_MODULE/artifacts/src/framework/plugin/repo/PluginRepo.sol/PluginRepo.json
-      eventHandlers:
-        - event: VersionCreated(uint8,uint16,indexed address,bytes)
-          handler: handleVersionCreated
-        - event: ReleaseMetadataUpdated(uint8,bytes)
-          handler: handleReleaseMetadataUpdated
+      file: ./src/mapping.ts
+

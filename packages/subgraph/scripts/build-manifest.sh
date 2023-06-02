@@ -17,7 +17,7 @@ fi
 FILE=$NETWORK_NAME'.json'
 DATA=manifest/data/$FILE
 
-ARAGON_OSX_MODULE=$(node -e 'console.log(require("path").dirname(require.resolve("@aragon/osx-artifacts/package.json")))')
+PLUGIN_MODULE=$(node -e 'console.log(require("path").dirname(require.resolve("@aragon/osx-plugin-contracts/package.json")))')
 
 echo 'Generating manifest from data file: '$DATA
 cat $DATA
@@ -25,5 +25,5 @@ cat $DATA
 mustache \
   $DATA \
   manifest/subgraph.placeholder.yaml \
-  | sed -e "s#\$ARAGON_OSX_MODULE#$ARAGON_OSX_MODULE#g" \
+  | sed -e "s#\$PLUGIN_MODULE#$PLUGIN_MODULE#g" \
   > subgraph.yaml
