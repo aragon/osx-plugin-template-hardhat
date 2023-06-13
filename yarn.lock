@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@aragon/osx-artifacts@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-artifacts/-/osx-artifacts-1.2.1.tgz#c1e206ce290ff92af20f42e823609e70f241a92d"
+  integrity sha512-/EgUCQMSrwuESpqaZejOTwvONggwmzNByU1lj6oL0euqs8fokSaUHiboiyMRp90VJZWXyJw/Hv1llUNGKc3XNg==
+
 "@aragon/osx-ethers@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.2.1.tgz#a442048137153ed5a3ca4eff3f3927b45a5134b5"
