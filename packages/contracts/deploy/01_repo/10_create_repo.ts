@@ -1,13 +1,9 @@
-import buildMetadata1 from '../../src/release1/build1/build-metadata-R1B1.json';
-import releaseMetadata1 from '../../src/release1/release-metadata.json';
 import {
   networkNameMapping,
   osxContracts,
   findEventTopicLog,
   addDeployedContract,
 } from '../../utils/helpers';
-import {toHex} from '../../utils/ipfs-upload';
-import {uploadToIPFS} from '../../utils/ipfs-upload';
 import {
   PluginRepoFactory__factory,
   PluginRepoRegistry__factory,
@@ -51,31 +47,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     deployer
   );
 
-  // Upload the metadata
-  const releaseMetadataURI = `ipfs://${await uploadToIPFS(
-    JSON.stringify(releaseMetadata1),
-    false
-  )}`;
-  const buildMetadataURI = `ipfs://${await uploadToIPFS(
-    JSON.stringify(buildMetadata1),
-    false
-  )}`;
+  const pluginName = 'test-repo-123';
 
-  console.log(`Uploaded metadata of release 1: ${releaseMetadataURI}`);
-  console.log(`Uploaded metadata of build 1: ${buildMetadataURI}`);
-
-  const pluginName = 'simple-storage-example-plugin';
-  const pluginSetupContractName = 'SimpleStorageR1B1Setup';
-
-  const setupR1B1 = await deployments.get(pluginSetupContractName);
-
-  // Create Repo for Release 1 and Build 1
-  const tx = await pluginRepoFactory.createPluginRepoWithFirstVersion(
+  // Create Repo
+  const tx = await pluginRepoFactory.createPluginRepo(
     pluginName,
-    setupR1B1.address,
-    deployer.address,
-    toHex(releaseMetadataURI),
-    toHex(buildMetadataURI)
+    deployer.address
   );
   const eventLog = await findEventTopicLog(
     tx,
@@ -91,13 +68,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     deployer
   );
 
-  console.log(
-    `"${pluginName}" PluginRepo deployed at: ${pluginRepo.address} with `
-  );
+  console.log(`"${pluginName}" PluginRepo deployed at: ${pluginRepo.address}`);
 
-  addDeployedContract(network.name, 'PluginRepo', pluginRepo.address);
-  addDeployedContract(network.name, pluginSetupContractName, setupR1B1.address);
+  addDeployedContract(
+    network.name,
+    'PluginRepo'.concat('_').concat(pluginName),
+    pluginRepo.address
+  );
 };
 
 export default func;
-func.tags = ['SimpleStoragePluginRepo', 'PublishSimpleStorageR1B2'];
+func.tags = ['PluginRepo'];
