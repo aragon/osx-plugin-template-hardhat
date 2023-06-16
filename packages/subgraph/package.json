@@ -20,7 +20,7 @@
     "postinstall": "ts-node scripts/postInstall.ts"
   },
   "devDependencies": {
-    "@aragon/osx-artifacts": "^1.2.1",
+    "osx-ethersV120": "npm:@aragon/osx-ethers@1.2.1",
     "@graphprotocol/graph-cli": "^0.51.0",
     "@graphprotocol/graph-ts": "^0.31.0",
     "matchstick-as": "^0.5.2",

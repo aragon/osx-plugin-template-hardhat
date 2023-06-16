@@ -21,7 +21,7 @@ dataSources:
         - PluginRepo
       abis:        
         - name: PluginRepo
-          file: ./abis/PluginRepo.json
+          file: ./abis/generated/PluginRepo.json
       eventHandlers:
         - event: VersionCreated(uint8,uint16,indexed address,bytes)
           handler: handleVersionCreated
@@ -47,7 +47,7 @@ dataSources:
         - PluginPermission
       abis:        
         - name: PluginSetupProcessor
-          file: ./abis/PluginSetupProcessor.json
+          file: ./abis/generated/PluginSetupProcessor.json
       eventHandlers:
         - event: InstallationPrepared(indexed address,indexed address,bytes32,indexed address,(uint8,uint16),bytes,address,(address[],(uint8,address,address,address,bytes32)[]))
           handler: handleInstallationPrepared
