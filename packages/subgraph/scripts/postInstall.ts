@@ -2,9 +2,8 @@ import fs from 'fs';
 import * as osx120 from 'osx-ethersV120';
 import path from 'path';
 
-// Extract the parameters from the arguments
 const params = [
-  osx120.PluginRepoFactory__factory,
+  osx120.PluginRepo__factory,
   osx120.PluginSetupProcessor__factory,
 ];
 
