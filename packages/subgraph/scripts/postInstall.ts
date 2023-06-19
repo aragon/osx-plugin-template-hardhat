@@ -16,7 +16,7 @@ function generateABIFiles(params: any[]): void {
     const fileName = `${abiName}.json`;
 
     // Construct the ABI directory path relative to the project root
-    const abisDirectory = path.join(__dirname, '../abis/generated');
+    const abisDirectory = path.join(__dirname, '../imported');
 
     // Check if directory exists, if not create it
     if (!fs.existsSync(abisDirectory)) {
