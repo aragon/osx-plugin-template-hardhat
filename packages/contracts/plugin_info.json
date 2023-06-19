@@ -2,7 +2,7 @@
   "hardhat": {
     "repo": "test-1",
     "address": "0x00E0B50f1fb27b03DE3a6608Bb587C8aefd3d69c",
-    "blockNumberOfDeployment": 17512606,
+    "blockNumberOfDeployment": 17513318,
     "releases": {
       "1": {
         "builds": {
@@ -10,10 +10,10 @@
             "setup": {
               "name": "SimpleStorageSetup",
               "address": "0x818E2f0D243FB841b765Eee2aA2CC7Ec93f05320",
-              "blockNumberOfDeployment": 17512607
+              "blockNumberOfDeployment": 17513319
             },
             "buildMetadataURI": "ipfs://QmY919VZ9gkeF6L169qQo89ucsUB9ScTaJVbGn8vMGGHxr",
-            "blockNumberOfPublication": 17512608
+            "blockNumberOfPublication": 17513320
           }
         },
         "releaseMetadataURI": "ipfs://QmVD1gtE5PdjhLuuRcjhiUqmnFXScVZbZ2oXEvXcKnd3b4"

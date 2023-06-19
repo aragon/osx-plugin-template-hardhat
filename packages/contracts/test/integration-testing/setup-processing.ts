@@ -20,12 +20,12 @@ import {
 } from '@aragon/osx-ethers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
-import {BigNumber, Wallet} from 'ethers';
+import {BigNumber} from 'ethers';
 import {ethers} from 'hardhat';
 
-describe.only('PluginSetup Processing', function () {
+describe('PluginSetup Processing', function () {
   let signers: SignerWithAddress[];
-  let deployer: Wallet;
+
   let psp: PluginSetupProcessor;
   let dao: DAO;
   let pluginRepo: PluginRepo;
@@ -33,11 +33,7 @@ describe.only('PluginSetup Processing', function () {
   before(async () => {
     signers = await ethers.getSigners();
 
-    const hardhatForkNetwork = process.env.HARDHAT_FORK_NETWORK
-      ? process.env.HARDHAT_FORK_NETWORK
-      : 'goerli';
-
-    console.log(hardhatForkNetwork);
+    const hardhatForkNetwork = 'goerli';
 
     await initializeFork(
       hardhatForkNetwork,

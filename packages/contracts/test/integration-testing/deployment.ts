@@ -21,12 +21,11 @@ async function deployAll() {
   await deployments.fixture();
 }
 
-// This tests
 describe('PluginRepo Deployment', function () {
   before(async () => {
     const hardhatForkNetwork = process.env.HARDHAT_FORK_NETWORK
       ? process.env.HARDHAT_FORK_NETWORK
-      : 'goerli';
+      : 'mainnet';
 
     signers = await ethers.getSigners();
 
