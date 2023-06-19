@@ -42,6 +42,14 @@ type Action @entity {
   execResult: Bytes
 }
 
+type StandardCallback @entity {
+  id: ID!
+  dao: Dao!
+  interfaceId: Bytes!
+  callbackSelector: Bytes!
+  magicNumber: Bytes!
+}
+
 # Dao
 
 type Dao @entity {
@@ -51,10 +59,7 @@ type Dao @entity {
   daoURI: String
   metadata: String
   createdAt: BigInt!
-  token: ERC20Contract
   actions: [Action!]! @derivedFrom(field: "dao")
-  transfers: [TokenTransfer!]! @derivedFrom(field: "dao")
-  balances: [TokenBalance!]! @derivedFrom(field: "dao")
   contractPermissionIds: [ContractPermissionId!]! @derivedFrom(field: "dao")
   permissions: [Permission!]! @derivedFrom(field: "dao")
   proposals: [IProposal!]! @derivedFrom(field: "dao")

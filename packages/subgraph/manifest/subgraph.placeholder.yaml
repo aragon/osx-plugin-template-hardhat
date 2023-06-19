@@ -21,7 +21,7 @@ dataSources:
         - PluginRepo
       abis:        
         - name: PluginRepo
-          file: ./abis/PluginRepo.json
+          file: ./abis/generated/PluginRepo.json
       eventHandlers:
         - event: VersionCreated(uint8,uint16,indexed address,bytes)
           handler: handleVersionCreated
@@ -47,7 +47,7 @@ dataSources:
         - PluginPermission
       abis:        
         - name: PluginSetupProcessor
-          file: ./abis/PluginSetupProcessor.json
+          file: ./abis/generated/PluginSetupProcessor.json
       eventHandlers:
         - event: InstallationPrepared(indexed address,indexed address,bytes32,indexed address,(uint8,uint16),bytes,address,(address[],(uint8,address,address,address,bytes32)[]))
           handler: handleInstallationPrepared
@@ -64,32 +64,32 @@ dataSources:
       file: ./src/mapping.ts
   {{/dataSources.PluginSetupProcessors}}
 # templates
-templates:
-  # Plugin (package)
-  - name: Plugin
-    kind: ethereum/contract
-    network: {{network}}
-    source:
-      abi: Plugin
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      entities:
-        - Dao
-      abis:
-        - name: Plugin
-          file: $PLUGIN_MODULE/artifacts/contracts/release1/build1/Plugin.sol/Plugin.json
-      eventHandlers:
-        - event: MembershipContractAnnounced(indexed address)
-          handler: handleMembershipContractAnnounced
-        - event: VoteCast(indexed uint256,indexed address,uint8,uint256)
-          handler: handleVoteCast
-        - event: ProposalExecuted(indexed uint256)
-          handler: handleProposalExecuted
-        - event: ProposalCreated(indexed uint256,indexed address,uint64,uint64,bytes,(address,uint256,bytes)[],uint256)
-          handler: handleProposalCreated
-        - event: VotingSettingsUpdated(uint8,uint32,uint32,uint64,uint256)
-          handler: handleVotingSettingsUpdated
-      file: ./src/mapping.ts
+# templates:
+#   # Plugin (package)
+#   - name: Plugin
+#     kind: ethereum/contract
+#     network: {{network}}
+#     source:
+#       abi: Plugin
+#     mapping:
+#       kind: ethereum/events
+#       apiVersion: 0.0.5
+#       language: wasm/assemblyscript
+#       entities:
+#         - Dao
+#       abis:
+#         - name: Plugin
+#           file: $PLUGIN_MODULE/artifacts/contracts/release1/build1/Plugin.sol/Plugin.json
+#       eventHandlers:
+#         - event: MembershipContractAnnounced(indexed address)
+#           handler: handleMembershipContractAnnounced
+#         - event: VoteCast(indexed uint256,indexed address,uint8,uint256)
+#           handler: handleVoteCast
+#         - event: ProposalExecuted(indexed uint256)
+#           handler: handleProposalExecuted
+#         - event: ProposalCreated(indexed uint256,indexed address,uint64,uint64,bytes,(address,uint256,bytes)[],uint256)
+#           handler: handleProposalCreated
+#         - event: VotingSettingsUpdated(uint8,uint32,uint32,uint64,uint256)
+#           handler: handleVotingSettingsUpdated
+#       file: ./src/mapping.ts
 
