@@ -11,7 +11,13 @@ import {ethers} from 'hardhat';
 import {upgrades} from 'hardhat';
 
 export type NetworkNameMapping = {[index: string]: string};
+
 export type ContractList = {[index: string]: {[index: string]: string}};
+
+export type ContractBlockNumberList = {
+  // network
+  [index: string]: {[index: string]: {address: string; blockNumber: number}};
+};
 
 export const osxContracts: ContractList = activeContractsList;
 
@@ -28,41 +34,102 @@ export const ERRORS = {
   ALREADY_INITIALIZED: 'Initializable: contract is already initialized',
 };
 
-const deployedContractsFilePath = 'deployed_contracts.json';
+const pluginInfoFilePath = 'plugin_info.json';
 
-export function getDeployedContracts(): ContractList {
-  return JSON.parse(readFileSync(deployedContractsFilePath, 'utf-8'));
+export function getPluginInfo(): any {
+  return JSON.parse(readFileSync(pluginInfoFilePath, 'utf-8'));
 }
 
-export function addDeployedContract(
+export function addDeployedRepo(
   networkName: string,
-  contractName: string,
-  contractAddr: string
+  repoName: string,
+  contractAddr: string,
+  blockNumber: number
 ) {
-  let deployedContracts: ContractList;
+  let pluginInfo: any;
 
   // Check if the file exists and is not empty
   if (
-    existsSync(deployedContractsFilePath) &&
-    statSync(deployedContractsFilePath).size !== 0
+    existsSync(pluginInfoFilePath) &&
+    statSync(pluginInfoFilePath).size !== 0
   ) {
-    deployedContracts = JSON.parse(
-      readFileSync(deployedContractsFilePath, 'utf-8')
-    );
+    pluginInfo = JSON.parse(readFileSync(pluginInfoFilePath, 'utf-8'));
   } else {
-    deployedContracts = {};
+    pluginInfo = {};
   }
 
-  if (!deployedContracts[networkName]) {
-    deployedContracts[networkName] = {};
+  if (!pluginInfo[networkName]) {
+    pluginInfo[networkName] = {};
   }
 
-  deployedContracts[networkName][contractName] = contractAddr;
+  pluginInfo[networkName]['repo'] = repoName;
+  pluginInfo[networkName]['address'] = contractAddr;
+  pluginInfo[networkName]['blockNumberOfDeployment'] = blockNumber;
 
-  writeFileSync(
-    'deployed_contracts.json',
-    JSON.stringify(deployedContracts, null, 2) + '\n'
-  );
+  writeFileSync('plugin_info.json', JSON.stringify(pluginInfo, null, 2) + '\n');
+}
+
+export function addCreatedVersion(
+  networkName: string,
+  version: {release: number; build: number},
+  metadataURIs: {release: string; build: string},
+  blockNumberOfPublication: number,
+  setup: {
+    name: string;
+    address: string;
+    blockNumberOfDeployment: number;
+  }
+) {
+  let pluginInfo: any;
+
+  // Check if the file exists and is not empty
+  if (
+    existsSync(pluginInfoFilePath) &&
+    statSync(pluginInfoFilePath).size !== 0
+  ) {
+    pluginInfo = JSON.parse(readFileSync(pluginInfoFilePath, 'utf-8'));
+  } else {
+    throw Error('plugiInfo.json file missing');
+  }
+
+  // Releases can already exist
+  if (!pluginInfo[networkName]['releases']) {
+    pluginInfo[networkName]['releases'] = {};
+  }
+  if (!pluginInfo[networkName]['releases'][version.release]) {
+    pluginInfo[networkName]['releases'][version.release] = {};
+    pluginInfo[networkName]['releases'][version.release]['builds'] = {};
+  }
+
+  // Update the releaseMetadataURI
+  pluginInfo[networkName]['releases'][version.release]['releaseMetadataURI'] =
+    metadataURIs.release;
+
+  /*
+  // The build should not exist already
+  if (
+    pluginInfo[networkName]['releases'][`${version.release}`]['builds'][
+      `${version.build}`
+    ]
+  ) {
+    throw new Error(
+      `Build ${version.build} already exists in release ${version.release}.`
+    );
+  }*/
+
+  pluginInfo[networkName]['releases'][`${version.release}`]['builds'][
+    `${version.build}`
+  ] = {};
+
+  pluginInfo[networkName]['releases'][`${version.release}`]['builds'][
+    `${version.build}`
+  ] = {
+    setup: setup,
+    buildMetadataURI: metadataURIs.build,
+    blockNumberOfPublication: blockNumberOfPublication,
+  };
+
+  writeFileSync('plugin_info.json', JSON.stringify(pluginInfo, null, 2) + '\n');
 }
 
 export function toBytes(string: string) {

@@ -41,7 +41,7 @@
     "@ensdomains/ens-contracts": "0.0.20",
     "@openzeppelin/contracts": "^4.8.2",
     "@openzeppelin/contracts-upgradeable": "^4.8.2",
-    "@openzeppelin/hardhat-upgrades": "^1.23.0"
+    "@openzeppelin/hardhat-upgrades": "^1.27.0"
   },
   "files": [
     "/src"

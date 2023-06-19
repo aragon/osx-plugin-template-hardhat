@@ -2,7 +2,7 @@ import {
   networkNameMapping,
   osxContracts,
   findEventTopicLog,
-  addDeployedContract,
+  addDeployedRepo,
 } from '../../utils/helpers';
 import {
   PluginRepoFactory__factory,
@@ -12,8 +12,10 @@ import {
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
+export const PLUGIN_REPO_NAME = 'test-1';
+
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const {deployments, network} = hre;
+  const {network} = hre;
   const [deployer] = await hre.ethers.getSigners();
 
   // Get the plugin factory address
@@ -47,11 +49,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     deployer
   );
 
-  const pluginName = 'test-repo-123';
-
   // Create Repo
   const tx = await pluginRepoFactory.createPluginRepo(
-    pluginName,
+    PLUGIN_REPO_NAME,
     deployer.address
   );
   const eventLog = await findEventTopicLog(
@@ -68,12 +68,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     deployer
   );
 
-  console.log(`"${pluginName}" PluginRepo deployed at: ${pluginRepo.address}`);
+  const blockNumberOfDeployment = (await tx.wait()).blockNumber;
 
-  addDeployedContract(
+  console.log(
+    `"${PLUGIN_REPO_NAME}" PluginRepo deployed at: ${pluginRepo.address} at block ${blockNumberOfDeployment}.`
+  );
+
+  addDeployedRepo(
     network.name,
-    'PluginRepo'.concat('_').concat(pluginName),
-    pluginRepo.address
+    PLUGIN_REPO_NAME,
+    pluginRepo.address,
+    blockNumberOfDeployment
   );
 };
 

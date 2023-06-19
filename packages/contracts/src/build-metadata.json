@@ -4,7 +4,14 @@
   "pluginSetup": {
     "prepareInstallation": {
       "description": "The information required for the installation of build 1.",
-      "inputs": []
+      "inputs": [
+        {
+          "name": "number",
+          "type": "uint256",
+          "internalType": "uint256",
+          "description": "The inital number to be stored."
+        }
+      ]
     },
     "prepareUpdate": {},
     "prepareUninstallation": {

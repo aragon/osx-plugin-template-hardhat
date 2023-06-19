@@ -1,0 +1,36 @@
+{
+  "goerli": {
+    "repoName": "test-repo-1",
+    "address": "0xb6D8F382B287502B42fA845185B334A1dD67cC81",
+    "blockNumberOfDeployment": 1,
+    "releases": {
+      "releaseMetadataURI": "ipfs://Qm...",
+      "1": {
+        "builds": {
+          "1": {
+            "buildMetadataURI": "ipfs://Qm...",
+            "blockNumberOfPublication": 10,
+            "setup": {
+              "name": "SimpleStorageSetup",
+              "address": "0xb1F28aBBeDb2043F025B84F25f5D55f45875d671",
+              "blockNumberOfDeployment": 5
+            },
+            "implementation": {
+              "__comment__": "can be empty",
+              "name": "SimpleStorage",
+              "address": "0xb1F28aBBeDb2043F025B84F25f5D55f45875d671",
+              "blockNumberOfDeployment": 5
+            },
+            "helpers": [
+              {
+                "name": "SimpleCondition",
+                "address": "0x12345BBeDb2043F025B84F25f5D55f45875d671",
+                "blockNumberOfDeployment": 2
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
