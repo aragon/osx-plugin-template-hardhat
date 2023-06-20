@@ -2,6 +2,7 @@ name: 'formatting'
 
 env:
   INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+  working-directory: .
 
 on:
   workflow_dispatch:
@@ -11,6 +12,9 @@ on:
 jobs:
   checks:
     runs-on: 'ubuntu-latest'
+    defaults:
+      run:
+        working-directory: ${{env.working-directory}}
     steps:
       - name: 'Check out the repo'
         uses: 'actions/checkout@v3'
