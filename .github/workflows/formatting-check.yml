@@ -1,0 +1,24 @@
+name: 'contracts'
+
+env:
+  INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+
+jobs:
+  tests:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Check out the repo'
+        uses: 'actions/checkout@v3'
+
+      - name: 'Check code formatting'
+        run: yarn prettier:check
+
+      - name: 'Add formatting summary'
+        run: |
+          echo "## Prettier results" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
