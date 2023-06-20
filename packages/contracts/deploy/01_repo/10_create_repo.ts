@@ -32,7 +32,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     pluginRepoFactoryAddr = osxContracts[hardhatForkNetwork].PluginRepoFactory;
     console.log(
-      `Using the ${hardhatForkNetwork} PluginRepoFactory address (${pluginRepoFactoryAddr}) for deployment testing on network ${network.name}`
+      `Using the "${hardhatForkNetwork}" PluginRepoFactory address (${pluginRepoFactoryAddr}) for deployment testing on network "${network.name}"`
     );
   } else {
     pluginRepoFactoryAddr =
@@ -55,6 +55,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     PLUGIN_REPO_ENS_NAME,
     deployer.address
   );
+  console.log(await tx.wait());
+
   const eventLog = await findEventTopicLog(
     tx,
     PluginRepoRegistry__factory.createInterface(),
