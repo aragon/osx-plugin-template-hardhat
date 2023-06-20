@@ -55,7 +55,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     PLUGIN_REPO_ENS_NAME,
     deployer.address
   );
-  console.log(await tx.wait());
 
   const eventLog = await findEventTopicLog(
     tx,
