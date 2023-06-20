@@ -1,11 +1,10 @@
-import {PLUGIN_REPO_NAME} from '../../deploy/01_repo/10_create_repo';
 import {
   PluginRepo,
   SimpleStorageSetup,
   SimpleStorageSetup__factory,
 } from '../../typechain';
 import {getPluginInfo, osxContracts} from '../../utils/helpers';
-import {toHex} from '../../utils/ipfs-upload';
+import {toHex} from '../../utils/ipfs';
 import {PluginRepoRegistry__factory} from '@aragon/osx-ethers';
 import {PluginRepoRegistry} from '@aragon/osx-ethers';
 import {PluginRepo__factory} from '@aragon/osx-ethers';

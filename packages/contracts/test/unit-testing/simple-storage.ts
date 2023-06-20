@@ -1,3 +1,4 @@
+import {PLUGIN_CONTRACT_NAME} from '../../plugin-settings';
 import {DAO, SimpleStorage, SimpleStorage__factory} from '../../typechain';
 import {deployWithProxy} from '../../utils/helpers';
 import {deployTestDao} from '../helpers/test-dao';
@@ -7,17 +8,17 @@ import {expect} from 'chai';
 import {BigNumber} from 'ethers';
 import {ethers} from 'hardhat';
 
-export type InputR1B1 = {number: BigNumber};
-export const defaultInputR1B1: InputR1B1 = {
+export type InitData = {number: BigNumber};
+export const defaultInitData: InitData = {
   number: BigNumber.from(123),
 };
 
-describe('SimpleStorage', function () {
+describe(PLUGIN_CONTRACT_NAME, function () {
   let signers: SignerWithAddress[];
   let dao: DAO;
   let SimpleStorage: SimpleStorage__factory;
   let simpleStorage: SimpleStorage;
-  let defaultInput: InputR1B1;
+  let defaultInput: InitData;
 
   before(async () => {
     signers = await ethers.getSigners();

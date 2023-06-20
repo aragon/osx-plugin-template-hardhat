@@ -1,4 +1,4 @@
-import buildMetadata from '../../src/build-metadata.json';
+import {METADATA} from '../../plugin-settings';
 import {
   PluginRepo,
   SimpleStorage,
@@ -108,7 +108,7 @@ describe('PluginSetup Processing', function () {
         pluginSetupRef,
         ethers.utils.defaultAbiCoder.encode(
           getNamedTypesFromMetadata(
-            buildMetadata.pluginSetup.prepareInstallation.inputs // TODO get from pluginInfo.json
+            METADATA.build.pluginSetup.prepareInstallation.inputs
           ),
           [123]
         )
@@ -137,7 +137,7 @@ describe('PluginSetup Processing', function () {
         pluginSetupRef,
         ethers.utils.defaultAbiCoder.encode(
           getNamedTypesFromMetadata(
-            buildMetadata.pluginSetup.prepareUninstallation.inputs
+            METADATA.build.pluginSetup.prepareUninstallation.inputs
           ),
           []
         ),

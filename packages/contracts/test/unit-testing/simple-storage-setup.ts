@@ -1,4 +1,5 @@
-import buildMetadata1 from '../../src/build-metadata.json';
+import {PLUGIN_SETUP_CONTRACT_NAME} from '../../plugin-settings';
+import buildMetadata from '../../src/build-metadata.json';
 import {
   DAO,
   SimpleStorageSetup,
@@ -7,7 +8,7 @@ import {
 } from '../../typechain';
 import {deployTestDao} from '../helpers/test-dao';
 import {Operation, getNamedTypesFromMetadata} from '../helpers/types';
-import {defaultInputR1B1} from './simple-storage';
+import {defaultInitData} from './simple-storage';
 import {
   ADDRESS_ZERO,
   EMPTY_DATA,
@@ -19,7 +20,7 @@ import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {ethers} from 'hardhat';
 
-describe('SimpleStorageSetup', function () {
+describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
   let signers: SignerWithAddress[];
   let simpleStorageSetup: SimpleStorageSetup;
   let SimpleStorageSetup: SimpleStorageSetup__factory;
@@ -39,9 +40,9 @@ describe('SimpleStorageSetup', function () {
     before(async () => {
       initData = abiCoder.encode(
         getNamedTypesFromMetadata(
-          buildMetadata1.pluginSetup.prepareInstallation.inputs
+          buildMetadata.pluginSetup.prepareInstallation.inputs
         ),
-        [defaultInputR1B1.number]
+        [defaultInitData.number]
       );
     });
 
@@ -82,7 +83,7 @@ describe('SimpleStorageSetup', function () {
 
       // initialization is correct
       expect(await simpleStorage.dao()).to.eq(dao.address);
-      expect(await simpleStorage.number()).to.be.eq(defaultInputR1B1.number);
+      expect(await simpleStorage.number()).to.be.eq(defaultInitData.number);
     });
   });
 
