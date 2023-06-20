@@ -1,4 +1,4 @@
-name: 'contracts'
+name: 'subgraph'
 
 env:
   INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
