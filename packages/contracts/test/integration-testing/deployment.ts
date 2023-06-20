@@ -22,6 +22,9 @@ async function deployAll() {
 
 describe('PluginRepo Deployment', function () {
   before(async () => {
+    console.log(process.cwd());
+    console.log(JSON.stringify(getPluginInfo()['hardhat'], null, 2));
+
     const hardhatForkNetwork = process.env.HARDHAT_FORK_NETWORK
       ? process.env.HARDHAT_FORK_NETWORK
       : 'mainnet';
@@ -35,9 +38,6 @@ describe('PluginRepo Deployment', function () {
     await deployAll();
 
     // Print infos
-
-    console.log(process.cwd());
-    console.log(JSON.stringify(getPluginInfo()['hardhat'], null, 2));
 
     // plugin repo registry
     repoRegistry = PluginRepoRegistry__factory.connect(

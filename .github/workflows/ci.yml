@@ -1,4 +1,4 @@
-name: 'CI'
+name: 'Contracts Tests'
 
 env:
   INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
