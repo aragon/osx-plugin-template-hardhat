@@ -26,8 +26,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     network.name === 'hardhat' ||
     network.name === 'coverage'
   ) {
-    const hardhatForkNetwork = process.env.HARDHAT_FORK_NETWORK
-      ? process.env.HARDHAT_FORK_NETWORK
+    const hardhatForkNetwork = process.env.NETWORK_NAME
+      ? process.env.NETWORK_NAME
       : 'mainnet';
 
     pluginRepoFactoryAddr = osxContracts[hardhatForkNetwork].PluginRepoFactory;

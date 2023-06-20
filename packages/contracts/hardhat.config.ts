@@ -14,7 +14,7 @@ import type {NetworkUserConfig} from 'hardhat/types';
 import {resolve} from 'path';
 import 'solidity-coverage';
 
-const dotenvConfigPath: string = process.env.DOTENV_CONFIG_PATH || './.env';
+const dotenvConfigPath: string = process.env.DOTENV_CONFIG_PATH || '../../.env';
 dotenvConfig({path: resolve(__dirname, dotenvConfigPath)});
 
 if (!process.env.INFURA_API_KEY) {
@@ -35,11 +35,7 @@ const networks: {[index: string]: NetworkUserConfig} = {
     chainId: 31337,
     forking: {
       url: `${
-        apiUrls[
-          process.env.HARDHAT_FORK_NETWORK
-            ? process.env.HARDHAT_FORK_NETWORK
-            : 'mainnet'
-        ]
+        apiUrls[process.env.NETWORK_NAME ? process.env.NETWORK_NAME : 'mainnet']
       }${process.env.INFURA_API_KEY}`,
     },
   },

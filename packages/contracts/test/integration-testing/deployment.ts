@@ -22,8 +22,8 @@ async function deployAll() {
 
 describe('PluginRepo Deployment', function () {
   before(async () => {
-    const hardhatForkNetwork = process.env.HARDHAT_FORK_NETWORK
-      ? process.env.HARDHAT_FORK_NETWORK
+    const hardhatForkNetwork = process.env.NETWORK_NAME
+      ? process.env.NETWORK_NAME
       : 'mainnet';
 
     signers = await ethers.getSigners();
