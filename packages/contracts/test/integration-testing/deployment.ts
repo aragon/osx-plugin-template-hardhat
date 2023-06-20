@@ -35,7 +35,9 @@ describe('PluginRepo Deployment', function () {
     await deployAll();
 
     // Print infos
-    console.log(getPluginInfo()['hardhat']);
+
+    console.log(process.cwd());
+    console.log(JSON.stringify(getPluginInfo()['hardhat'], null, 2));
 
     // plugin repo registry
     repoRegistry = PluginRepoRegistry__factory.connect(
