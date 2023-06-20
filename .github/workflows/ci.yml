@@ -1,4 +1,4 @@
-name: 'Contracts Tests'
+name: 'contracts'
 
 env:
   INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
@@ -11,7 +11,7 @@ on:
       - main
 
 jobs:
-  ci:
+  tests:
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'Check out the repo'
