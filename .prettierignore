@@ -10,6 +10,9 @@ deployments
 dist
 node_modules
 typechain
+types
+imported
+generated
 
 # files
 *.env
@@ -20,3 +23,4 @@ coverage.json
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+extended-schema.ts

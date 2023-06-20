@@ -14,7 +14,7 @@ import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(
-    `Publishing ${PLUGIN_SETUP_CONTRACT_NAME} as v${VERSION.release}.${VERSION.build} in the \"${PLUGIN_REPO_ENS_NAME}\" plugin repo`
+    `Publishing ${PLUGIN_SETUP_CONTRACT_NAME} as v${VERSION.release}.${VERSION.build} in the "${PLUGIN_REPO_ENS_NAME}" plugin repo`
   );
 
   const {deployments, network} = hre;

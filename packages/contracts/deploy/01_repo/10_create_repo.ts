@@ -14,7 +14,7 @@ import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  console.log(`\nDeploying the \"${PLUGIN_REPO_ENS_NAME}\" plugin repo`);
+  console.log(`\nDeploying the "${PLUGIN_REPO_ENS_NAME}" plugin repo`);
 
   const {network} = hre;
   const [deployer] = await hre.ethers.getSigners();

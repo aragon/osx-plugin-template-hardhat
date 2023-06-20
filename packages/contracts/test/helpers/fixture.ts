@@ -1,5 +1,5 @@
 import networks from './networks.json';
-import {network, deployments} from 'hardhat';
+import {network} from 'hardhat';
 
 export async function initializeFork(
   forkNetwork: string,
