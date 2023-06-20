@@ -13,8 +13,8 @@ export async function createPluginSetupProcessor(
 ): Promise<PluginSetupProcessor> {
   // Create the PluginSetupProcessor
 
-  const hardhatForkNetwork = process.env.HARDHAT_FORK_NETWORK
-    ? process.env.HARDHAT_FORK_NETWORK
+  const hardhatForkNetwork = process.env.NETWORK_NAME
+    ? process.env.NETWORK_NAME
     : 'mainnet';
 
   const psp = new PluginSetupProcessor__factory(signer).attach(

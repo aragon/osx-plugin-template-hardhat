@@ -1,10 +1,11 @@
 #!/bin/bash
 
 
-if [ -f .env ]
+if [ -f ../../.env ]
 then
-  export $(cat .env | sed 's/#.*//g' | xargs)
+  export $(cat ../../.env | sed 's/#.*//g' | xargs)
 fi
+
 
 if [ -z "$NETWORK_NAME" ] 
 then

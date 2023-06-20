@@ -1,0 +1,53 @@
+name: 'contracts'
+
+env:
+  INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+  working-directory: packages/contracts
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'packages/contracts/**'
+      - '.github/workflows/contracts-*.yml'
+
+jobs:
+  tests:
+    runs-on: 'ubuntu-latest'
+    defaults:
+      run:
+        working-directory: ${{env.working-directory}}
+    steps:
+      - name: 'Check out the repo'
+        uses: 'actions/checkout@v3'
+
+      - name: 'Install Node.js'
+        uses: 'actions/setup-node@v3'
+        with:
+          cache: 'yarn'
+          node-version: 16
+
+      - name: 'Install the dependencies'
+        run: 'yarn install'
+
+      - name: 'Lint the code'
+        run: 'yarn lint'
+        working-directory: packages/contracts
+
+      - name: 'Add lint summary'
+        run: |
+          echo "## Lint results" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+
+      - name: 'Build the contracts'
+        run: 'yarn build'
+        working-directory: packages/contracts
+
+      - name: 'Test the contracts and generate the coverage report'
+        run: 'yarn coverage'
+        working-directory: packages/contracts
+
+      - name: 'Add test summary'
+        run: |
+          echo "## Test results" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY

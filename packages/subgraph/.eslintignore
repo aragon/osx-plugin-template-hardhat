@@ -1,0 +1,12 @@
+# directories
+imported
+generated
+tests
+
+# files
+*.env
+*.log
+.DS_Store
+.pnp.*
+extended-schema.ts
+
