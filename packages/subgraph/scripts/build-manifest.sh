@@ -3,8 +3,11 @@
 
 if [ -f ../../.env ]
 then
+  echo $(cat ../../.env)
   export $(cat ../../.env | sed 's/#.*//g' | xargs)
 fi
+
+echo "$NETWORK_NAME"
 
 if [ -z "$NETWORK_NAME" ] 
 then
