@@ -28,11 +28,14 @@ describe('PluginRepo Deployment', function () {
 
     signers = await ethers.getSigners();
 
-    // deployment should be empty
+    // Deploymen should be empty
     expect(await deployments.all()).to.be.empty;
 
-    // deploy framework
+    // Deploy all contracts
     await deployAll();
+
+    // Print infos
+    console.log(getPluginInfo()['hardhat']);
 
     // plugin repo registry
     repoRegistry = PluginRepoRegistry__factory.connect(
@@ -45,6 +48,7 @@ describe('PluginRepo Deployment', function () {
       signers[0]
     );
   });
+
   it('creates the repo', async () => {
     expect(await repoRegistry.entries(pluginRepo.address)).to.be.true;
   });

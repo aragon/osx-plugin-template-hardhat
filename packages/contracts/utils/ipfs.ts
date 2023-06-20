@@ -22,15 +22,3 @@ export async function uploadToIPFS(
 export function toHex(input: string): BytesLike {
   return ethers.utils.hexlify(ethers.utils.toUtf8Bytes(input));
 }
-
-export async function downloadJSONFromIPFS(cid: string): Promise<any> {
-  const ipfs = IPFS.create();
-  try {
-    const file = await ipfs.cat(cid);
-    const data = JSON.parse(file.toString());
-    return data;
-  } catch (error) {
-    console.error('Error downloading JSON from IPFS:', error);
-    throw error;
-  }
-}
