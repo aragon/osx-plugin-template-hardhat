@@ -7,9 +7,9 @@ then
   export $(cat ../../.env | sed 's/#.*//g' | xargs)
 fi
 
-echo "$NETWORK_NAME"
+echo $NETWORK_NAME
 
-if [ -z "$NETWORK_NAME" ] 
+if [ -z $NETWORK_NAME ] 
 then
     echo "env is not set, exiting..."
     exit -1
