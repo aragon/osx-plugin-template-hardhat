@@ -38,7 +38,7 @@ const networks: {[index: string]: NetworkUserConfig} = {
         apiUrls[
           process.env.HARDHAT_FORK_NETWORK
             ? process.env.HARDHAT_FORK_NETWORK
-            : 'mainnet'
+            : 'goerli'
         ]
       }${process.env.INFURA_API_KEY}`,
     },
@@ -117,7 +117,7 @@ const config: HardhatUserConfig = {
   paths: {
     artifacts: './artifacts',
     cache: './cache',
-    sources: './contracts',
+    sources: './src',
     tests: './test',
     deploy: './deploy',
   },

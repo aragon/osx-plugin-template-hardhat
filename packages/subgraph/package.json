@@ -5,10 +5,10 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "build:contracts": "cd ../contracts && yarn build",
-    "build:contracts-versions": "cd ../contracts-versions && yarn build",
-    "manifest": "scripts/build-manifest.sh",
+    "build:manifest": "scripts/build-manifest.sh",
+    "build:subgraph": "scripts/build-subgraph.sh",
     "extend:schema": "yarn ts-node utils/schema-extender.ts",
-    "build": "scripts/build-subgraph.sh && yarn extend:schema",
+    "build": "yarn build:manifest && yarn build:contracts && yarn build:subgraph && yarn extend:schema",
     "deploy": "scripts/deploy-subgraph.sh",
     "create:local": "graph create aragon/aragon-core-rinkeby --node http://localhost:8020",
     "deploy:local": "LOCAL=true scripts/deploy-subgraph.sh",
@@ -17,7 +17,8 @@
     "test:fast": "graph test",
     "test": "graph test -r",
     "coverage": "graph test -c",
-    "postinstall": "ts-node scripts/postInstall.ts"
+    "postinstall": "ts-node scripts/postInstall.ts",
+    "clean": "rimraf deploy-output.txt subgraph.yaml ./build ./imported ./generated ./tests/.bin tests/.latest.json tests/helpers/extended-schema.ts && yarn postinstall"
   },
   "devDependencies": {
     "osx-ethersV120": "npm:@aragon/osx-ethers@1.2.1",

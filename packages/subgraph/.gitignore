@@ -6,9 +6,11 @@ tests/bin
 artifacts
 
 # generated
+imported
 generated
 subgraph.yaml
 deploy-output.txt
 dev-data
 tests/.latest.json
+tests/.bin
 tests/helpers/extended-schema.ts

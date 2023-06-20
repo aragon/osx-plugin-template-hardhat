@@ -1,8 +1,0 @@
-{
-  "hardhat": {
-    "SimpleStorageR1B1Setup": "0x9D3DA37d36BB0B825CD319ed129c2872b893f538",
-    "SimpleStorageR1B2Setup": "0x59C4e2c6a6dC27c259D6d067a039c831e1ff4947",
-    "SimpleStorageR1B3Setup": "0x9d136eEa063eDE5418A6BC7bEafF009bBb6CFa70",
-    "PluginRepo": "0x00E0B50f1fb27b03DE3a6608Bb587C8aefd3d69c"
-  }
-}

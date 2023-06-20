@@ -18,5 +18,11 @@
   },
   "exclude": ["node_modules"],
   "files": ["./hardhat.config.ts"],
-  "include": ["src/**/*", "deploy/**/*", "test/**/*", "utils/**/*"]
+  "include": [
+    "src/**/*",
+    "deploy/**/*",
+    "test/**/*",
+    "utils/**/*",
+    "plugin-settings.ts"
+  ]
 }
