@@ -1,19 +1,19 @@
+import {PLUGIN_SETUP_CONTRACT_NAME} from '../../plugin-settings';
 import {
   SimpleStorageSetup__factory,
   SimpleStorage__factory,
 } from '../../typechain';
-import {NAME} from './10_setup';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import {setTimeout} from 'timers/promises';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  console.log(`Concluding SimpleStorageSetup setup deployment.\n`);
+  console.log(`Concluding ${PLUGIN_SETUP_CONTRACT_NAME} deployment.\n`);
   const [deployer] = await hre.ethers.getSigners();
 
   const {deployments, network} = hre;
 
-  const setupDeployment = await deployments.get('SimpleStorageSetup');
+  const setupDeployment = await deployments.get(PLUGIN_SETUP_CONTRACT_NAME);
   const setup = SimpleStorageSetup__factory.connect(
     setupDeployment.address,
     deployer
@@ -40,4 +40,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 
 export default func;
-func.tags = [NAME, 'Verify'];
+func.tags = [PLUGIN_SETUP_CONTRACT_NAME, 'Verification'];

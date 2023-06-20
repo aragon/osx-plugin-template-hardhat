@@ -1,3 +1,4 @@
+import {PLUGIN_REPO_ENS_NAME} from '../../plugin-settings';
 import '../../typechain';
 import {getPluginInfo} from '../../utils/helpers';
 import {DeployFunction} from 'hardhat-deploy/types';
@@ -5,7 +6,7 @@ import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import {setTimeout} from 'timers/promises';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  console.log(`Concluding PluginRepo deployment.\n`);
+  console.log(`Concluding ${PLUGIN_REPO_ENS_NAME} plugin repo deployment.\n`);
 
   const {network} = hre;
 
@@ -24,4 +25,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 
 export default func;
-func.tags = ['PluginRepo', 'Verify'];
+func.tags = ['PluginRepo', 'Verification'];

@@ -22,8 +22,6 @@ export type ContractBlockNumberList = {
 export const osxContracts: ContractList = activeContractsList;
 
 export const networkNameMapping: NetworkNameMapping = {
-  arbitrumOne: 'ERROR: Not available yet.',
-  arbitrumGoerli: 'ERROR: Not available yet.',
   mainnet: 'mainnet',
   goerli: 'goerli',
   polygon: 'polygon',
@@ -34,7 +32,7 @@ export const ERRORS = {
   ALREADY_INITIALIZED: 'Initializable: contract is already initialized',
 };
 
-const pluginInfoFilePath = 'plugin_info.json';
+const pluginInfoFilePath = 'plugin-info.json';
 
 export function getPluginInfo(): any {
   return JSON.parse(readFileSync(pluginInfoFilePath, 'utf-8'));
@@ -66,7 +64,7 @@ export function addDeployedRepo(
   pluginInfo[networkName]['address'] = contractAddr;
   pluginInfo[networkName]['blockNumberOfDeployment'] = blockNumber;
 
-  writeFileSync('plugin_info.json', JSON.stringify(pluginInfo, null, 2) + '\n');
+  writeFileSync('plugin-info.json', JSON.stringify(pluginInfo, null, 2) + '\n');
 }
 
 export function addCreatedVersion(
@@ -78,7 +76,21 @@ export function addCreatedVersion(
     name: string;
     address: string;
     blockNumberOfDeployment: number;
-  }
+  },
+  implementation: {
+    name: string;
+    address: string;
+    blockNumberOfDeployment: number;
+  },
+  helpers:
+    | [
+        {
+          name: string;
+          address: string;
+          blockNumberOfDeployment: number;
+        }
+      ]
+    | []
 ) {
   let pluginInfo: any;
 
@@ -125,11 +137,13 @@ export function addCreatedVersion(
     `${version.build}`
   ] = {
     setup: setup,
+    implementation: implementation,
+    helpers: helpers,
     buildMetadataURI: metadataURIs.build,
     blockNumberOfPublication: blockNumberOfPublication,
   };
 
-  writeFileSync('plugin_info.json', JSON.stringify(pluginInfo, null, 2) + '\n');
+  writeFileSync('plugin-info.json', JSON.stringify(pluginInfo, null, 2) + '\n');
 }
 
 export function toBytes(string: string) {

@@ -1,28 +1,32 @@
-import {PLUGIN_REPO_NAME} from '../01_repo/10_create_repo';
-import buildMetadata from '../../src/build-metadata.json';
-import releaseMetadata from '../../src/release-metadata.json';
+import {
+  METADATA,
+  PLUGIN_CONTRACT_NAME,
+  PLUGIN_REPO_ENS_NAME,
+  PLUGIN_SETUP_CONTRACT_NAME,
+  VERSION,
+} from '../../plugin-settings';
 import {addCreatedVersion, getPluginInfo} from '../../utils/helpers';
 import {toHex} from '../../utils/ipfs-upload';
 import {uploadToIPFS} from '../../utils/ipfs-upload';
-import {NAME} from './10_setup';
-import {PluginRepo__factory} from '@aragon/osx-ethers';
+import {PluginRepo__factory, PluginSetup__factory} from '@aragon/osx-ethers';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
-const pluginSetupContractName = 'SimpleStorageSetup';
-const releaseNumber = 1;
-
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  console.log(
+    `Publishing ${PLUGIN_SETUP_CONTRACT_NAME} as v${VERSION.release}.${VERSION.build} in the \"${PLUGIN_REPO_ENS_NAME}\" plugin repo`
+  );
+
   const {deployments, network} = hre;
   const [deployer] = await hre.ethers.getSigners();
 
-  // Upload the metadata
+  // Upload the metadata to IPFS
   const releaseMetadataURI = `ipfs://${await uploadToIPFS(
-    JSON.stringify(releaseMetadata),
+    JSON.stringify(METADATA.release),
     false
   )}`;
   const buildMetadataURI = `ipfs://${await uploadToIPFS(
-    JSON.stringify(buildMetadata),
+    JSON.stringify(METADATA.build),
     false
   )}`;
 
@@ -30,9 +34,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`Uploaded build metadata: ${buildMetadataURI}`);
 
   // Get PluginSetup
-  const setup = await deployments.get(pluginSetupContractName);
-
-  console.log(network.name);
+  const setup = await deployments.get(PLUGIN_SETUP_CONTRACT_NAME);
 
   // Get PluginRepo
   const pluginRepo = PluginRepo__factory.connect(
@@ -40,9 +42,37 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     deployer
   );
 
+  // Check release number
+  const latestRelease = await pluginRepo.latestRelease();
+  if (VERSION.release > latestRelease + 1) {
+    throw Error(
+      `Publishing with release number ${VERSION.release} is not possible. 
+      The latest release is ${latestRelease} and the next release you can publish is release number ${
+        latestRelease + 1
+      }.`
+    );
+  }
+
+  // Check build number
+  const latestBuild = (await pluginRepo.buildCount(VERSION.release)).toNumber();
+  if (VERSION.build <= latestBuild) {
+    throw Error(
+      `Publishing with build number ${VERSION.build} is not possible. 
+      The latest build is ${latestBuild} and build ${VERSION.build} has been deployed already.`
+    );
+  }
+  if (VERSION.build > latestBuild + 1) {
+    throw Error(
+      `Publishing with build number ${VERSION.build} is not possible. 
+      The latest build is ${latestBuild} and the next release you can publish is release number ${
+        latestBuild + 1
+      }.`
+    );
+  }
+
   // Create Version
   const tx = await pluginRepo.createVersion(
-    releaseNumber,
+    VERSION.release,
     setup.address,
     toHex(buildMetadataURI),
     toHex(releaseMetadataURI)
@@ -54,27 +84,38 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     throw Error('setup deployment unavailable');
   }
 
-  const version = await pluginRepo['getLatestVersion(uint8)'](releaseNumber);
-  if (releaseNumber !== version.tag.release) {
+  const version = await pluginRepo['getLatestVersion(uint8)'](VERSION.release);
+  if (VERSION.release !== version.tag.release) {
     throw Error('something went wrong');
   }
 
+  const implementationAddress = await PluginSetup__factory.connect(
+    setup.address,
+    deployer
+  ).implementation();
+
   console.log(
-    `Published ${pluginSetupContractName} at ${setup.address} in PluginRepo ${PLUGIN_REPO_NAME} at ${pluginRepo.address} at block ${blockNumberOfPublication}.`
+    `Published ${PLUGIN_SETUP_CONTRACT_NAME} at ${setup.address} in PluginRepo ${PLUGIN_REPO_ENS_NAME} at ${pluginRepo.address} at block ${blockNumberOfPublication}.`
   );
 
   addCreatedVersion(
     network.name,
-    {release: releaseNumber, build: version.tag.build},
+    {release: VERSION.release, build: version.tag.build},
     {release: releaseMetadataURI, build: buildMetadataURI},
     blockNumberOfPublication,
     {
-      name: pluginSetupContractName,
+      name: PLUGIN_SETUP_CONTRACT_NAME,
       address: setup.address,
       blockNumberOfDeployment: setup.receipt.blockNumber,
-    }
+    },
+    {
+      name: PLUGIN_CONTRACT_NAME,
+      address: implementationAddress,
+      blockNumberOfDeployment: setup.receipt.blockNumber,
+    },
+    []
   );
 };
 
 export default func;
-func.tags = [NAME, 'Publish'];
+func.tags = [PLUGIN_SETUP_CONTRACT_NAME, 'Publication'];
