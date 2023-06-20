@@ -1,7 +1,7 @@
 name: 'subgraph'
 
 env:
-  INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+  INFURA_API_KEY: ${{secrets.INFURA_API_KEY}}
   working-directory: packages/subgraph
 
 on:
@@ -41,7 +41,8 @@ jobs:
 
       - name: 'Build the subgraph'
         run: 'yarn build'
-
+        env:
+          NETWORK_NAME: 'goerli'
       - name: 'Test the subgraph'
         run: 'yarn test'
 
