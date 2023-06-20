@@ -28,9 +28,6 @@ jobs:
       - name: 'Install the dependencies'
         run: 'yarn install'
 
-      - name: 'Check out the repo'
-        uses: 'actions/checkout@v3'
-
       - name: 'Check code formatting'
         run: yarn prettier:check
 
