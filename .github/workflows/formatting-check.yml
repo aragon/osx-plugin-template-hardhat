@@ -29,8 +29,3 @@ jobs:
 
       - name: 'Check code formatting'
         run: yarn prettier:check
-
-      - name: 'Add formatting summary'
-        run: |
-          echo "## Prettier results" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
