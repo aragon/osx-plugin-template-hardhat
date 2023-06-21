@@ -37,9 +37,9 @@ describe('PluginSetup Processing', function () {
 
     await initializeFork(
       hardhatForkNetwork,
-      getPluginInfo()[hardhatForkNetwork]['releases']['1']['builds']['1'][
-        'blockNumberOfPublication'
-      ]
+      getPluginInfo(hardhatForkNetwork)[hardhatForkNetwork]['releases']['1'][
+        'builds'
+      ]['1']['blockNumberOfPublication']
     );
 
     // PSP
@@ -73,7 +73,7 @@ describe('PluginSetup Processing', function () {
     );
 
     pluginRepo = PluginRepo__factory.connect(
-      getPluginInfo()[hardhatForkNetwork].address,
+      getPluginInfo(hardhatForkNetwork)[hardhatForkNetwork].address,
       signers[0]
     );
   });

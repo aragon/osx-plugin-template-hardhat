@@ -1,24 +1,25 @@
 {
-  "goerli": {
+  "hardhat": {
     "repo": "test-1",
-    "address": "0xEF30A43458d846bb754DBEE17958Dbc7a7b98618",
-    "blockNumberOfDeployment": 9203689,
+    "address": "0x00E0B50f1fb27b03DE3a6608Bb587C8aefd3d69c",
+    "blockNumberOfDeployment": 17528647,
     "releases": {
       "1": {
         "builds": {
           "1": {
             "setup": {
               "name": "SimpleStorageSetup",
-              "address": "0x49ABA4462c560BE3a02Dc0A57a96E88cB8c1EE5b",
-              "blockNumberOfDeployment": 9203690
+              "address": "0x818E2f0D243FB841b765Eee2aA2CC7Ec93f05320",
+              "blockNumberOfDeployment": 17528648
             },
             "implementation": {
               "name": "SimpleStorage",
-              "address": "0xDF4a1f58bE59e59E8502DD424aF564f9D7B92581",
-              "blockNumberOfDeployment": 9203690
+              "address": "0xA0ed3Ddbf3d228756FF775bf582734601110cB73",
+              "blockNumberOfDeployment": 17528648
             },
+            "helpers": [],
             "buildMetadataURI": "ipfs://QmY919VZ9gkeF6L169qQo89ucsUB9ScTaJVbGn8vMGGHxr",
-            "blockNumberOfPublication": 9203691
+            "blockNumberOfPublication": 17528649
           }
         },
         "releaseMetadataURI": "ipfs://QmVD1gtE5PdjhLuuRcjhiUqmnFXScVZbZ2oXEvXcKnd3b4"

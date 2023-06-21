@@ -10,16 +10,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log('\nVerifying contracts');
 
   const {deployments} = hre;
-  const deployedContracts = await deployments.all();
 
-  for (const [k, v] of Object.entries(deployedContracts)) {
-    console.log(k, v.address, v.args);
+  for (let index = 0; index < hre.aragonToVerifyContracts.length; index++) {
+    const element = hre.aragonToVerifyContracts[index];
 
     console.log(
-      `Verifying contract ${k} at address ${v.address} with constructor arguments "${v.args}".`
+      `Verifying address ${element.address} with constructor argument ${element.args}.`
     );
+    await verifyContract(element.address, element.args || []);
 
-    await verifyContract(v.address, v.args || []);
     // Etherscan Max rate limit is 1/5s,
     // use 6s just to be safe.
     console.log(
@@ -30,6 +29,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 
 export default func;
+
 func.tags = ['Verification'];
 func.runAtTheEnd = true;
 func.skip = (hre: HardhatRuntimeEnvironment) =>
