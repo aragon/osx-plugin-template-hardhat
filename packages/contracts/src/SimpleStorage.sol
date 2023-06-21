@@ -10,6 +10,10 @@ contract SimpleStorage is PluginUUPSUpgradeable {
 
     uint256 public number; // added in build 1
 
+    constructor() {
+        _disableInitializers();
+    }
+
     /// @notice Initializes the plugin when build 1 is installed.
     /// @param _number The number to be stored.
     function initialize(IDAO _dao, uint256 _number) external initializer {

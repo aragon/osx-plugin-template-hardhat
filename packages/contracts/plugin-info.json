@@ -2,6 +2,7 @@
   "goerli": {
     "repo": "test-1",
     "address": "0xEF30A43458d846bb754DBEE17958Dbc7a7b98618",
+    "args": [],
     "blockNumberOfDeployment": 9203689,
     "releases": {
       "1": {
@@ -10,11 +11,13 @@
             "setup": {
               "name": "SimpleStorageSetup",
               "address": "0x49ABA4462c560BE3a02Dc0A57a96E88cB8c1EE5b",
+              "args": [],
               "blockNumberOfDeployment": 9203690
             },
             "implementation": {
               "name": "SimpleStorage",
               "address": "0xDF4a1f58bE59e59E8502DD424aF564f9D7B92581",
+              "args": [],
               "blockNumberOfDeployment": 9203690
             },
             "buildMetadataURI": "ipfs://QmY919VZ9gkeF6L169qQo89ucsUB9ScTaJVbGn8vMGGHxr",

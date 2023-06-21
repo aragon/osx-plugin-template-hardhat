@@ -32,6 +32,33 @@ export const ERRORS = {
   ALREADY_INITIALIZED: 'Initializable: contract is already initialized',
 };
 
+export function getPluginRepoFactoryAddress(networkName: string) {
+  let pluginRepoFactoryAddr: string;
+
+  if (
+    networkName === 'localhost' ||
+    networkName === 'hardhat' ||
+    networkName === 'coverage'
+  ) {
+    const hardhatForkNetwork = process.env.NETWORK_NAME
+      ? process.env.NETWORK_NAME
+      : 'mainnet';
+
+    pluginRepoFactoryAddr = osxContracts[hardhatForkNetwork].PluginRepoFactory;
+    console.log(
+      `Using the "${hardhatForkNetwork}" PluginRepoFactory address (${pluginRepoFactoryAddr}) for deployment testing on network "${networkName}"`
+    );
+  } else {
+    pluginRepoFactoryAddr =
+      osxContracts[networkNameMapping[networkName]].PluginRepoFactory;
+
+    console.log(
+      `Using the ${networkNameMapping[networkName]} PluginRepoFactory address (${pluginRepoFactoryAddr}) for deployment...`
+    );
+  }
+  return pluginRepoFactoryAddr;
+}
+
 export function getPluginInfo(networkName: string): any {
   let pluginInfoFilePath: string;
 
@@ -75,12 +102,14 @@ export function addDeployedRepo(
   networkName: string,
   repoName: string,
   contractAddr: string,
+  args: [],
   blockNumber: number
 ) {
   let pluginInfo = getPluginInfo(networkName);
 
   pluginInfo[networkName]['repo'] = repoName;
   pluginInfo[networkName]['address'] = contractAddr;
+  pluginInfo[networkName]['args'] = args;
   pluginInfo[networkName]['blockNumberOfDeployment'] = blockNumber;
 
   storePluginInfo(networkName, pluginInfo);
@@ -94,11 +123,13 @@ export function addCreatedVersion(
   setup: {
     name: string;
     address: string;
+    args: [];
     blockNumberOfDeployment: number;
   },
   implementation: {
     name: string;
     address: string;
+    args: [];
     blockNumberOfDeployment: number;
   },
   helpers:
@@ -106,6 +137,7 @@ export function addCreatedVersion(
         {
           name: string;
           address: string;
+          args: [];
           blockNumberOfDeployment: number;
         }
       ]
