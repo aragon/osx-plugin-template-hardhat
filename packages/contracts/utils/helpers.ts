@@ -61,6 +61,7 @@ export function getPluginRepoFactoryAddress(networkName: string) {
 
 export function getPluginInfo(networkName: string): any {
   let pluginInfoFilePath: string;
+  let pluginInfo: any = {};
 
   if (['localhost', 'hardhat', 'coverage'].includes(networkName)) {
     pluginInfoFilePath = 'plugin-info-testing.json';
@@ -72,16 +73,15 @@ export function getPluginInfo(networkName: string): any {
     existsSync(pluginInfoFilePath) &&
     statSync(pluginInfoFilePath).size !== 0
   ) {
-    let pluginInfo = JSON.parse(readFileSync(pluginInfoFilePath, 'utf-8'));
+    pluginInfo = JSON.parse(readFileSync(pluginInfoFilePath, 'utf-8'));
 
     if (!pluginInfo[networkName]) {
       pluginInfo[networkName] = {};
     }
-
-    return pluginInfo;
   } else {
-    return {networkName: {}};
+    pluginInfo[networkName] = {};
   }
+  return pluginInfo;
 }
 
 function storePluginInfo(networkName: string, pluginInfo: any) {
