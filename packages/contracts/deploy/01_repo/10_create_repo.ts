@@ -19,7 +19,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const [deployer] = await hre.ethers.getSigners();
 
   // Get the PluginRepoFactory address
-  let pluginRepoFactoryAddr: string = getPluginRepoFactoryAddress(network.name);
+  const pluginRepoFactoryAddr: string = getPluginRepoFactoryAddress(
+    network.name
+  );
 
   const pluginRepoFactory = PluginRepoFactory__factory.connect(
     pluginRepoFactoryAddr,

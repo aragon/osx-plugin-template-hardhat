@@ -105,7 +105,7 @@ export function addDeployedRepo(
   args: [],
   blockNumber: number
 ) {
-  let pluginInfo = getPluginInfo(networkName);
+  const pluginInfo = getPluginInfo(networkName);
 
   pluginInfo[networkName]['repo'] = repoName;
   pluginInfo[networkName]['address'] = contractAddr;
@@ -143,7 +143,7 @@ export function addCreatedVersion(
       ]
     | []
 ) {
-  let pluginInfo = getPluginInfo(networkName);
+  const pluginInfo = getPluginInfo(networkName);
 
   // Releases can already exist
   if (!pluginInfo[networkName]['releases']) {

@@ -9,8 +9,6 @@ function delay(ms: number) {
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log('\nVerifying contracts');
 
-  const {deployments} = hre;
-
   for (let index = 0; index < hre.aragonToVerifyContracts.length; index++) {
     const element = hre.aragonToVerifyContracts[index];
 
