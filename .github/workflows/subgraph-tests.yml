@@ -33,19 +33,10 @@ jobs:
       - name: 'Lint the code'
         run: 'yarn lint'
 
-      - name: 'Add lint summary'
-        run: |
-          echo "## Lint results" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
-
       - name: 'Build the subgraph'
         run: 'yarn build'
         env:
           NETWORK_NAME: 'goerli'
+
       - name: 'Test the subgraph'
         run: 'yarn test'
-
-      - name: 'Add test summary'
-        run: |
-          echo "## Test results" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY

@@ -35,7 +35,7 @@ describe('PluginRepo Deployment', function () {
     await deployAll();
 
     // Print info
-    console.log(JSON.stringify(getPluginInfo()['hardhat'], null, 2));
+    console.log(JSON.stringify(getPluginInfo('hardhat')['hardhat'], null, 2));
 
     // plugin repo registry
     repoRegistry = PluginRepoRegistry__factory.connect(
@@ -44,7 +44,7 @@ describe('PluginRepo Deployment', function () {
     );
 
     pluginRepo = PluginRepo__factory.connect(
-      getPluginInfo()['hardhat'].address,
+      getPluginInfo('hardhat')['hardhat'].address,
       signers[0]
     );
   });

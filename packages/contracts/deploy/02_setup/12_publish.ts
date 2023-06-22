@@ -38,7 +38,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Get PluginRepo
   const pluginRepo = PluginRepo__factory.connect(
-    getPluginInfo()[network.name]['address'],
+    getPluginInfo(network.name)[network.name]['address'],
     deployer
   );
 
@@ -106,11 +106,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     {
       name: PLUGIN_SETUP_CONTRACT_NAME,
       address: setup.address,
+      args: [],
       blockNumberOfDeployment: setup.receipt.blockNumber,
     },
     {
       name: PLUGIN_CONTRACT_NAME,
       address: implementationAddress,
+      args: [],
       blockNumberOfDeployment: setup.receipt.blockNumber,
     },
     []

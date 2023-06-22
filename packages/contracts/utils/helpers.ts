@@ -32,39 +32,87 @@ export const ERRORS = {
   ALREADY_INITIALIZED: 'Initializable: contract is already initialized',
 };
 
-const pluginInfoFilePath = 'plugin-info.json';
+export function getPluginRepoFactoryAddress(networkName: string) {
+  let pluginRepoFactoryAddr: string;
 
-export function getPluginInfo(): any {
-  return JSON.parse(readFileSync(pluginInfoFilePath, 'utf-8'));
+  if (
+    networkName === 'localhost' ||
+    networkName === 'hardhat' ||
+    networkName === 'coverage'
+  ) {
+    const hardhatForkNetwork = process.env.NETWORK_NAME
+      ? process.env.NETWORK_NAME
+      : 'mainnet';
+
+    pluginRepoFactoryAddr = osxContracts[hardhatForkNetwork].PluginRepoFactory;
+    console.log(
+      `Using the "${hardhatForkNetwork}" PluginRepoFactory address (${pluginRepoFactoryAddr}) for deployment testing on network "${networkName}"`
+    );
+  } else {
+    pluginRepoFactoryAddr =
+      osxContracts[networkNameMapping[networkName]].PluginRepoFactory;
+
+    console.log(
+      `Using the ${networkNameMapping[networkName]} PluginRepoFactory address (${pluginRepoFactoryAddr}) for deployment...`
+    );
+  }
+  return pluginRepoFactoryAddr;
+}
+
+export function getPluginInfo(networkName: string): any {
+  let pluginInfoFilePath: string;
+  let pluginInfo: any = {};
+
+  if (['localhost', 'hardhat', 'coverage'].includes(networkName)) {
+    pluginInfoFilePath = 'plugin-info-testing.json';
+  } else {
+    pluginInfoFilePath = 'plugin-info.json';
+  }
+
+  if (
+    existsSync(pluginInfoFilePath) &&
+    statSync(pluginInfoFilePath).size !== 0
+  ) {
+    pluginInfo = JSON.parse(readFileSync(pluginInfoFilePath, 'utf-8'));
+
+    if (!pluginInfo[networkName]) {
+      pluginInfo[networkName] = {};
+    }
+  } else {
+    pluginInfo[networkName] = {};
+  }
+  return pluginInfo;
+}
+
+function storePluginInfo(networkName: string, pluginInfo: any) {
+  if (['localhost', 'hardhat', 'coverage'].includes(networkName)) {
+    writeFileSync(
+      'plugin-info-testing.json',
+      JSON.stringify(pluginInfo, null, 2) + '\n'
+    );
+  } else {
+    writeFileSync(
+      'plugin-info.json',
+      JSON.stringify(pluginInfo, null, 2) + '\n'
+    );
+  }
 }
 
 export function addDeployedRepo(
   networkName: string,
   repoName: string,
   contractAddr: string,
+  args: [],
   blockNumber: number
 ) {
-  let pluginInfo: any;
-
-  // Check if the file exists and is not empty
-  if (
-    existsSync(pluginInfoFilePath) &&
-    statSync(pluginInfoFilePath).size !== 0
-  ) {
-    pluginInfo = JSON.parse(readFileSync(pluginInfoFilePath, 'utf-8'));
-  } else {
-    pluginInfo = {};
-  }
-
-  if (!pluginInfo[networkName]) {
-    pluginInfo[networkName] = {};
-  }
+  const pluginInfo = getPluginInfo(networkName);
 
   pluginInfo[networkName]['repo'] = repoName;
   pluginInfo[networkName]['address'] = contractAddr;
+  pluginInfo[networkName]['args'] = args;
   pluginInfo[networkName]['blockNumberOfDeployment'] = blockNumber;
 
-  writeFileSync('plugin-info.json', JSON.stringify(pluginInfo, null, 2) + '\n');
+  storePluginInfo(networkName, pluginInfo);
 }
 
 export function addCreatedVersion(
@@ -75,11 +123,13 @@ export function addCreatedVersion(
   setup: {
     name: string;
     address: string;
+    args: [];
     blockNumberOfDeployment: number;
   },
   implementation: {
     name: string;
     address: string;
+    args: [];
     blockNumberOfDeployment: number;
   },
   helpers:
@@ -87,22 +137,13 @@ export function addCreatedVersion(
         {
           name: string;
           address: string;
+          args: [];
           blockNumberOfDeployment: number;
         }
       ]
     | []
 ) {
-  let pluginInfo: any;
-
-  // Check if the file exists and is not empty
-  if (
-    existsSync(pluginInfoFilePath) &&
-    statSync(pluginInfoFilePath).size !== 0
-  ) {
-    pluginInfo = JSON.parse(readFileSync(pluginInfoFilePath, 'utf-8'));
-  } else {
-    throw Error('plugiInfo.json file missing');
-  }
+  const pluginInfo = getPluginInfo(networkName);
 
   // Releases can already exist
   if (!pluginInfo[networkName]['releases']) {
@@ -116,18 +157,6 @@ export function addCreatedVersion(
   // Update the releaseMetadataURI
   pluginInfo[networkName]['releases'][version.release]['releaseMetadataURI'] =
     metadataURIs.release;
-
-  /*
-  // The build should not exist already
-  if (
-    pluginInfo[networkName]['releases'][`${version.release}`]['builds'][
-      `${version.build}`
-    ]
-  ) {
-    throw new Error(
-      `Build ${version.build} already exists in release ${version.release}.`
-    );
-  }*/
 
   pluginInfo[networkName]['releases'][`${version.release}`]['builds'][
     `${version.build}`
@@ -143,7 +172,7 @@ export function addCreatedVersion(
     blockNumberOfPublication: blockNumberOfPublication,
   };
 
-  writeFileSync('plugin-info.json', JSON.stringify(pluginInfo, null, 2) + '\n');
+  storePluginInfo(networkName, pluginInfo);
 }
 
 export function toBytes(string: string) {

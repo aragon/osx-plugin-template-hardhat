@@ -1,9 +1,8 @@
 import {PLUGIN_REPO_ENS_NAME} from '../../plugin-settings';
 import {
-  networkNameMapping,
-  osxContracts,
   findEventTopicLog,
-  addDeployedRepo,
+  addDeployedRepo as addCreatedRepo,
+  getPluginRepoFactoryAddress,
 } from '../../utils/helpers';
 import {
   PluginRepoFactory__factory,
@@ -20,30 +19,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const [deployer] = await hre.ethers.getSigners();
 
   // Get the PluginRepoFactory address
-  let pluginRepoFactoryAddr: string;
-  if (
-    network.name === 'localhost' ||
-    network.name === 'hardhat' ||
-    network.name === 'coverage'
-  ) {
-    const hardhatForkNetwork = process.env.NETWORK_NAME
-      ? process.env.NETWORK_NAME
-      : 'mainnet';
-
-    pluginRepoFactoryAddr = osxContracts[hardhatForkNetwork].PluginRepoFactory;
-    console.log(
-      `Using the "${hardhatForkNetwork}" PluginRepoFactory address (${pluginRepoFactoryAddr}) for deployment testing on network "${network.name}"`
-    );
-  } else {
-    pluginRepoFactoryAddr =
-      osxContracts[networkNameMapping[network.name]].PluginRepoFactory;
-
-    console.log(
-      `Using the ${
-        networkNameMapping[network.name]
-      } PluginRepoFactory address (${pluginRepoFactoryAddr}) for deployment...`
-    );
-  }
+  const pluginRepoFactoryAddr: string = getPluginRepoFactoryAddress(
+    network.name
+  );
 
   const pluginRepoFactory = PluginRepoFactory__factory.connect(
     pluginRepoFactoryAddr,
@@ -77,10 +55,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   );
 
   // Store the information
-  addDeployedRepo(
+  addCreatedRepo(
     network.name,
     PLUGIN_REPO_ENS_NAME,
     pluginRepo.address,
+    [],
     blockNumberOfDeployment
   );
 };
