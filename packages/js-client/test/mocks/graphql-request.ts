@@ -1,18 +1,18 @@
-import { gql, GraphQLClient } from "graphql-request";
+import { gql, GraphQLClient } from 'graphql-request';
 
-jest.mock("graphql-request");
+jest.mock('graphql-request');
 
 export function mockUpCheck(client: jest.Mocked<GraphQLClient>) {
   client.request.mockResolvedValueOnce({
     _meta: {
-      deployment: "Deployment",
+      deployment: 'Deployment',
     },
   });
 }
 
 // Only for typescript to be happy
 export function getMockedInstance(
-  client: any, // needed to bypass wrong typecheck
+  client: any // needed to bypass wrong typecheck
 ): jest.Mocked<GraphQLClient> {
   return client;
 }
@@ -22,5 +22,5 @@ const gqlMocked: jest.Mock = gql as jest.Mock; // typecasting here because we ge
 gqlMocked.mockImplementation(
   (chunks: TemplateStringsArray, ...variables: any[]) => {
     return chunks[0]; // return the first entry. We always only have one chunk because we don't use advanced features of the gql template function
-  },
+  }
 );

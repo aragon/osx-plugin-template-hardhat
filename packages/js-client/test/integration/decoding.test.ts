@@ -1,8 +1,8 @@
-import { Server } from "ganache";
-import * as ganacheSetup from "../helpers/ganache-setup";
-import { SimpleStorageClient, SimpleStorageContext } from "../../src";
+import { SimpleStorageClient, SimpleStorageContext } from '../../src';
+import * as ganacheSetup from '../helpers/ganache-setup';
+import { Server } from 'ganache';
 
-describe("Decoding", () => {
+describe('Decoding', () => {
   let server: Server;
   beforeAll(async () => {
     server = await ganacheSetup.start();
@@ -13,7 +13,7 @@ describe("Decoding", () => {
     server.close();
   });
 
-  it("should decode an action", async () => {
+  it('should decode an action', async () => {
     const ctx = new SimpleStorageContext();
     const client = new SimpleStorageClient(ctx);
     client.decoding.myAction();

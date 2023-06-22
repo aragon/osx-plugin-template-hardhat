@@ -1,4 +1,4 @@
-import ganache from "ganache";
+import ganache from 'ganache';
 
 export async function start() {
   const server = ganache.server({

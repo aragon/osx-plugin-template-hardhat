@@ -1,4 +1,4 @@
-import { ClientCore } from "@aragon/sdk-client-common";
+import { SimpleStorageContext } from './context';
 import {
   ISimpleStorageClient,
   ISimpleStorageClientDecoding,
@@ -9,11 +9,13 @@ import {
   SimpleStorageClientDecoding,
   SimpleStorageClientEncoding,
   SimpleStorageClientMethods,
-} from "./internal";
-import { SimpleStorageContext } from "./context";
+} from './internal';
+import { ClientCore } from '@aragon/sdk-client-common';
 
-export class SimpleStorageClient extends ClientCore
-  implements ISimpleStorageClient {
+export class SimpleStorageClient
+  extends ClientCore
+  implements ISimpleStorageClient
+{
   public methods: ISimpleStorageClientMethods;
   public estimation: ISimpleStorageClientEstimation;
   public encoding: ISimpleStorageClientEncoding;

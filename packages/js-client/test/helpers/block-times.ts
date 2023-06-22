@@ -1,27 +1,20 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
+import { JsonRpcProvider } from '@ethersproject/providers';
 
 export function mineBlock(provider: JsonRpcProvider) {
-  return provider.send("evm_mine", []);
+  return provider.send('evm_mine', []);
 }
 
-export function mineBlockWithTime(
-  provider: JsonRpcProvider,
-  targetDate: Date,
-) {
+export function mineBlockWithTime(provider: JsonRpcProvider, targetDate: Date) {
   const val = Math.ceil(targetDate.getTime() / 1000);
-  return provider.send("evm_mine", [
-    `0x${val.toString(16)}`,
-  ]);
+  return provider.send('evm_mine', [`0x${val.toString(16)}`]);
 }
 
 export function mineBlockWithTimeOffset(
   provider: JsonRpcProvider,
-  secondsForward: number,
+  secondsForward: number
 ) {
   const val = Math.ceil(Date.now() / 1000) + secondsForward;
-  return provider.send("evm_mine", [
-    `0x${val.toString(16)}`,
-  ]);
+  return provider.send('evm_mine', [`0x${val.toString(16)}`]);
 }
 
 // export function setNextBlockTimeOffset(
