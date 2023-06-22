@@ -59,7 +59,7 @@
     "typescript": "^4.6.2"
   },
   "dependencies": {
-    "@aragon/sdk-client-common": "file:./aragon-sdk-client-common-v1.0.0.tgz",
+    "@aragon/sdk-client-common": "1.0.0",
     "@ethersproject/abstract-signer": "^5.7.0",
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/constants": "^5.7.0",
