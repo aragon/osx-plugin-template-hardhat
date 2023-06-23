@@ -48,6 +48,8 @@ dataSources:
       abis:        
         - name: PluginSetupProcessor
           file: ./imported/PluginSetupProcessor.json
+        - name: ERC165
+          file: ./abis/ERC165.json
       eventHandlers:
         - event: InstallationPrepared(indexed address,indexed address,bytes32,indexed address,(uint8,uint16),bytes,address,(address[],(uint8,address,address,address,bytes32)[]))
           handler: handleInstallationPrepared

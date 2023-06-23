@@ -7,15 +7,15 @@ then
 fi
 
 
-if [ -z "$NETWORK_NAME" ] 
+if [ -z "$SUBGRAPH_NETWORK_NAME" ] 
 then
     echo "env is not set, exiting..."
     exit -1
 else
-    echo "env Network is set to: $NETWORK_NAME"
+    echo "env Network is set to: $SUBGRAPH_NETWORK_NAME"
 fi
 
-FILE=$NETWORK_NAME'.json'
+FILE=$SUBGRAPH_NETWORK_NAME'.json'
 DATA=manifest/data/$FILE
 
 PLUGIN_MODULE=$(node -e 'console.log(require("path").dirname(require.resolve("@aragon/osx-plugin-contracts/package.json")))')
