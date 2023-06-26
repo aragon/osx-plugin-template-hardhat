@@ -42,14 +42,6 @@ type Action @entity {
   execResult: Bytes
 }
 
-type StandardCallback @entity {
-  id: ID!
-  dao: Dao!
-  interfaceId: Bytes!
-  callbackSelector: Bytes!
-  magicNumber: Bytes!
-}
-
 # Dao
 
 type Dao @entity {
@@ -65,7 +57,6 @@ type Dao @entity {
   proposals: [IProposal!]! @derivedFrom(field: "dao")
   trustedForwarder: Bytes
   signatureValidator: Bytes
-  standardCallbacks: [StandardCallback!]! @derivedFrom(field: "dao")
 
   plugins: [PluginInstallation!]! @derivedFrom(field: "dao")
 }
@@ -110,6 +101,12 @@ type PluginVersion @entity(immutable: true) {
   installations: [PluginInstallation!] @derivedFrom(field: "appliedVersion")
 }
 
+enum PermissionOperation {
+  Grant
+  Revoke
+  GrantWithCondition
+}
+
 type PluginPermission @entity(immutable: true) {
   id: ID! # PluginPreparation + operation + where + who + permissionId
   pluginPreparation: PluginPreparation!
@@ -120,10 +117,9 @@ type PluginPermission @entity(immutable: true) {
   permissionId: Bytes!
 }
 
-enum PermissionOperation {
-  Grant
-  Revoke
-  GrantWithCondition
+enum PluginPreparationType {
+  Installation
+  Update
 }
 
 type PluginPreparation @entity(immutable: true) {
@@ -141,24 +137,6 @@ type PluginPreparation @entity(immutable: true) {
   type: PluginPreparationType!
 }
 
-# Don't implement IPlugin. Otherwise it would show up under plugins in the DAO entity
-type PluginInstallation @entity {
-  id: ID! # psp installationId
-  dao: Dao!
-  plugin: IPlugin # The plugin address as id provided by the applied preparation
-  appliedPreparation: PluginPreparation
-  appliedSetupId: Bytes # The setupId of the application see PSP documentation for more info
-  appliedVersion: PluginVersion # Stored to track installations in the different plugin versions
-  appliedPluginRepo: PluginRepo # Stored to track installation in the different plugin repos
-  preparations: [PluginPreparation!]! @derivedFrom(field: "installation")
-  state: PluginPreparationState!
-}
-
-enum PluginPreparationType {
-  Installation
-  Update
-}
-
 enum PluginPreparationState {
   InstallationPrepared
   Installed
@@ -167,23 +145,58 @@ enum PluginPreparationState {
   Uninstalled
 }
 
-interface IPlugin {
-  id: ID! # plugin address
+interface PluginInstallation @entity {
+  id: ID! # psp installationId
   dao: Dao!
   pluginAddress: Bytes!
-
-  installations: [PluginInstallation!]! @derivedFrom(field: "plugin")
-
-  # TODO: Uncomment as soon as the plugins have their own subgraph
-  # appliedPreparation: PluginPreparation
-  # appliedSetupId: Bytes # The setupId of the application see PSP documentation for more info
-  # preparations: [PluginPreparation!]! @derivedFrom(field: "plugin")
-  # state: PluginPreparationState!
+  appliedPreparation: PluginPreparation
+  appliedSetupId: Bytes # The setupId of the application see PSP documentation for more info
+  appliedVersion: PluginVersion # Stored to track installations in the different plugin versions
+  appliedPluginRepo: PluginRepo # Stored to track installation in the different plugin repos
+  preparations: [PluginPreparation!]! @derivedFrom(field: "installation")
+  state: PluginPreparationState!
 }
 
-### Entities below should move to there respective subgraph once plugin is seperated from the Aragon OSx
-# Proposal
+# Plugin
 
+type Plugin implements PluginInstallation @entity {
+  "OSX related data"
+  id: ID! # psp installationId
+  dao: Dao!
+  pluginAddress: Bytes!
+  appliedPreparation: PluginPreparation
+  appliedSetupId: Bytes # The setupId of the application see PSP documentation for more info
+  appliedVersion: PluginVersion # Stored to track installations in the different plugin versions
+  appliedPluginRepo: PluginRepo # Stored to track installation in the different plugin repos
+  preparations: [PluginPreparation!]! @derivedFrom(field: "installation")
+  state: PluginPreparationState!
+
+  "Plugin specific related data"
+  proposalCount: BigInt
+  proposals: [PluginProposal!]! @derivedFrom(field: "plugin")
+  members: [PluginMember!]! @derivedFrom(field: "plugin")
+
+  # multisig settings
+  minApprovals: Int
+  onlyListed: Boolean
+}
+
+type PluginMember @entity {
+  id: ID! # plugin_address + member_address
+  address: String # address as string to facilitate filtering by address on the UI
+  proposals: [PluginProposalMember!]! @derivedFrom(field: "approver")
+  plugin: Plugin!
+}
+
+type PluginProposalMember @entity(immutable: true) {
+  "MemberProposal for Many-to-Many"
+  id: ID! # approver + proposal
+  approver: PluginMember!
+  proposal: PluginProposal!
+  createdAt: BigInt!
+}
+
+# Proposal
 interface IProposal {
   id: ID! # package + proposalId
   dao: Dao!
@@ -199,47 +212,13 @@ interface IProposal {
   executionTxHash: Bytes
 }
 
-# Plugin
-
-type MultisigPlugin implements IPlugin @entity {
-  "TODO: attributes should be appended to Plugin once plugin is seperated from Aragon OSx"
-  id: ID!
-  dao: Dao!
-  pluginAddress: Bytes!
-
-  installations: [PluginInstallation!]! @derivedFrom(field: "plugin")
-
-  proposalCount: BigInt
-  proposals: [MultisigProposal!]! @derivedFrom(field: "plugin")
-  members: [MultisigApprover!]! @derivedFrom(field: "plugin")
-
-  # multisig settings
-  minApprovals: Int
-  onlyListed: Boolean
-}
-
-type MultisigApprover @entity {
-  id: ID! # plugin_address + member_address
-  address: String # address as string to facilitate filtering by address on the UI
-  proposals: [MultisigProposalApprover!]! @derivedFrom(field: "approver")
-  plugin: MultisigPlugin!
-}
-
-type MultisigProposalApprover @entity(immutable: true) {
-  "ApproverProposal for Many-to-Many"
-  id: ID! # approver + proposal
-  approver: MultisigApprover!
-  proposal: MultisigProposal!
-  createdAt: BigInt!
-}
-
-type MultisigProposal implements IProposal @entity {
+type PluginProposal implements IProposal @entity {
   id: ID! # plugin + proposalId
   dao: Dao!
   actions: [Action!]! @derivedFrom(field: "proposal")
   allowFailureMap: BigInt!
   failureMap: BigInt
-  plugin: MultisigPlugin!
+  plugin: Plugin!
   pluginProposalId: BigInt!
   creator: Bytes!
   metadata: String
@@ -255,5 +234,5 @@ type MultisigProposal implements IProposal @entity {
   executionDate: BigInt
   executionBlockNumber: BigInt
   executionTxHash: Bytes
-  approvers: [MultisigProposalApprover!]! @derivedFrom(field: "proposal")
+  approvers: [PluginProposalMember!]! @derivedFrom(field: "proposal")
 }

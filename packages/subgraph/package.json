@@ -8,7 +8,7 @@
     "build:manifest": "scripts/build-manifest.sh",
     "build:subgraph": "scripts/build-subgraph.sh",
     "extend:schema": "yarn ts-node utils/schema-extender.ts",
-    "build": "yarn build:manifest && yarn build:contracts && yarn build:subgraph && yarn extend:schema",
+    "build": "yarn build:contracts && yarn build:manifest && yarn build:subgraph && yarn extend:schema",
     "deploy": "scripts/deploy-subgraph.sh",
     "create:local": "graph create aragon/aragon-core-rinkeby --node http://localhost:8020",
     "deploy:local": "LOCAL=true scripts/deploy-subgraph.sh",

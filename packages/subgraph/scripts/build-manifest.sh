@@ -18,7 +18,7 @@ fi
 FILE=$SUBGRAPH_NETWORK_NAME'.json'
 DATA=manifest/data/$FILE
 
-PLUGIN_MODULE=$(node -e 'console.log(require("path").dirname(require.resolve("@aragon/osx-plugin-contracts/package.json")))')
+PLUGIN_MODULE=$(node -e 'console.log(require("path").dirname(require.resolve("@aragon/todo-osx-plugin-contracts/package.json")))')
 
 echo 'Generating manifest from data file: '$DATA
 cat $DATA
