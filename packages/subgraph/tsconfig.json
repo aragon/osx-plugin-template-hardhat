@@ -24,6 +24,7 @@
     "scripts/**/*",
     "tests/**/*",
     "utils/**/*",
-    "plugin-settings.ts"
+    "plugin-settings.ts",
+    "commons/erc165.ts"
   ]
 }

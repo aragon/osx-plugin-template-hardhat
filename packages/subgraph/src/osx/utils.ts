@@ -1,4 +1,4 @@
-import {ERC165 as ERC165Contract} from '../../generated/PluginSetupProcessor/ERC165';
+import {getPluginVersionId, getPluginInstallationId} from '../../commons/ids';
 import {InstallationPrepared} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
 import {
   Plugin,
@@ -6,15 +6,10 @@ import {
   PluginPreparation,
 } from '../../generated/schema';
 import {Plugin as PluginTemplate} from '../../generated/templates';
-import {PLUGIN_INTERFACE} from '../utils/constants';
-import {supportsInterface} from '../utils/erc165';
 import {
   Address,
   Bytes,
   DataSourceContext,
-  ethereum,
-  crypto,
-  ByteArray,
   BigInt,
   log,
 } from '@graphprotocol/graph-ts';
@@ -29,19 +24,7 @@ function addPluginSpecificData(pluginEntity: Plugin) {
   pluginEntity.proposalCount = BigInt.zero();
 }
 
-export function addPlugin(event: InstallationPrepared): void {
-  let dao = event.params.dao.toHexString();
-  let plugin = event.params.plugin;
-  let contract = ERC165Contract.bind(plugin);
-
-  let pluginInterfaceSupported = supportsInterface(contract, PLUGIN_INTERFACE);
-
-  if (pluginInterfaceSupported) {
-    createPlugin(event);
-  }
-}
-
-function createPlugin(event: InstallationPrepared): void {
+export function createPluginPreparation(event: InstallationPrepared): void {
   let dao = event.params.dao.toHexString();
   let plugin = event.params.plugin;
   let setupId = event.params.preparedSetupId.toHexString();
@@ -67,13 +50,8 @@ function createPlugin(event: InstallationPrepared): void {
 
   let preparationEntity = new PluginPreparation(preparationId);
   preparationEntity.installation = installationId.toHexString();
-  preparationEntity.creator = event.params.sender;
-  preparationEntity.dao = dao;
-  preparationEntity.preparedSetupId = event.params.preparedSetupId;
   preparationEntity.pluginRepo = event.params.pluginSetupRepo.toHexString();
   preparationEntity.pluginVersion = pluginVersionId;
-  preparationEntity.data = event.params.data;
-  preparationEntity.pluginAddress = event.params.plugin;
   preparationEntity.helpers = helpers;
   preparationEntity.type = 'Installation';
   preparationEntity.save();
@@ -93,12 +71,20 @@ function createPlugin(event: InstallationPrepared): void {
     }
     permissionEntity.save();
   }
+}
+
+export function createPlugin(daoId: string, plugin: Address): void {
+  let installationId = getPluginInstallationId(daoId, plugin.toHexString());
+  if (!installationId) {
+    log.error('Failed to get installationId', [daoId, plugin.toHexString()]);
+    return;
+  }
 
   let pluginEntity = Plugin.load(installationId.toHexString());
   if (!pluginEntity) {
     pluginEntity = new Plugin(installationId.toHexString());
   }
-  pluginEntity.dao = dao;
+  pluginEntity.dao = daoId;
   pluginEntity.pluginAddress = plugin;
   pluginEntity.state = 'InstallationPrepared';
 
@@ -106,49 +92,8 @@ function createPlugin(event: InstallationPrepared): void {
 
   // Create template
   let context = new DataSourceContext();
-  context.setString('daoAddress', dao);
+  context.setString('daoAddress', daoId);
   PluginTemplate.createWithContext(plugin, context);
 
   pluginEntity.save();
-}
-
-export function getPluginInstallationId(
-  dao: string,
-  plugin: string
-): Bytes | null {
-  let installationIdTupleArray = new ethereum.Tuple();
-  installationIdTupleArray.push(
-    ethereum.Value.fromAddress(Address.fromString(dao))
-  );
-  installationIdTupleArray.push(
-    ethereum.Value.fromAddress(Address.fromString(plugin))
-  );
-
-  let installationIdTuple = installationIdTupleArray as ethereum.Tuple;
-  let installationIdTupleEncoded = ethereum.encode(
-    ethereum.Value.fromTuple(installationIdTuple)
-  );
-
-  if (installationIdTupleEncoded) {
-    return Bytes.fromHexString(
-      crypto
-        .keccak256(
-          ByteArray.fromHexString(installationIdTupleEncoded.toHexString())
-        )
-        .toHexString()
-    );
-  }
-  return null;
-}
-
-export function getPluginVersionId(
-  pluginRepo: string,
-  release: i32,
-  build: i32
-): string {
-  return pluginRepo
-    .concat('_')
-    .concat(release.toString())
-    .concat('_')
-    .concat(build.toString());
 }

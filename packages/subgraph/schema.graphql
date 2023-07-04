@@ -8,28 +8,6 @@ interface Token {
   symbol: String
 }
 
-# ACL
-
-type ContractPermissionId @entity(immutable: true) {
-  id: ID! # where + permissionId
-  dao: Dao!
-  where: Bytes!
-  permissionId: Bytes!
-}
-
-# Cannot be immutable because a permission can be revoked and granted in the same TX.
-# This results in an error in the subgraph if the entity is immutable.
-type Permission @entity {
-  "no need to store granted as we can delete permission when revoked"
-  id: ID! # where + permissionId + who
-  dao: Dao!
-  where: Bytes!
-  contractPermissionId: ContractPermissionId!
-  who: Bytes!
-  actor: Bytes!
-  condition: Bytes
-}
-
 # Executions
 
 type Action @entity {
@@ -46,19 +24,9 @@ type Action @entity {
 
 type Dao @entity {
   id: ID! # use address as id
-  subdomain: String
-  creator: Bytes!
-  daoURI: String
-  metadata: String
-  createdAt: BigInt!
   actions: [Action!]! @derivedFrom(field: "dao")
-  contractPermissionIds: [ContractPermissionId!]! @derivedFrom(field: "dao")
-  permissions: [Permission!]! @derivedFrom(field: "dao")
   proposals: [IProposal!]! @derivedFrom(field: "dao")
-  trustedForwarder: Bytes
-  signatureValidator: Bytes
-
-  plugins: [PluginInstallation!]! @derivedFrom(field: "dao")
+  plugins: [Plugin!]! @derivedFrom(field: "dao")
 }
 
 # Plugins
@@ -125,15 +93,9 @@ enum PluginPreparationType {
 type PluginPreparation @entity(immutable: true) {
   id: ID! # psp setupId + installationId
   installation: PluginInstallation!
-  creator: Bytes!
-  dao: Dao!
-  preparedSetupId: Bytes! # the psp setupId
   pluginRepo: PluginRepo!
   pluginVersion: PluginVersion!
-  data: Bytes
-  pluginAddress: Bytes!
   helpers: [Bytes!]!
-  permissions: [PluginPermission!]! @derivedFrom(field: "pluginPreparation")
   type: PluginPreparationType!
 }
 
@@ -149,10 +111,11 @@ interface PluginInstallation @entity {
   id: ID! # psp installationId
   dao: Dao!
   pluginAddress: Bytes!
+
   appliedPreparation: PluginPreparation
-  appliedSetupId: Bytes # The setupId of the application see PSP documentation for more info
-  appliedVersion: PluginVersion # Stored to track installations in the different plugin versions
-  appliedPluginRepo: PluginRepo # Stored to track installation in the different plugin repos
+  appliedVersion: PluginVersion
+  appliedPluginRepo: PluginRepo
+
   preparations: [PluginPreparation!]! @derivedFrom(field: "installation")
   state: PluginPreparationState!
 }
@@ -164,10 +127,11 @@ type Plugin implements PluginInstallation @entity {
   id: ID! # psp installationId
   dao: Dao!
   pluginAddress: Bytes!
+
   appliedPreparation: PluginPreparation
-  appliedSetupId: Bytes # The setupId of the application see PSP documentation for more info
-  appliedVersion: PluginVersion # Stored to track installations in the different plugin versions
-  appliedPluginRepo: PluginRepo # Stored to track installation in the different plugin repos
+  appliedVersion: PluginVersion
+  appliedPluginRepo: PluginRepo
+
   preparations: [PluginPreparation!]! @derivedFrom(field: "installation")
   state: PluginPreparationState!
 
@@ -175,8 +139,6 @@ type Plugin implements PluginInstallation @entity {
   proposalCount: BigInt
   proposals: [PluginProposal!]! @derivedFrom(field: "plugin")
   members: [PluginMember!]! @derivedFrom(field: "plugin")
-
-  # multisig settings
   minApprovals: Int
   onlyListed: Boolean
 }
