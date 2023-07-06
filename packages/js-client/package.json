@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "module": "dist/sdk-client-template.esm.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -19,7 +20,6 @@
     "build": "tsdx build",
     "test": "TESTING=true tsdx test --verbose --runInBand",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
     "clean": "rm -Rf .turbo dist",
@@ -37,14 +37,13 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "module": "dist/plugin-client.esm.js",
   "size-limit": [
     {
-      "path": "dist/plugin-client.cjs.production.min.js",
+      "path": "dist/sdk-client-template.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/plugin-client.esm.js",
+      "path": "dist/sdk-client-template.esm.js",
       "limit": "10 KB"
     }
   ],
