@@ -1,5 +1,5 @@
-import { SimpleStorageContextParams } from './types';
-import { Context, ContextCore, ContextState } from '@aragon/sdk-client-common';
+import { SimpleStorageContextParams } from "./types";
+import { Context, ContextCore, ContextState } from "@aragon/sdk-client-common";
 
 // TODO
 // import from @aragon/sdk-client-common
@@ -28,7 +28,7 @@ export class SimpleStorageContext extends ContextCore {
   protected overriden: SimpleStorageOverridenState = this.overriden;
   constructor(
     contextParams?: Partial<SimpleStorageContextParams>,
-    context?: Context
+    context?: Context,
   ) {
     // parent contructor will call this.set(contextParams)
     // so we don't need to call it again
@@ -36,6 +36,8 @@ export class SimpleStorageContext extends ContextCore {
     if (context) {
       // copy the context properties to this
       Object.assign(this, context);
+    }
+    if (contextParams) {
       // overide the context params with the ones passed to the constructor
       this.set(contextParams ?? {});
     }
@@ -59,7 +61,7 @@ export class SimpleStorageContext extends ContextCore {
   private setDefaults() {
     if (!this.overriden.myParam) {
       // set the default value for myParam
-      this.state.myParam = 'default';
+      this.state.myParam = "default";
     }
   }
 
