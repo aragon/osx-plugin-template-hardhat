@@ -3,13 +3,12 @@ name: 02-JS-Publish
 on:
   push:
     tags:
-      - "*"
+      - '*'
     paths:
       - 'packages/js-client/**'
       - '.github/workflows/js-client-*.yml'
 
 jobs:
-
   check_tag:
     runs-on: ubuntu-latest
     outputs:
