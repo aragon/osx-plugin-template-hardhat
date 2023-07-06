@@ -8,9 +8,7 @@ on:
       - 'packages/js-client/**'
       - '.github/workflows/js-client-*.yml'
 
-
 jobs:
-
   test:
     uses: ./.github/workflows/javascript_test.yml
     secrets:
@@ -60,7 +58,7 @@ jobs:
       - name: Get version from '${{ matrix.package }}' package.json
         id: getver
         working-directory: './modules/${{ matrix.package }}'
-        run: | 
+        run: |
           VERSION=$(cat package.json | jq -r .version)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Version: $VERSION"

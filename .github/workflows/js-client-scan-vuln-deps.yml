@@ -1,4 +1,4 @@
-name: Scan vulnerable dependencies 
+name: Scan vulnerable dependencies
 
 on:
   workflow_dispatch:
@@ -8,7 +8,6 @@ on:
       - '.github/workflows/js-client-*.yml'
 
 jobs:
-
   scan-vuln-deps-in-repo:
     runs-on: ubuntu-latest
 
