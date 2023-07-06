@@ -4,12 +4,12 @@ on:
   workflow_call:
     inputs:
       run:
-        description: "Forces a run if true"
+        description: 'Forces a run if true'
         required: false
         type: boolean
     secrets:
       IPFS_API_KEY:
-        description: "IPFS API Key"
+        description: 'IPFS API Key'
         required: true
   push:
     branches-ignore:
@@ -37,21 +37,25 @@ jobs:
       - name: Use Node ${{ matrix.node }}
         uses: actions/setup-node@v3
         with:
-          cache: "yarn"
+          cache: 'yarn'
           node-version: ${{ matrix.node }}
- 
+
       - name: Install deps
         run: yarn install --frozen-lockfile
+        working-directory: packages/js-client
 
       - name: Build subpackages
         run: yarn run build
+        working-directory: packages/js-client
 
       - name: Integration test
-        run: yarn test modules/client/test/integration --ci --coverage --passWithNoTests
+        run: yarn test integration --ci --coverage --passWithNoTests
+        working-directory: packages/js-client
         env:
           IPFS_API_KEY: ${{ secrets.IPFS_API_KEY }}
 
       - name: Run unit tests
-        run: yarn test --testPathIgnorePatterns=modules/client/test/integration --ci --coverage  --passWithNoTests
+        run: yarn test --testPathIgnorePatterns=/integration --ci --coverage  --passWithNoTests
+        working-directory: packages/js-client
         env:
           IPFS_API_KEY: ${{ secrets.IPFS_API_KEY }}
