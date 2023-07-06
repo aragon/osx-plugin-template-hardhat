@@ -1,10 +1,6 @@
 import {getPluginVersionId, getPluginInstallationId} from '../../commons/ids';
 import {InstallationPrepared} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
-import {
-  Plugin,
-  PluginPermission,
-  PluginPreparation,
-} from '../../generated/schema';
+import {Plugin, PluginPreparation} from '../../generated/schema';
 import {Plugin as PluginTemplate} from '../../generated/templates';
 import {
   Address,
@@ -19,7 +15,7 @@ export const PERMISSION_OPERATIONS = new Map<number, string>()
   .set(1, 'Revoke')
   .set(2, 'GrantWithCondition');
 
-function addPluginSpecificData(pluginEntity: Plugin) {
+function addPluginSpecificData(pluginEntity: Plugin): void {
   pluginEntity.onlyListed = false;
   pluginEntity.proposalCount = BigInt.zero();
 }
@@ -50,27 +46,19 @@ export function createPluginPreparation(event: InstallationPrepared): void {
 
   let preparationEntity = new PluginPreparation(preparationId);
   preparationEntity.installation = installationId.toHexString();
-  preparationEntity.pluginRepo = event.params.pluginSetupRepo.toHexString();
-  preparationEntity.pluginVersion = pluginVersionId;
-  preparationEntity.helpers = helpers;
   preparationEntity.type = 'Installation';
-  preparationEntity.save();
 
+  // index permission ids
+  let permissions: string[] = [];
   for (let i = 0; i < event.params.preparedSetupData.permissions.length; i++) {
     let permission = event.params.preparedSetupData.permissions[i];
     let operation = PERMISSION_OPERATIONS.get(permission.operation);
     let permissionId = `${preparationId}_${operation}_${permission.where.toHexString()}_${permission.who.toHexString()}_${permission.permissionId.toHexString()}`;
-    let permissionEntity = new PluginPermission(permissionId);
-    permissionEntity.pluginPreparation = preparationId;
-    permissionEntity.operation = operation;
-    permissionEntity.where = permission.where;
-    permissionEntity.who = permission.who;
-    permissionEntity.permissionId = permission.permissionId;
-    if (permission.condition) {
-      permissionEntity.condition = permission.condition;
-    }
-    permissionEntity.save();
+
+    permissions.push(permissionId);
   }
+
+  preparationEntity.save();
 }
 
 export function createPlugin(daoId: string, plugin: Address): void {

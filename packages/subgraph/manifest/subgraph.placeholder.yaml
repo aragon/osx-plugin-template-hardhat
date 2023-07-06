@@ -27,7 +27,7 @@ dataSources:
           handler: handleVersionCreated
         - event: ReleaseMetadataUpdated(uint8,bytes)
           handler: handleReleaseMetadataUpdated
-      file: ./src/mapping.ts
+      file: ./src/osx/pluginRepo.ts
   {{#dataSources.PluginSetupProcessors}}
   # PluginSetupProcessor
   - kind: ethereum/contract
@@ -63,7 +63,7 @@ dataSources:
           handler: handleUninstallationPrepared
         - event: UninstallationApplied(indexed address,indexed address,bytes32)
           handler: handleUninstallationApplied
-      file: ./src/mapping.ts
+      file: ./src/osx/pluginSetupProcessor.ts
   {{/dataSources.PluginSetupProcessors}}
 # templates
 templates:

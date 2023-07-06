@@ -1,3 +1,4 @@
+import {getPluginVersionId} from '../../commons/ids';
 import {
   ReleaseMetadataUpdated,
   VersionCreated,
@@ -7,7 +8,6 @@ import {
   PluginSetup,
   PluginRelease,
 } from '../../generated/schema';
-import {getPluginVersionId} from './utils';
 
 export function handleVersionCreated(event: VersionCreated): void {
   // PluginSetup
@@ -32,7 +32,6 @@ export function handleVersionCreated(event: VersionCreated): void {
   );
 
   let entity = new PluginVersion(pluginVersionId);
-  entity.pluginRepo = event.address.toHexString();
   entity.pluginSetup = pluginSetupId;
 
   entity.release = pluginReleaseId;
@@ -56,7 +55,6 @@ export function handleReleaseMetadataUpdated(
   let pluginReleaseEntity = PluginRelease.load(pluginReleaseEntityId);
   if (!pluginReleaseEntity) {
     pluginReleaseEntity = new PluginRelease(pluginReleaseEntityId);
-    pluginReleaseEntity.pluginRepo = pluginRepoId;
     pluginReleaseEntity.release = pluginRelease;
   }
 

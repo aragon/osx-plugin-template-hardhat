@@ -1,12 +1,6 @@
-import {InstallationPrepared} from '../generated/PluginSetupProcessor/PluginSetupProcessor';
-import {Plugin, PluginPermission, PluginPreparation} from '../generated/schema';
-import {Plugin as PluginTemplate} from '../generated/templates';
 import {
   Address,
   Bytes,
-  DataSourceContext,
-  BigInt,
-  log,
   ethereum,
   crypto,
   ByteArray,

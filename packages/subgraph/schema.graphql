@@ -1,13 +1,5 @@
 # Types
 
-# Token
-
-interface Token {
-  id: ID! # use address as id
-  name: String
-  symbol: String
-}
-
 # Executions
 
 type Action @entity {
@@ -31,16 +23,6 @@ type Dao @entity {
 
 # Plugins
 
-type PluginRepo @entity(immutable: true) {
-  id: ID! # address
-  subdomain: String!
-  releases: [PluginRelease!]! @derivedFrom(field: "pluginRepo")
-  # Holds all preparations. Also applied ones.
-  preparations: [PluginPreparation!]! @derivedFrom(field: "pluginRepo")
-  # Holds all installed and uninstalled installations.
-  installations: [PluginInstallation!] @derivedFrom(field: "appliedPluginRepo")
-}
-
 type PluginSetup @entity(immutable: true) {
   id: ID! # contract address
   versions: [PluginVersion!]! @derivedFrom(field: "pluginSetup")
@@ -48,7 +30,6 @@ type PluginSetup @entity(immutable: true) {
 
 type PluginRelease @entity {
   id: ID! # pluginRepo + release
-  pluginRepo: PluginRepo!
   release: Int!
   metadata: String! # release metadata
   builds: [PluginVersion!]! @derivedFrom(field: "release")
@@ -56,33 +37,18 @@ type PluginRelease @entity {
 
 type PluginVersion @entity(immutable: true) {
   id: ID! # pluginRepo + release + build
-  pluginRepo: PluginRepo!
   pluginSetup: PluginSetup
 
   release: PluginRelease!
   build: Int!
 
   metadata: String! # build metadata
-  # Holds all preparations. Also applied ones.
-  preparations: [PluginPreparation!]! @derivedFrom(field: "pluginVersion")
-  # Holds all installed and uninstalled installations.
-  installations: [PluginInstallation!] @derivedFrom(field: "appliedVersion")
 }
 
 enum PermissionOperation {
   Grant
   Revoke
   GrantWithCondition
-}
-
-type PluginPermission @entity(immutable: true) {
-  id: ID! # PluginPreparation + operation + where + who + permissionId
-  pluginPreparation: PluginPreparation!
-  operation: PermissionOperation!
-  where: Bytes!
-  who: Bytes!
-  condition: Bytes
-  permissionId: Bytes!
 }
 
 enum PluginPreparationType {
@@ -93,9 +59,7 @@ enum PluginPreparationType {
 type PluginPreparation @entity(immutable: true) {
   id: ID! # psp setupId + installationId
   installation: PluginInstallation!
-  pluginRepo: PluginRepo!
-  pluginVersion: PluginVersion!
-  helpers: [Bytes!]!
+  permissions: [String!]!
   type: PluginPreparationType!
 }
 
@@ -112,10 +76,6 @@ interface PluginInstallation @entity {
   dao: Dao!
   pluginAddress: Bytes!
 
-  appliedPreparation: PluginPreparation
-  appliedVersion: PluginVersion
-  appliedPluginRepo: PluginRepo
-
   preparations: [PluginPreparation!]! @derivedFrom(field: "installation")
   state: PluginPreparationState!
 }
@@ -127,10 +87,6 @@ type Plugin implements PluginInstallation @entity {
   id: ID! # psp installationId
   dao: Dao!
   pluginAddress: Bytes!
-
-  appliedPreparation: PluginPreparation
-  appliedVersion: PluginVersion
-  appliedPluginRepo: PluginRepo
 
   preparations: [PluginPreparation!]! @derivedFrom(field: "installation")
   state: PluginPreparationState!
