@@ -24,7 +24,7 @@ jobs:
           TAG=${GITHUB_REF##*/}
           VERSION=$(echo "$TAG" | grep -woP "([0-9]+\.[0-9]+\.[0-9]+)-\w+" | sed 's/-javascript//')
           PACKAGE=$(echo "$TAG" | grep -oP "javascript-(.+)" | sed 's/javascript-//')
-          if [ -d "./modules/$PACKAGE" ]; then
+          if [ -d "./packages/$PACKAGE" ]; then
             echo "package=$PACKAGE" >> $GITHUB_OUTPUT
             echo "version=$VERSION" >> $GITHUB_OUTPUT
           fi
@@ -67,7 +67,7 @@ jobs:
         run: yarn run build
       - name: Publish NPM pkg (${{ needs.check_tag.outputs.package }} - ${{ needs.check_tag.outputs.version }})
         run: yarn publish --no-git-tag-version --new-version ${{ needs.check_tag.outputs.version }}
-        working-directory: ./modules/${{ needs.check_tag.outputs.package }}
+        working-directory: ./packages/${{ needs.check_tag.outputs.package }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Setup Python environment
@@ -76,7 +76,7 @@ jobs:
           python-version: 3.x
       - name: Generate release-notes.txt
         id: notes
-        run: python ./.github/scripts/js-client-generate-release-notes.py "./modules/${{ needs.check_tag.outputs.package }}/CHANGELOG.md"
+        run: python ./.github/scripts/js-client-generate-release-notes.py "./packages/${{ needs.check_tag.outputs.package }}/CHANGELOG.md"
       - name: Add NPM pkg info to release-notes.txt
         run: |
           echo "### NPM Packages" >> release-notes.txt
