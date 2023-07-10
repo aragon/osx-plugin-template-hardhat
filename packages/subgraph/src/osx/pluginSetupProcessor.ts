@@ -1,6 +1,4 @@
-import {supportsInterface} from '../../commons/erc165';
-import {getPluginInstallationId, getPluginVersionId} from '../../commons/ids';
-import {ERC165 as ERC165Contract} from '../../generated/PluginSetupProcessor/ERC165';
+import {getPluginInstallationId} from '../../commons/ids';
 import {
   InstallationApplied,
   InstallationPrepared,
@@ -10,13 +8,20 @@ import {
   UpdatePrepared,
 } from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
 import {Dao, Plugin, PluginPreparation} from '../../generated/schema';
-import {PLUGIN_INTERFACE, PLUGIN_REPO_ADDRESS} from '../utils/constants';
+import {Plugin as PluginTemplate} from '../../generated/templates';
+import {PLUGIN_REPO_ADDRESS} from '../../utils/constants';
 import {
-  createPlugin,
-  createPluginPreparation,
-  PERMISSION_OPERATIONS,
-} from './utils';
-import {Bytes, log} from '@graphprotocol/graph-ts';
+  updatePluginDataForInstallationApplied,
+  updatePluginDataForInstallationPrepared,
+  updatePluginDataForUninstallationApplied,
+  updatePluginDataForUninstallationPrepared,
+  updatePluginDataForUpdateApplied,
+  updatePluginDataForUpdatePrepared,
+  updatePreparationDataForInstallationPrepared,
+  updatePreparationDataForUninstallationPrepared,
+  updatePreparationDataForUpdatePrepared,
+} from '../plugin/osx';
+import {DataSourceContext, log} from '@graphprotocol/graph-ts';
 
 export function handleInstallationPrepared(event: InstallationPrepared): void {
   let pluginRepo = event.params.pluginSetupRepo.toHexString();
@@ -28,7 +33,9 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
     return;
   }
 
+  //////////////////////////////////////////////////////////////
   // Index DAO
+  //////////////////////////////////////////////////////////////
   let daoId = event.params.dao.toHexString();
   let doaEntity = Dao.load(daoId);
   if (!doaEntity) {
@@ -36,11 +43,45 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
     doaEntity.save();
   }
 
+  let dao = event.params.dao.toHexString();
   let plugin = event.params.plugin;
+  let installationId = getPluginInstallationId(dao, plugin.toHexString());
+  if (!installationId) {
+    log.error('Failed to get installationId', [dao, plugin.toHexString()]);
+    return;
+  }
 
-  // Index Plugin
-  createPluginPreparation(event);
-  createPlugin(daoId, plugin);
+  //////////////////////////////////////////////////////////////
+  // Index preparation
+  //////////////////////////////////////////////////////////////
+  let setupId = event.params.preparedSetupId.toHexString();
+  let preparationId = `${installationId.toHexString()}_${setupId}`;
+
+  let preparationEntity = new PluginPreparation(preparationId);
+
+  // Add preparation specific data
+  updatePreparationDataForInstallationPrepared(preparationEntity, event);
+
+  preparationEntity.save();
+
+  //////////////////////////////////////////////////////////////
+  // Index plugin
+  //////////////////////////////////////////////////////////////
+  let pluginEntity = Plugin.load(installationId.toHexString());
+  if (!pluginEntity) {
+    pluginEntity = new Plugin(installationId.toHexString());
+  }
+  pluginEntity.dao = daoId;
+
+  // Add plugin preparation specific data
+  updatePluginDataForInstallationPrepared(pluginEntity, event);
+
+  // Create template
+  let context = new DataSourceContext();
+  context.setString('daoAddress', daoId);
+  PluginTemplate.createWithContext(plugin, context);
+
+  pluginEntity.save();
 }
 
 export function handleInstallationApplied(event: InstallationApplied): void {
@@ -54,16 +95,15 @@ export function handleInstallationApplied(event: InstallationApplied): void {
     return;
   }
 
-  let preparationId = `${installationId.toHexString()}_${event.params.preparedSetupId.toHexString()}`;
-
   let pluginEntity = Plugin.load(installationId.toHexString());
   if (!pluginEntity) {
     pluginEntity = new Plugin(installationId.toHexString());
     pluginEntity.dao = daoId;
-    pluginEntity.pluginAddress = pluginAddress;
   }
 
-  pluginEntity.state = 'Installed';
+  // Add plugin applied specific data
+  updatePluginDataForInstallationApplied(pluginEntity, event);
+
   pluginEntity.save();
 }
 
@@ -79,46 +119,24 @@ export function handleUpdatePrepared(event: UpdatePrepared): void {
   }
 
   let setupId = event.params.preparedSetupId.toHexString();
-  let pluginRepo = event.params.pluginSetupRepo.toHexString();
-
-  let pluginVersionId = getPluginVersionId(
-    pluginRepo,
-    event.params.versionTag.release,
-    event.params.versionTag.build
-  );
-
   let preparationId = `${installationId.toHexString()}_${setupId}`;
 
-  let helpers: Bytes[] = [];
-  for (let i = 0; i < event.params.preparedSetupData.helpers.length; i++) {
-    helpers.push(event.params.preparedSetupData.helpers[i]);
-  }
-
   let preparationEntity = new PluginPreparation(preparationId);
-  preparationEntity.installation = installationId.toHexString();
-  preparationEntity.type = 'Update';
 
-  // index permission ids
-  let permissions: string[] = [];
-  for (let i = 0; i < event.params.preparedSetupData.permissions.length; i++) {
-    let permission = event.params.preparedSetupData.permissions[i];
-    let operation = PERMISSION_OPERATIONS.get(permission.operation);
-    let permissionId = `${preparationId}_${operation}_${permission.where.toHexString()}_${permission.who.toHexString()}_${permission.permissionId.toHexString()}`;
+  // Add preparation specific data
+  updatePreparationDataForUpdatePrepared(preparationEntity, event);
 
-    permissions.push(permissionId);
-  }
-
-  preparationEntity.permissions = permissions;
   preparationEntity.save();
 
   let pluginEntity = Plugin.load(installationId.toHexString());
   if (!pluginEntity) {
     pluginEntity = new Plugin(installationId.toHexString());
     pluginEntity.dao = dao;
-    pluginEntity.pluginAddress = pluginAddress;
   }
 
-  pluginEntity.state = 'UpdatePrepared';
+  // Add plugin preparation specific data
+  updatePluginDataForUpdatePrepared(pluginEntity, event);
+
   pluginEntity.save();
 }
 
@@ -133,19 +151,16 @@ export function handleUpdateApplied(event: UpdateApplied): void {
     return;
   }
 
-  let preparationId = `${installationId.toHexString()}_${event.params.preparedSetupId.toHexString()}`;
-
   let pluginEntity = Plugin.load(installationId.toHexString());
   if (!pluginEntity) {
     pluginEntity = new Plugin(installationId.toHexString());
     pluginEntity.dao = dao;
   }
 
-  pluginEntity.pluginAddress = pluginAddress;
-  pluginEntity.state = 'Installed';
-  pluginEntity.save();
+  // Add plugin applied specific data
+  updatePluginDataForUpdateApplied(pluginEntity, event);
 
-  createPlugin(dao, event.params.plugin);
+  pluginEntity.save();
 }
 
 export function handleUninstallationPrepared(
@@ -161,29 +176,13 @@ export function handleUninstallationPrepared(
   }
 
   let setupId = event.params.preparedSetupId.toHexString();
-  let pluginRepo = event.params.pluginSetupRepo.toHexString();
-
-  let pluginVersionId = getPluginVersionId(
-    pluginRepo,
-    event.params.versionTag.release,
-    event.params.versionTag.build
-  );
 
   let preparationId = `${installationId.toHexString()}_${setupId}`;
 
   let preparationEntity = new PluginPreparation(preparationId);
-  preparationEntity.installation = installationId.toHexString();
-  preparationEntity.type = 'Uninstallation';
 
-  // index permission ids
-  let permissions: string[] = [];
-  for (let i = 0; i < event.params.permissions.length; i++) {
-    let permission = event.params.permissions[i];
-    let operation = PERMISSION_OPERATIONS.get(permission.operation);
-    let permissionId = `${preparationId}_${operation}_${permission.where.toHexString()}_${permission.who.toHexString()}_${permission.permissionId.toHexString()}`;
-
-    permissions.push(permissionId);
-  }
+  // Add preparation specific data
+  updatePreparationDataForUninstallationPrepared(preparationEntity, event);
 
   preparationEntity.save();
 
@@ -192,7 +191,10 @@ export function handleUninstallationPrepared(
     pluginEntity = new Plugin(installationId.toHexString());
     pluginEntity.dao = dao;
   }
-  pluginEntity.state = 'UninstallPrepared';
+
+  // Add plugin preparation specific data
+  updatePluginDataForUninstallationPrepared(pluginEntity, event);
+
   pluginEntity.save();
 }
 
@@ -207,13 +209,15 @@ export function handleUninstallationApplied(
   if (!installationId) {
     return;
   }
-  let preparationId = `${installationId.toHexString()}_${event.params.preparedSetupId.toHexString()}`;
 
   let pluginEntity = Plugin.load(installationId.toHexString());
   if (!pluginEntity) {
     pluginEntity = new Plugin(installationId.toHexString());
     pluginEntity.dao = dao;
   }
-  pluginEntity.state = 'Uninstalled';
+
+  // Add plugin applied specific data
+  updatePluginDataForUninstallationApplied(pluginEntity, event);
+
   pluginEntity.save();
 }

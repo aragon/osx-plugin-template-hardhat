@@ -5,29 +5,6 @@ repository: https://github.com/aragon/osx-plugin-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
-  # PluginRepo
-  - kind: ethereum/contract
-    name: {{dataSources.PluginRepo.name}}
-    network: {{network}}
-    source:
-      abi: PluginRepo
-      address: '{{dataSources.PluginRepo.address}}'
-      startBlock: {{dataSources.PluginRepo.startBlock}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      entities:
-        - PluginRepo
-      abis:        
-        - name: PluginRepo
-          file: ./imported/PluginRepo.json
-      eventHandlers:
-        - event: VersionCreated(uint8,uint16,indexed address,bytes)
-          handler: handleVersionCreated
-        - event: ReleaseMetadataUpdated(uint8,bytes)
-          handler: handleReleaseMetadataUpdated
-      file: ./src/osx/pluginRepo.ts
   {{#dataSources.PluginSetupProcessors}}
   # PluginSetupProcessor
   - kind: ethereum/contract

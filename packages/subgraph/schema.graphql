@@ -25,59 +25,29 @@ type Dao @entity {
 
 type PluginSetup @entity(immutable: true) {
   id: ID! # contract address
-  versions: [PluginVersion!]! @derivedFrom(field: "pluginSetup")
 }
 
 type PluginRelease @entity {
   id: ID! # pluginRepo + release
-  release: Int!
-  metadata: String! # release metadata
-  builds: [PluginVersion!]! @derivedFrom(field: "release")
 }
 
 type PluginVersion @entity(immutable: true) {
   id: ID! # pluginRepo + release + build
-  pluginSetup: PluginSetup
-
-  release: PluginRelease!
-  build: Int!
-
-  metadata: String! # build metadata
-}
-
-enum PermissionOperation {
-  Grant
-  Revoke
-  GrantWithCondition
-}
-
-enum PluginPreparationType {
-  Installation
-  Update
 }
 
 type PluginPreparation @entity(immutable: true) {
+  # OSX related data
   id: ID! # psp setupId + installationId
-  installation: PluginInstallation!
-  permissions: [String!]!
-  type: PluginPreparationType!
-}
 
-enum PluginPreparationState {
-  InstallationPrepared
-  Installed
-  UpdatePrepared
-  UninstallPrepared
-  Uninstalled
+  # Set plugin specific related data below:
 }
 
 interface PluginInstallation @entity {
+  # OSX related data
   id: ID! # psp installationId
   dao: Dao!
-  pluginAddress: Bytes!
 
-  preparations: [PluginPreparation!]! @derivedFrom(field: "installation")
-  state: PluginPreparationState!
+  # Set plugin specific related data below:
 }
 
 # Plugin
@@ -86,12 +56,8 @@ type Plugin implements PluginInstallation @entity {
   "OSX related data"
   id: ID! # psp installationId
   dao: Dao!
-  pluginAddress: Bytes!
 
-  preparations: [PluginPreparation!]! @derivedFrom(field: "installation")
-  state: PluginPreparationState!
-
-  "Plugin specific related data"
+  "Set plugin specific related data below:"
   proposalCount: BigInt
   proposals: [PluginProposal!]! @derivedFrom(field: "plugin")
   members: [PluginMember!]! @derivedFrom(field: "plugin")
