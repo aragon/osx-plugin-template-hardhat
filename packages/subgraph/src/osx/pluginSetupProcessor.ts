@@ -20,7 +20,7 @@ import {
   updatePreparationDataForInstallationPrepared,
   updatePreparationDataForUninstallationPrepared,
   updatePreparationDataForUpdatePrepared,
-} from '../plugin/osx';
+} from '../plugin/pluginSetupProcessor';
 import {DataSourceContext, log} from '@graphprotocol/graph-ts';
 
 export function handleInstallationPrepared(event: InstallationPrepared): void {

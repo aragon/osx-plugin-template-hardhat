@@ -4,10 +4,7 @@ import * as osx120 from 'osx-ethersV120';
 import path from 'path';
 
 // Add the contract factories to this array for the contracts you want to generate ABIs for.
-const contractFactories = [
-  osx120.PluginRepo__factory,
-  osx120.PluginSetupProcessor__factory,
-];
+const contractFactories = [osx120.PluginSetupProcessor__factory];
 
 function generateABIFiles(contractFactories: any[]): void {
   // Iterate through each contract factory passed.

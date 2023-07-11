@@ -23,18 +23,6 @@ type Dao @entity {
 
 # Plugins
 
-type PluginSetup @entity(immutable: true) {
-  id: ID! # contract address
-}
-
-type PluginRelease @entity {
-  id: ID! # pluginRepo + release
-}
-
-type PluginVersion @entity(immutable: true) {
-  id: ID! # pluginRepo + release + build
-}
-
 type PluginPreparation @entity(immutable: true) {
   # OSX related data
   id: ID! # psp setupId + installationId
