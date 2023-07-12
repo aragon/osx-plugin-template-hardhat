@@ -4,19 +4,43 @@ import {
   ethereum,
   crypto,
   ByteArray,
+  log,
 } from '@graphprotocol/graph-ts';
 
+export function getDaoId(dao: Address): string {
+  return dao.toHexString();
+}
+
+export function getPluginPreparationId(
+  dao: Address,
+  plugin: Address,
+  setupId: Bytes
+): string | null {
+  let installationId = getPluginInstallationId(dao, plugin);
+  if (!installationId) {
+    log.critical('Failed to get installationId for dao {}, plugin {}', [
+      dao.toHexString(),
+      plugin.toHexString(),
+    ]);
+
+    return null;
+  }
+
+  let preparationId = installationId
+    .toHexString()
+    .concat('_')
+    .concat(pluginSetup.toHexString());
+
+  return preparationId;
+}
+
 export function getPluginInstallationId(
-  dao: string,
-  plugin: string
+  dao: Address,
+  plugin: Address
 ): Bytes | null {
   let installationIdTupleArray = new ethereum.Tuple();
-  installationIdTupleArray.push(
-    ethereum.Value.fromAddress(Address.fromString(dao))
-  );
-  installationIdTupleArray.push(
-    ethereum.Value.fromAddress(Address.fromString(plugin))
-  );
+  installationIdTupleArray.push(ethereum.Value.fromAddress(dao));
+  installationIdTupleArray.push(ethereum.Value.fromAddress(plugin));
 
   let installationIdTuple = installationIdTupleArray as ethereum.Tuple;
   let installationIdTupleEncoded = ethereum.encode(
