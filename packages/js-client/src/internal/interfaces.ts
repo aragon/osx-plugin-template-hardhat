@@ -7,7 +7,8 @@ export interface ISimpleStorageClient {
 
 export interface ISimpleStorageClientMethods {
   // fill with methods
-  myMethod(): void;
+  prepareInstallation(): void;
+  storeNumber(): void;
 }
 export interface ISimpleStorageClientEstimation {
   // fill with methods for estimation
