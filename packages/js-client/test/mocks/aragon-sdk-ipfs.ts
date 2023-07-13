@@ -1,3 +1,13 @@
+// This are default mock values, you can can change them or
+// add more if you need to
+//
+// To add more functions just add them to the mockedIPFSClient object
+//
+// If you want to reeturn a specific value for a function you can use
+// jest.fn().mockResolvedValueOnce(value) inside your test
+// this will return the specified value only once and then will return
+// the default value
+
 export const mockedIPFSClient = {
   nodeInfo: jest.fn().mockResolvedValue(true),
   add: jest.fn().mockResolvedValue({
