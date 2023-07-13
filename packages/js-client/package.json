@@ -1,10 +1,10 @@
 {
-  "name": "@aragon/sdk-client-template",
+  "name": "@aragon/storage-js-client",
   "author": "Aragon Association",
   "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index.js",
-  "module": "dist/sdk-client-template.esm.js",
+  "module": "dist/storage-js-client.esm.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"

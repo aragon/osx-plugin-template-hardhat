@@ -1,25 +1,9 @@
-import { SimpleStorageContextParams } from './types';
-import { Context, ContextCore, ContextState } from '@aragon/sdk-client-common';
-
-// TODO
-// import from @aragon/sdk-client-common
-type OverriddenState = {
-  daoFactoryAddress: boolean;
-  ensRegistryAddress: boolean;
-  gasFeeEstimationFactor: boolean;
-  ipfsNodes: boolean;
-  graphqlNodes: boolean;
-};
-
-type SimpleStorageContextState = ContextState & {
-  // extend the Context state with a new state for storing
-  // the new parameters
-  myParam: string;
-};
-
-type SimpleStorageOverridenState = OverriddenState & {
-  myParam: boolean;
-};
+import {
+  SimpleStorageContextParams,
+  SimpleStorageContextState,
+  SimpleStorageOverridenState,
+} from "./types";
+import { Context, ContextCore } from "@aragon/sdk-client-common";
 
 export class SimpleStorageContext extends ContextCore {
   // super is called before the properties are initialized
@@ -28,7 +12,7 @@ export class SimpleStorageContext extends ContextCore {
   protected overriden: SimpleStorageOverridenState = this.overriden;
   constructor(
     contextParams?: Partial<SimpleStorageContextParams>,
-    context?: Context
+    context?: Context,
   ) {
     // parent contructor will call this.set(contextParams)
     // so we don't need to call it again
@@ -61,7 +45,7 @@ export class SimpleStorageContext extends ContextCore {
   private setDefaults() {
     if (!this.overriden.myParam) {
       // set the default value for myParam
-      this.state.myParam = 'default';
+      this.state.myParam = "default";
     }
   }
 
