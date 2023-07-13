@@ -1,3 +1,10 @@
+import { PrepareInstallationParams, StoreNumberStepValue } from "../types";
+import {
+  DaoAction,
+  GasFeeEstimation,
+  PrepareInstallationStepValue,
+} from "@aragon/sdk-client-common";
+
 export interface ISimpleStorageClient {
   methods: ISimpleStorageClientMethods;
   estimation: ISimpleStorageClientEstimation;
@@ -7,18 +14,22 @@ export interface ISimpleStorageClient {
 
 export interface ISimpleStorageClientMethods {
   // fill with methods
-  prepareInstallation(): void;
-  storeNumber(): void;
+  prepareInstallation(
+    params: PrepareInstallationParams,
+  ): AsyncGenerator<PrepareInstallationStepValue>;
+  storeNumber(number: bigint): AsyncGenerator<StoreNumberStepValue>;
 }
 export interface ISimpleStorageClientEstimation {
-  // fill with methods for estimation
-  myMethod(): void;
+  prepareInstallation(
+    params: PrepareInstallationParams,
+  ): Promise<GasFeeEstimation>;
+  storeNumber(
+    number: bigint,
+  ): Promise<GasFeeEstimation>;
 }
 export interface ISimpleStorageClientEncoding {
-  // fill with methods for encoding actions
-  myAction(): void;
+  storeNumberAction(number: bigint): DaoAction;
 }
 export interface ISimpleStorageClientDecoding {
-  // fill with methods for decoding actions
-  myAction(): void;
+  storeNumberAction(data: Uint8Array): bigint;
 }

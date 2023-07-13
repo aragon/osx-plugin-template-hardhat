@@ -33,7 +33,7 @@ describe('Context instances', () => {
       gasFeeEstimationFactor: 0.1,
       graphqlNodes: [],
       ipfsNodes: [],
-      myParam: 'notDefault',
+      simpleStoragePluginAddress: 'notDefault',
     };
   });
   it('Should create an empty context and have default values', () => {
@@ -47,7 +47,7 @@ describe('Context instances', () => {
     expect(context.web3Providers.length).toBe(0);
     expect(context.ipfs.length).toBe(IPFS_NODES.homestead.length);
     expect(context.graphql.length).toBe(GRAPHQL_NODES.homestead.length);
-    expect(context.myParam).toBe('default');
+    expect(context.simpleStoragePluginAddress).toBe("0x1234567890123456789012345678901234567890");
     context.web3Providers.map((provider) => {
       expect(provider).toBeInstanceOf(JsonRpcProvider);
     });
@@ -78,7 +78,7 @@ describe('Context instances', () => {
     context.graphql.map((graphqlClient) =>
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
-    expect(context.myParam).toBe('notDefault');
+    expect(context.simpleStoragePluginAddress).toBe('notDefault');
   });
   it('Should set a new context and have the correct values', () => {
     const context = new SimpleStorageContext(contextParams);
@@ -90,7 +90,7 @@ describe('Context instances', () => {
       gasFeeEstimationFactor: 0.1,
       ipfsNodes: [{ url: 'https://localhost', headers: {} }],
       graphqlNodes: [{ url: 'https://localhost' }],
-      myParam: 'notDefault',
+      simpleStoragePluginAddress: 'notDefault',
     };
     context.set(contextParams);
 
@@ -109,7 +109,7 @@ describe('Context instances', () => {
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
     expect(context.gasFeeEstimationFactor).toEqual(0.1);
-    expect(context.myParam).toBe('notDefault');
+    expect(context.simpleStoragePluginAddress).toBe('notDefault');
   });
   it('Should create a context in goerli, update the network and update all the parameters automatically', () => {
     const context = new SimpleStorageContext({
@@ -135,11 +135,11 @@ describe('Context instances', () => {
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
 
-    expect(context.myParam).toBe('default');
+    expect(context.simpleStoragePluginAddress).toBe("0x1234567890123456789012345678901234567890");
     context.set({
       network: 'matic',
       web3Providers: 'https://polygon-rpc.com/',
-      myParam: 'otherValue',
+      simpleStoragePluginAddress: 'otherValue',
     });
     expect(context.network.name).toBe('matic');
     expect(context.network.chainId).toBe(137);
@@ -158,7 +158,7 @@ describe('Context instances', () => {
     context.graphql.map((graphqlClient) =>
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
-    expect(context.myParam).toBe('otherValue');
+    expect(context.simpleStoragePluginAddress).toBe('otherValue');
   });
   it('Should create an empty context, update the network and update all the parameters automatically', () => {
     const context = new SimpleStorageContext();
@@ -262,7 +262,7 @@ describe('Context instances', () => {
     const context = new Context(contextParams);
     const simpleStorageContext = new SimpleStorageContext(
       {
-        myParam: 'notDefault',
+        simpleStoragePluginAddress: 'notDefault',
       },
       context
     );
@@ -286,6 +286,6 @@ describe('Context instances', () => {
     simpleStorageContext.graphql.map((graphqlClient) =>
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
-    expect(simpleStorageContext.myParam).toBe('notDefault');
+    expect(simpleStorageContext.simpleStoragePluginAddress).toBe('notDefault');
   });
 });
