@@ -29,7 +29,7 @@ export class SimpleStorageContext extends ContextCore {
     }
     if (contextParams) {
       // overide the context params with the ones passed to the constructor
-      this.set(contextParams ?? {});
+      this.set(contextParams);
     }
   }
 
