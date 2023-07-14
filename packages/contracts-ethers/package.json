@@ -1,7 +1,7 @@
 {
   "name": "@aragon/todo-plugin-ethers",
   "version": "1.0.0",
-  "description": "The Aragon OSx contract definitions for ethers.js",
+  "description": "Plugin contract definitions for ethers.js",
   "main": "dist/bundle-cjs.js",
   "module": "dist/bundle-esm.js",
   "types": "dist/bundle.d.ts",
