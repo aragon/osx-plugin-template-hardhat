@@ -1,6 +1,7 @@
 import {
   ContextParams,
   ContextState,
+  Pagination,
   // OverridenState,
   VersionTag,
 } from "@aragon/sdk-client-common";
@@ -36,19 +37,6 @@ export type SimpleStorageContextParams = ContextParams & {
   // add custom params
 };
 
-export type StoreNumberStepValue = {
-  key: StoreNumberStep.STORING;
-  txHash: string;
-} | {
-  key: StoreNumberStep.DONE;
-  txHash: string;
-};
-
-export enum StoreNumberStep {
-  STORING = "storing",
-  DONE = "done",
-}
-
 export type PrepareInstallationParams = {
   daoAddressOrEns: string;
   version?: VersionTag;
@@ -56,3 +44,19 @@ export type PrepareInstallationParams = {
     number: bigint;
   };
 };
+
+export type NumbersQueryParams = Pagination & {
+  sortBy?: NumbersSortBy;
+  daoAddressOrEns?: string;
+};
+
+export enum NumbersSortBy {
+  NUMBER = "number",
+  CREATED_AT = "createdAt",
+}
+
+export type NumberListItem = {
+  id: string;
+  subdomain: string;
+  value: bigint;
+}

@@ -2,16 +2,19 @@ import { ISimpleStorageClientMethods } from "../interfaces";
 import {
   prepareGenericInstallation,
   PrepareInstallationStepValue,
+  SortDirection,
 } from "@aragon/sdk-client-common";
-import { SimpleStorage__factory } from "@aragon/todo-plugin-ethers";
 import {
+  NumberListItem,
+  NumbersQueryParams,
+  NumbersSortBy,
   PrepareInstallationParams,
-  StoreNumberStep,
-  StoreNumberStepValue,
 } from "../../types";
 import { SimpleStorageClientCore } from "../../core";
 import * as BUILD_METADATA from "../../../../contracts/src/build-metadata.json";
-import { PluginRepo__factory } from "@aragon/osx-ethers";
+import { QueryNumber, QueryNumbers } from "../graphql-queries";
+import { SubgraphNumberListItem, SubgraphNumber } from "../types";
+import { toNumber, toNumberListItem } from "../utils";
 
 export class SimpleStorageClientMethods extends SimpleStorageClientCore
   implements ISimpleStorageClientMethods {
@@ -19,53 +22,53 @@ export class SimpleStorageClientMethods extends SimpleStorageClientCore
   public async *prepareInstallation(
     params: PrepareInstallationParams,
   ): AsyncGenerator<PrepareInstallationStepValue> {
-    let version = params.version;
-    // if not specified use the lates version
-    if (!version) {
-      // get signer
-      const signer = this.web3.getConnectedSigner();
-      // connect to the plugin repo
-      const pluginRepo = PluginRepo__factory.connect(
-        this.simpleStorageRepoAddress,
-        signer,
-      );
-      // get latest release
-      const currentRelease = await pluginRepo.latestRelease();
-      // get latest version
-      const latestVersion = await pluginRepo["getLatestVersion(uint8)"](
-        currentRelease,
-      );
-      version = latestVersion.tag;
-    }
-
     yield* prepareGenericInstallation(this.web3, {
       daoAddressOrEns: params.daoAddressOrEns,
       pluginRepo: this.simpleStorageRepoAddress,
-      version,
+      version: params.version,
       installationAbi: BUILD_METADATA.pluginSetup.prepareInstallation.inputs,
       installationParams: [params.settings.number],
     });
   }
 
-  public async *storeNumber(
-    number: bigint,
-  ): AsyncGenerator<StoreNumberStepValue> {
-    // get signer
-    const signer = this.web3.getConnectedSigner();
-    // connect to the contract
-    const simpleStorage = SimpleStorage__factory.connect(
-      this.simpleStoragePluginAddress,
-      signer,
+  public async getNumber(daoAddressOrEns: string): Promise<bigint> {
+    const query = QueryNumber;
+    const name = "Numbers";
+    type T = { dao: SubgraphNumber };
+    const { dao } = await this.graphql.request<T>({
+      query,
+      params: { id: daoAddressOrEns },
+      name,
+    });
+    return toNumber(dao);
+  }
+
+  public async getNumbers(
+    {
+      limit = 10,
+      skip = 0,
+      direction = SortDirection.ASC,
+      sortBy = NumbersSortBy.CREATED_AT,
+    }: NumbersQueryParams,
+  ): Promise<NumberListItem[]> {
+    const query = QueryNumbers;
+    const params = {
+      limit,
+      skip,
+      direction,
+      sortBy,
+    };
+    const name = "Numbers";
+    type T = { daos: SubgraphNumberListItem[] };
+    const { daos } = await this.graphql.request<T>({
+      query,
+      params,
+      name,
+    });
+    return Promise.all(
+      daos.map(async (dao) => {
+        return toNumberListItem(dao);
+      }),
     );
-    const tx = await simpleStorage.storeNumber(number);
-    yield {
-      key: StoreNumberStep.STORING,
-      txHash: tx.hash,
-    };
-    await tx.wait();
-    yield {
-      key: StoreNumberStep.DONE,
-      txHash: tx.hash,
-    };
   }
 }

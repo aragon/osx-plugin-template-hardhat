@@ -1,4 +1,4 @@
-import { PrepareInstallationParams, StoreNumberStepValue } from "../types";
+import { NumberListItem, NumbersQueryParams, PrepareInstallationParams } from "../types";
 import {
   DaoAction,
   GasFeeEstimation,
@@ -17,14 +17,12 @@ export interface ISimpleStorageClientMethods {
   prepareInstallation(
     params: PrepareInstallationParams,
   ): AsyncGenerator<PrepareInstallationStepValue>;
-  storeNumber(number: bigint): AsyncGenerator<StoreNumberStepValue>;
+  getNumber(daoAddressOrEns: string): Promise<bigint>;
+  getNumbers(params: NumbersQueryParams): Promise<NumberListItem[]>;
 }
 export interface ISimpleStorageClientEstimation {
   prepareInstallation(
     params: PrepareInstallationParams,
-  ): Promise<GasFeeEstimation>;
-  storeNumber(
-    number: bigint,
   ): Promise<GasFeeEstimation>;
 }
 export interface ISimpleStorageClientEncoding {
