@@ -1,12 +1,28 @@
+import { hexToBytes } from '@aragon/sdk-common';
+import * as deployContracts from "../helpers/deploy-contracts";
 import { SimpleStorageClient, SimpleStorageContext } from '../../src';
 import * as ganacheSetup from '../helpers/ganache-setup';
 import { Server } from 'ganache';
+import { contextParamsLocalChain } from '../constants';
+import { ContextCore, SupportedNetworksArray } from '@aragon/sdk-client-common';
+import { buildSimpleStorageDao } from '../helpers/build-daos';
+
+jest.spyOn(SupportedNetworksArray, "includes").mockReturnValue(true);
+jest.spyOn(ContextCore.prototype, "network", "get").mockReturnValue(
+  { chainId: 5, name: "goerli" },
+);
 
 describe('Decoding', () => {
   let server: Server;
+  let deployment: deployContracts.Deployment;
   beforeAll(async () => {
     server = await ganacheSetup.start();
-    // deploy contracts and do other setup if necessary
+    deployment = await deployContracts.deploy();
+    const dao = await buildSimpleStorageDao(deployment);
+    contextParamsLocalChain.simpleStorageRepoAddress =
+      deployment.simpleStorageRepo.address;
+    contextParamsLocalChain.simpleStoragePluginAddress = dao!.plugins[0];
+    contextParamsLocalChain.ensRegistryAddress = deployment.ensRegistry.address;
   });
 
   afterAll(async () => {
@@ -14,8 +30,10 @@ describe('Decoding', () => {
   });
 
   it('should decode an action', async () => {
-    const ctx = new SimpleStorageContext();
+    const ctx = new SimpleStorageContext(contextParamsLocalChain);
     const client = new SimpleStorageClient(ctx);
-    client.decoding.myAction();
+    const data = hexToBytes("0xb63394180000000000000000000000000000000000000000000000000000000000000002")
+    const decodedNum = client.decoding.storeNumberAction(data);
+    expect(decodedNum).toBe(BigInt(2));
   });
 });

@@ -1,21 +1,43 @@
-import { SimpleStorageClient, SimpleStorageContext } from '../../src';
-import * as ganacheSetup from '../helpers/ganache-setup';
-import { Server } from 'ganache';
+import { SimpleStorageClient, SimpleStorageContext } from "../../src";
+import * as ganacheSetup from "../helpers/ganache-setup";
+import * as deployContracts from "../helpers/deploy-contracts";
+import { Server } from "ganache";
+import { buildSimpleStorageDao } from "../helpers/build-daos";
+import { contextParamsLocalChain } from "../constants";
+import { ContextCore, SupportedNetworksArray } from "@aragon/sdk-client-common";
 
-describe('Encoding', () => {
+
+jest.spyOn(SupportedNetworksArray, "includes").mockReturnValue(true);
+jest.spyOn(ContextCore.prototype, "network", "get").mockReturnValue(
+  { chainId: 5, name: "goerli" },
+);
+
+describe("Encoding", () => {
   let server: Server;
+  let deployment: deployContracts.Deployment;
   beforeAll(async () => {
     server = await ganacheSetup.start();
-    // deploy contracts and do other setup if necessary
+    deployment = await deployContracts.deploy();
+    const dao = await buildSimpleStorageDao(deployment);
+    contextParamsLocalChain.simpleStorageRepoAddress =
+      deployment.simpleStorageRepo.address;
+    contextParamsLocalChain.simpleStoragePluginAddress = dao!.plugins[0];
+    contextParamsLocalChain.ensRegistryAddress = deployment.ensRegistry.address;
   });
 
   afterAll(async () => {
     server.close();
   });
 
-  it('should encode an action', async () => {
-    const ctx = new SimpleStorageContext();
+  it("should encode an action", async () => {
+    const ctx = new SimpleStorageContext(contextParamsLocalChain);
     const client = new SimpleStorageClient(ctx);
-    client.encoding.myAction();
+    const num = BigInt(2);
+    const action = client.encoding.storeNumberAction(num);
+    expect(action.to).toBe(contextParamsLocalChain.simpleStoragePluginAddress);
+    expect(action.data instanceof Uint8Array).toBe(true);
+    expect(action.data.length).toBeGreaterThan(0);
+    const decodedNum = client.decoding.storeNumberAction(action.data);
+    expect(decodedNum).toBe(num);
   });
 });

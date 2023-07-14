@@ -48,8 +48,10 @@
     }
   ],
   "devDependencies": {
-    "@ensdomains/ens-contracts": "^0.0.21",
+    "@ensdomains/ens-contracts": "^0.0.15",
     "@size-limit/preset-small-lib": "^7.0.8",
+    "@types/jest": "^29.5.2",
+    "@aragon/sdk-client": "1.10.0-rc1",
     "ganache": "^7.8.0",
     "husky": "^7.0.4",
     "size-limit": "^7.0.8",
