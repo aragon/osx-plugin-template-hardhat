@@ -62,5 +62,5 @@ templates:
       # eventHandlers:
       #   - event: MembershipContractAnnounced(indexed address)
       #     handler: handleMembershipContractAnnounced
-      file: ./src/mapping.ts
+      file: ./src/plugin/plugin.ts
 
