@@ -1,0 +1,14 @@
+# These labels (common, client, ipfs and client-common) are only informative.
+# While the labels <pkg-name>-release are for trriggering the release process.
+
+js-client:
+  - ./packages/js-client/**/*
+  - ./packages/js-client/*
+
+subgraph:
+  - ./packages/subgraph/**/*
+  - ./packages/subgraph/*
+
+contracts:
+  - ./packages/contracts/**/*
+  - ./packages/contracts/*
