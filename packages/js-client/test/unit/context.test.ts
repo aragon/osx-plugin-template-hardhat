@@ -26,6 +26,7 @@ describe('Context instances', () => {
   beforeEach(() => {
     // reset contextParams
     contextParams = {
+      // General parameters
       network: 'mainnet',
       signer: new Wallet(TEST_WALLET),
       daoFactoryAddress: '0x1234',
@@ -33,6 +34,7 @@ describe('Context instances', () => {
       gasFeeEstimationFactor: 0.1,
       graphqlNodes: [],
       ipfsNodes: [],
+      // Plugin specific parameters
       simpleStoragePluginAddress: 'notDefault',
     };
   });
