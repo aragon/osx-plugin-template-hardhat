@@ -1,7 +1,7 @@
 import {
   SimpleStorageContextParams,
   SimpleStorageContextState,
-  SimpleStorageOverridenState,
+  SimpleStorageOverriddenState,
 } from "./types";
 import { Context, ContextCore } from "@aragon/sdk-client-common";
 
@@ -15,7 +15,9 @@ export class SimpleStorageContext extends ContextCore {
   // super is called before the properties are initialized
   // so we initialize them to the value of the parent class
   protected state: SimpleStorageContextState = this.state;
-  protected overriden: SimpleStorageOverridenState = this.overriden;
+  // TODO
+  // fix typo in the overridden property name 
+  protected overriden: SimpleStorageOverriddenState = this.overriden;
   constructor(
     contextParams?: Partial<SimpleStorageContextParams>,
     aragonContext?: Context,
@@ -48,13 +50,13 @@ export class SimpleStorageContext extends ContextCore {
       this.state.simpleStoragePluginAddress =
         contextParams.simpleStoragePluginAddress;
       // set the overriden flag to true in case set is called again
-      this.overriden.simpleStoragePluginAdddress = true;
+      this.overriden.simpleStoragePluginAddress = true;
     }
 
     if (contextParams.simpleStorageRepoAddress) {
       this.state.simpleStorageRepoAddress =
         contextParams.simpleStorageRepoAddress;
-      this.overriden.simpleStorageRepoAdddress = true;
+      this.overriden.simpleStorageRepoAddress = true;
     }
   }
 

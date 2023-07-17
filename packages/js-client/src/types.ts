@@ -2,21 +2,10 @@ import {
   ContextParams,
   ContextState,
   Pagination,
-  // OverridenState,
+  OverriddenState,
   VersionTag,
 } from "@aragon/sdk-client-common";
 
-// TODO
-// import from @aragon/sdk-client-common
-type OverridenState = {
-  daoFactoryAddress: boolean;
-  ensRegistryAddress: boolean;
-  gasFeeEstimationFactor: boolean;
-  ipfsNodes: boolean;
-  graphqlNodes: boolean;
-  simpleStoragePluginAdddress: boolean;
-  simpleStorageRepoAdddress: boolean;
-};
 
 export type SimpleStorageContextState = ContextState & {
   // extend the Context state with a new state for storing
@@ -25,7 +14,7 @@ export type SimpleStorageContextState = ContextState & {
   simpleStorageRepoAddress: string;
 };
 
-export type SimpleStorageOverridenState = OverridenState & {
+export type SimpleStorageOverriddenState = OverriddenState & {
   simpleStoragePluginAddress: boolean;
   simpleStorageRepoAddress: boolean;
 };

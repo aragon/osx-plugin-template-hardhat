@@ -33,24 +33,7 @@
     "@openzeppelin/contracts" "4.8.1"
     "@openzeppelin/contracts-upgradeable" "4.8.1"
 
-"@aragon/sdk-client-common@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.0.0.tgz#3759febf0b47fb1b18607c5a8f376b5e4e108b9a"
-  integrity sha512-+jwuHnx8Bq/Y2mInEyfY7VfkrPwDJ1/V8JP4RKb64thp9v3sU77nlk+GB/Y60zsKXWIRPfqnQlh1yFfaJqmQSQ==
-  dependencies:
-    "@aragon/osx-ethers" "^1.2.1"
-    "@aragon/sdk-common" "^1.4.0"
-    "@aragon/sdk-ipfs" "^1.1.0"
-    "@ethersproject/abstract-signer" "^5.5.0"
-    "@ethersproject/bignumber" "^5.6.0"
-    "@ethersproject/constants" "^5.6.0"
-    "@ethersproject/contracts" "^5.5.0"
-    "@ethersproject/providers" "^5.5.0"
-    "@ethersproject/wallet" "^5.6.0"
-    graphql "^16.5.0"
-    graphql-request "^4.3.0"
-
-"@aragon/sdk-client-common@^1.2.0-rc0":
+"@aragon/sdk-client-common@1.2.0-rc0", "@aragon/sdk-client-common@^1.2.0-rc0":
   version "1.2.0-rc0"
   resolved "https://registry.yarnpkg.com/@aragon/sdk-client-common/-/sdk-client-common-1.2.0-rc0.tgz#642d294aa8faae4ddc1d121b4ba1df4c8d526fab"
   integrity sha512-xzVBcNnY0FBdID1lD84L+krlOrIYX/ZOzluFWD4gdQr+5Mo1xc7UTazSUMiU5cvr8vD/dF2JrZHj8eWpW3j7nA==
@@ -89,11 +72,6 @@
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.5.0.tgz#321d5861a18d3d50b79aebb888ab77c830022be9"
   integrity sha512-3dV1ATZamBOaDhEPlXM1thIl6BzjerqArFjd0MvajEyjbVBkFFAVM5PZRSYs243o+91iSNdVPGFml+TSonCZTg==
-
-"@aragon/sdk-common@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@aragon/sdk-common/-/sdk-common-1.4.0.tgz#9f822f831f7e437ff1d40131dc800e15034c4c2b"
-  integrity sha512-FWdOTpOgl5PXOVbhkYEg7Wx4IYi7OkWL49LnUv0IFDpViEiJIKnSkB3t7y0hSXSCNsJEU02+1eKs06yChkpoAg==
 
 "@aragon/sdk-ipfs@^1.1.0":
   version "1.1.0"
