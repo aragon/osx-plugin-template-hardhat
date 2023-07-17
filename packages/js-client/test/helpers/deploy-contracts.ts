@@ -2,7 +2,7 @@ import * as aragonContracts from "@aragon/osx-ethers";
 import {
   SimpleStorageSetup,
   SimpleStorageSetup__factory,
-} from "@aragon/todo-plugin-ethers";
+} from "@aragon/simple-storage-ethers";
 import { Signer } from "@ethersproject/abstract-signer";
 import { AddressZero, HashZero } from "@ethersproject/constants";
 import { Contract, ContractFactory } from "@ethersproject/contracts";

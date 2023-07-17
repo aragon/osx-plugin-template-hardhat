@@ -1,6 +1,6 @@
 import { DaoAction } from "@aragon/sdk-client-common";
 import { ISimpleStorageClientEncoding } from "../interfaces";
-import { SimpleStorage__factory } from "@aragon/todo-plugin-ethers";
+import { SimpleStorage__factory } from "@aragon/simple-storage-ethers";
 import { hexToBytes } from "@aragon/sdk-common";
 import { SimpleStorageClientCore } from "../../core";
 

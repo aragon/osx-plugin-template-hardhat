@@ -20,13 +20,16 @@ export class SimpleStorageContext extends ContextCore {
     contextParams?: Partial<SimpleStorageContextParams>,
     aragonContext?: Context,
   ) {
-    // parent contructor will call this.set(contextParams)
-    // so we don't need to call it again
-    super(contextParams);
+    // call the parent constructor
+    // so it does not complain and we
+    // can use this
+    super()
+    // set the context params inherited from the context
     if (aragonContext) {
       // copy the context properties to this
       Object.assign(this, aragonContext);
     }
+    // contextParams have priority over the aragonContext
     if (contextParams) {
       // overide the context params with the ones passed to the constructor
       this.set(contextParams);

@@ -7,7 +7,7 @@ import {
   prepareGenericInstallationEstimation,
 } from "@aragon/sdk-client-common";
 import * as BUILD_METADATA from "../../../../contracts/src/build-metadata.json";
-import { SimpleStorage__factory } from "@aragon/todo-plugin-ethers";
+import { SimpleStorage__factory } from "@aragon/simple-storage-ethers";
 
 export class SimpleStoragClientEstimation extends SimpleStorageClientCore
   implements ISimpleStorageClientEstimation {

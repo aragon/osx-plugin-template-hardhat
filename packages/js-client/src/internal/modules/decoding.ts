@@ -1,4 +1,4 @@
-import { SimpleStorage__factory } from "@aragon/todo-plugin-ethers";
+import { SimpleStorage__factory } from "@aragon/simple-storage-ethers";
 import { SimpleStorageClientCore } from "../../core";
 import { ISimpleStorageClientDecoding } from "../interfaces";
 
