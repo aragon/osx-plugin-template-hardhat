@@ -37,6 +37,7 @@
   },
   "scripts": {
     "build": "cd ./packages/contracts && yarn build && cd ../contracts-ethers && yarn build && cd ../subgraph && yarn build",
+    "build:js-client": "cd ./packages/contracts-ethers && yarn build && cd ../js-client && yarn build",
     "test": "cd ./packages/contracts && yarn test && cd ../subgraph && yarn test",
     "clean": "cd ./packages/contracts && yarn clean && cd ../contracts-ethers && yarn clean && yarn clean && cd ../subgraph && yarn clean",
     "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts,yml}\"",
