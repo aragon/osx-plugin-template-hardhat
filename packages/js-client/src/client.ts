@@ -1,4 +1,5 @@
-import { SimpleStorageContext } from "./context";
+import { SimpleStorageContext } from './context';
+import { SimpleStorageClientCore } from './core';
 import {
   ISimpleStorageClient,
   ISimpleStorageClientDecoding,
@@ -9,11 +10,12 @@ import {
   SimpleStorageClientDecoding,
   SimpleStorageClientEncoding,
   SimpleStorageClientMethods,
-} from "./internal";
-import { SimpleStorageClientCore } from "./core";
+} from './internal';
 
-export class SimpleStorageClient extends SimpleStorageClientCore
-  implements ISimpleStorageClient {
+export class SimpleStorageClient
+  extends SimpleStorageClientCore
+  implements ISimpleStorageClient
+{
   public methods: ISimpleStorageClientMethods;
   public estimation: ISimpleStorageClientEstimation;
   public encoding: ISimpleStorageClientEncoding;

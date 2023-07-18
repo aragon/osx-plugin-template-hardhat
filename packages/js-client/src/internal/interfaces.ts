@@ -1,9 +1,13 @@
-import { NumberListItem, NumbersQueryParams, PrepareInstallationParams } from "../types";
+import {
+  NumberListItem,
+  NumbersQueryParams,
+  PrepareInstallationParams,
+} from '../types';
 import {
   DaoAction,
   GasFeeEstimation,
   PrepareInstallationStepValue,
-} from "@aragon/sdk-client-common";
+} from '@aragon/sdk-client-common';
 
 export interface ISimpleStorageClient {
   methods: ISimpleStorageClientMethods;
@@ -15,14 +19,14 @@ export interface ISimpleStorageClient {
 export interface ISimpleStorageClientMethods {
   // fill with methods
   prepareInstallation(
-    params: PrepareInstallationParams,
+    params: PrepareInstallationParams
   ): AsyncGenerator<PrepareInstallationStepValue>;
   getNumber(daoAddressOrEns: string): Promise<bigint>;
   getNumbers(params: NumbersQueryParams): Promise<NumberListItem[]>;
 }
 export interface ISimpleStorageClientEstimation {
   prepareInstallation(
-    params: PrepareInstallationParams,
+    params: PrepareInstallationParams
   ): Promise<GasFeeEstimation>;
 }
 export interface ISimpleStorageClientEncoding {

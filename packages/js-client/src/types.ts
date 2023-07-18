@@ -4,8 +4,7 @@ import {
   Pagination,
   OverriddenState,
   VersionTag,
-} from "@aragon/sdk-client-common";
-
+} from '@aragon/sdk-client-common';
 
 export type SimpleStorageContextState = ContextState & {
   // extend the Context state with a new state for storing
@@ -40,12 +39,12 @@ export type NumbersQueryParams = Pagination & {
 };
 
 export enum NumbersSortBy {
-  NUMBER = "number",
-  CREATED_AT = "createdAt",
+  NUMBER = 'number',
+  CREATED_AT = 'createdAt',
 }
 
 export type NumberListItem = {
   id: string;
   subdomain: string;
   value: bigint;
-}
+};

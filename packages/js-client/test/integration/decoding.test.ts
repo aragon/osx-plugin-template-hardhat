@@ -1,16 +1,16 @@
-import { hexToBytes } from '@aragon/sdk-common';
-import * as deployContracts from "../helpers/deploy-contracts";
 import { SimpleStorageClient, SimpleStorageContext } from '../../src';
-import * as ganacheSetup from '../helpers/ganache-setup';
-import { Server } from 'ganache';
 import { contextParamsLocalChain } from '../constants';
-import { ContextCore, SupportedNetworksArray } from '@aragon/sdk-client-common';
 import { buildSimpleStorageDao } from '../helpers/build-daos';
+import * as deployContracts from '../helpers/deploy-contracts';
+import * as ganacheSetup from '../helpers/ganache-setup';
+import { ContextCore, SupportedNetworksArray } from '@aragon/sdk-client-common';
+import { hexToBytes } from '@aragon/sdk-common';
+import { Server } from 'ganache';
 
-jest.spyOn(SupportedNetworksArray, "includes").mockReturnValue(true);
-jest.spyOn(ContextCore.prototype, "network", "get").mockReturnValue(
-  { chainId: 5, name: "goerli" },
-);
+jest.spyOn(SupportedNetworksArray, 'includes').mockReturnValue(true);
+jest
+  .spyOn(ContextCore.prototype, 'network', 'get')
+  .mockReturnValue({ chainId: 5, name: 'goerli' });
 
 describe('Decoding', () => {
   let server: Server;
@@ -32,7 +32,9 @@ describe('Decoding', () => {
   it('should decode an action', async () => {
     const ctx = new SimpleStorageContext(contextParamsLocalChain);
     const client = new SimpleStorageClient(ctx);
-    const data = hexToBytes("0xb63394180000000000000000000000000000000000000000000000000000000000000002")
+    const data = hexToBytes(
+      '0xb63394180000000000000000000000000000000000000000000000000000000000000002'
+    );
     const decodedNum = client.decoding.storeNumberAction(data);
     expect(decodedNum).toBe(BigInt(2));
   });

@@ -2,30 +2,30 @@ import {
   SimpleStorageContextParams,
   SimpleStorageContextState,
   SimpleStorageOverriddenState,
-} from "./types";
-import { Context, ContextCore } from "@aragon/sdk-client-common";
+} from './types';
+import { Context, ContextCore } from '@aragon/sdk-client-common';
 
 // set your defaults here or import them from a package
 const DEFAULT_SIMPLE_STORAGE_PLUGIN_ADDRESS =
-  "0x1234567890123456789012345678901234567890";
+  '0x1234567890123456789012345678901234567890';
 const DEFAULT_SIMPLE_STORAGE_Repo_ADDRESS =
-  "0x2345678901234567890123456789012345678901";
+  '0x2345678901234567890123456789012345678901';
 
 export class SimpleStorageContext extends ContextCore {
   // super is called before the properties are initialized
   // so we initialize them to the value of the parent class
   protected state: SimpleStorageContextState = this.state;
   // TODO
-  // fix typo in the overridden property name 
+  // fix typo in the overridden property name
   protected overriden: SimpleStorageOverriddenState = this.overriden;
   constructor(
     contextParams?: Partial<SimpleStorageContextParams>,
-    aragonContext?: Context,
+    aragonContext?: Context
   ) {
     // call the parent constructor
     // so it does not complain and we
     // can use this
-    super()
+    super();
     // set the context params inherited from the context
     if (aragonContext) {
       // copy the context properties to this

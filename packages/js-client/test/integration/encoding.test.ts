@@ -1,18 +1,17 @@
-import { SimpleStorageClient, SimpleStorageContext } from "../../src";
-import * as ganacheSetup from "../helpers/ganache-setup";
-import * as deployContracts from "../helpers/deploy-contracts";
-import { Server } from "ganache";
-import { buildSimpleStorageDao } from "../helpers/build-daos";
-import { contextParamsLocalChain } from "../constants";
-import { ContextCore, SupportedNetworksArray } from "@aragon/sdk-client-common";
+import { SimpleStorageClient, SimpleStorageContext } from '../../src';
+import { contextParamsLocalChain } from '../constants';
+import { buildSimpleStorageDao } from '../helpers/build-daos';
+import * as deployContracts from '../helpers/deploy-contracts';
+import * as ganacheSetup from '../helpers/ganache-setup';
+import { ContextCore, SupportedNetworksArray } from '@aragon/sdk-client-common';
+import { Server } from 'ganache';
 
+jest.spyOn(SupportedNetworksArray, 'includes').mockReturnValue(true);
+jest
+  .spyOn(ContextCore.prototype, 'network', 'get')
+  .mockReturnValue({ chainId: 5, name: 'goerli' });
 
-jest.spyOn(SupportedNetworksArray, "includes").mockReturnValue(true);
-jest.spyOn(ContextCore.prototype, "network", "get").mockReturnValue(
-  { chainId: 5, name: "goerli" },
-);
-
-describe("Encoding", () => {
+describe('Encoding', () => {
   let server: Server;
   let deployment: deployContracts.Deployment;
   beforeAll(async () => {
@@ -29,7 +28,7 @@ describe("Encoding", () => {
     server.close();
   });
 
-  it("should encode an action", async () => {
+  it('should encode an action', async () => {
     const ctx = new SimpleStorageContext(contextParamsLocalChain);
     const client = new SimpleStorageClient(ctx);
     const num = BigInt(2);

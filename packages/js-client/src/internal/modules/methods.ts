@@ -1,31 +1,33 @@
-import { ISimpleStorageClientMethods } from "../interfaces";
-import {
-  prepareGenericInstallation,
-  PrepareInstallationStepValue,
-  SortDirection,
-} from "@aragon/sdk-client-common";
+import * as BUILD_METADATA from '../../../../contracts/src/build-metadata.json';
+import { SimpleStorageClientCore } from '../../core';
 import {
   NumberListItem,
   NumbersQueryParams,
   NumbersSortBy,
   PrepareInstallationParams,
-} from "../../types";
-import { SimpleStorageClientCore } from "../../core";
-import * as BUILD_METADATA from "../../../../contracts/src/build-metadata.json";
-import { QueryNumber, QueryNumbers } from "../graphql-queries";
-import { SubgraphNumberListItem, SubgraphNumber } from "../types";
-import { toNumber, toNumberListItem } from "../utils";
+} from '../../types';
+import { QueryNumber, QueryNumbers } from '../graphql-queries';
+import { ISimpleStorageClientMethods } from '../interfaces';
+import { SubgraphNumberListItem, SubgraphNumber } from '../types';
+import { toNumber, toNumberListItem } from '../utils';
+import {
+  prepareGenericInstallation,
+  PrepareInstallationStepValue,
+  SortDirection,
+} from '@aragon/sdk-client-common';
 
-export class SimpleStorageClientMethods extends SimpleStorageClientCore
-  implements ISimpleStorageClientMethods {
+export class SimpleStorageClientMethods
+  extends SimpleStorageClientCore
+  implements ISimpleStorageClientMethods
+{
   // implementation of the methods in the interface
   public async *prepareInstallation(
-    params: PrepareInstallationParams,
+    params: PrepareInstallationParams
   ): AsyncGenerator<PrepareInstallationStepValue> {
     // do any additionall custom operations here before you prepare your plugin
 
     // ...
-    
+
     yield* prepareGenericInstallation(this.web3, {
       daoAddressOrEns: params.daoAddressOrEns,
       pluginRepo: this.simpleStorageRepoAddress,
@@ -37,7 +39,7 @@ export class SimpleStorageClientMethods extends SimpleStorageClientCore
 
   public async getNumber(daoAddressOrEns: string): Promise<bigint> {
     const query = QueryNumber;
-    const name = "Numbers";
+    const name = 'Numbers';
     type T = { dao: SubgraphNumber };
     const { dao } = await this.graphql.request<T>({
       query,
@@ -47,14 +49,12 @@ export class SimpleStorageClientMethods extends SimpleStorageClientCore
     return toNumber(dao);
   }
 
-  public async getNumbers(
-    {
-      limit = 10,
-      skip = 0,
-      direction = SortDirection.ASC,
-      sortBy = NumbersSortBy.CREATED_AT,
-    }: NumbersQueryParams,
-  ): Promise<NumberListItem[]> {
+  public async getNumbers({
+    limit = 10,
+    skip = 0,
+    direction = SortDirection.ASC,
+    sortBy = NumbersSortBy.CREATED_AT,
+  }: NumbersQueryParams): Promise<NumberListItem[]> {
     const query = QueryNumbers;
     const params = {
       limit,
@@ -62,7 +62,7 @@ export class SimpleStorageClientMethods extends SimpleStorageClientCore
       direction,
       sortBy,
     };
-    const name = "Numbers";
+    const name = 'Numbers';
     type T = { daos: SubgraphNumberListItem[] };
     const { daos } = await this.graphql.request<T>({
       query,
@@ -72,7 +72,7 @@ export class SimpleStorageClientMethods extends SimpleStorageClientCore
     return Promise.all(
       daos.map(async (dao) => {
         return toNumberListItem(dao);
-      }),
+      })
     );
   }
 }
