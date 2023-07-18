@@ -1,0 +1,81 @@
+{
+  "name": "@aragon/simple-storage-js-client",
+  "author": "Aragon Association",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/simple-storage-js-client.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "TESTING=true tsdx test --verbose --runInBand",
+    "lint": "prettier --check src test *.json",
+    "lint:fix": "prettier --write src test *.json",
+    "size": "size-limit",
+    "analyze": "size-limit --why",
+    "clean": "rm -Rf .turbo dist",
+    "examples": "node ./scripts/generate-examples-md.js ./examples ./examples.md"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint --fix"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "size-limit": [
+    {
+      "path": "dist/simple-storage-js-client.cjs.production.min.js",
+      "limit": "750 KB"
+    },
+    {
+      "path": "dist/simple-storage-js-client.esm.js",
+      "limit": "750 KB"
+    }
+  ],
+  "devDependencies": {
+    "@aragon/sdk-client": "1.10.0-rc1",
+    "@ensdomains/ens-contracts": "^0.0.15",
+    "@size-limit/preset-small-lib": "^7.0.8",
+    "@types/jest": "^29.5.2",
+    "ganache": "^7.8.0",
+    "husky": "^7.0.4",
+    "size-limit": "^7.0.8",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.3.1",
+    "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "@aragon/osx-ethers": "1.3.0-rc0",
+    "@aragon/sdk-client-common": "1.2.0-rc0",
+    "@aragon/sdk-common": "1.5.0",
+    "@aragon/simple-storage-ethers": "1.0.0",
+    "@ethersproject/abstract-signer": "^5.7.0",
+    "@ethersproject/bignumber": "^5.7.0",
+    "@ethersproject/constants": "^5.7.0",
+    "@ethersproject/contracts": "^5.7.0",
+    "@ethersproject/providers": "^5.7.2",
+    "@ethersproject/wallet": "^5.7.0",
+    "graphql": "^16.6.0",
+    "graphql-request": "4.3.0"
+  },
+  "jest": {
+    "testEnvironment": "./test-environment.js",
+    "testTimeout": 120000
+  }
+}

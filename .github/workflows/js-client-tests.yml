@@ -1,0 +1,69 @@
+name: 00-JS-Test
+
+on:
+  workflow_call:
+    inputs:
+      run:
+        description: 'Forces a run if true'
+        required: false
+        type: boolean
+    secrets:
+      IPFS_API_KEY:
+        description: 'IPFS API Key'
+        required: true
+  push:
+    branches-ignore:
+      - develop
+      - main
+    paths:
+      - 'packages/js-client/**'
+      - '.github/workflows/js-client-*.yml'
+
+jobs:
+  build-js:
+    if: ${{ github.actor != 'arabot-1' || inputs.run }}
+    name: Build, lint, and test on Node ${{ matrix.node }} and ${{ matrix.os }}
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node: ['16.x']
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Use Node ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+          node-version: ${{ matrix.node }}
+
+      - name: Install deps
+        run: yarn install --frozen-lockfile
+        working-directory: packages/js-client
+
+      - name: Build Contracts Ethers typings
+        run: yarn run build
+        working-directory: packages/contracts-ethers
+
+      - name: Build Contracts Ethers package
+        run: yarn run build:npm
+        working-directory: packages/contracts-ethers
+
+      - name: Build JS Client
+        run: yarn run build
+        working-directory: packages/js-client
+
+      - name: Integration test
+        run: yarn test integration --ci --coverage --passWithNoTests
+        working-directory: packages/js-client
+        env:
+          IPFS_API_KEY: ${{ secrets.IPFS_API_KEY }}
+
+      - name: Run unit tests
+        run: yarn test --testPathIgnorePatterns=/integration --ci --coverage  --passWithNoTests
+        working-directory: packages/js-client
+        env:
+          IPFS_API_KEY: ${{ secrets.IPFS_API_KEY }}
