@@ -22,6 +22,10 @@ export class SimpleStorageClientMethods extends SimpleStorageClientCore
   public async *prepareInstallation(
     params: PrepareInstallationParams,
   ): AsyncGenerator<PrepareInstallationStepValue> {
+    // do any additionall custom operations here before you prepare your plugin
+
+    // ...
+    
     yield* prepareGenericInstallation(this.web3, {
       daoAddressOrEns: params.daoAddressOrEns,
       pluginRepo: this.simpleStorageRepoAddress,
