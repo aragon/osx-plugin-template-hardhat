@@ -1,8 +1,8 @@
 import {
-  SimpleStorageContextParams,
   SimpleStorageContextState,
   SimpleStorageOverriddenState,
-} from './types';
+} from './internal/types';
+import { SimpleStorageContextParams } from './types';
 import { Context, ContextCore } from '@aragon/sdk-client-common';
 
 // set your defaults here or import them from a package

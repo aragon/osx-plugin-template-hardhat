@@ -1,14 +1,14 @@
 import * as BUILD_METADATA from '../../../../contracts/src/build-metadata.json';
-import { SimpleStorageClientCore } from '../../core';
 import {
   NumberListItem,
   NumbersQueryParams,
   NumbersSortBy,
   PrepareInstallationParams,
 } from '../../types';
+import { SimpleStorageClientCore } from '../core';
 import { QueryNumber, QueryNumbers } from '../graphql-queries';
 import { ISimpleStorageClientMethods } from '../interfaces';
-import { SubgraphNumberListItem, SubgraphNumber } from '../types';
+import { SubgraphNumber, SubgraphNumberListItem } from '../types';
 import { toNumber, toNumberListItem } from '../utils';
 import {
   prepareGenericInstallation,
@@ -70,8 +70,8 @@ export class SimpleStorageClientMethods
       name,
     });
     return Promise.all(
-      daos.map(async (dao) => {
-        return toNumberListItem(dao);
+      daos.map(async (number) => {
+        return toNumberListItem(number);
       })
     );
   }

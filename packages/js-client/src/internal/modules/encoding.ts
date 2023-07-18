@@ -1,4 +1,4 @@
-import { SimpleStorageClientCore } from '../../core';
+import { SimpleStorageClientCore } from '../core';
 import { ISimpleStorageClientEncoding } from '../interfaces';
 import { DaoAction } from '@aragon/sdk-client-common';
 import { hexToBytes } from '@aragon/sdk-common';

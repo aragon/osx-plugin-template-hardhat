@@ -1,4 +1,4 @@
-import { SimpleStorageContext } from './context';
+import { SimpleStorageContext } from '../context';
 import { ClientCore } from '@aragon/sdk-client-common';
 
 export class SimpleStorageClientCore extends ClientCore {

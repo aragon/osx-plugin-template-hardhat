@@ -1,4 +1,4 @@
-import { SimpleStorageClientCore } from '../../core';
+import { SimpleStorageClientCore } from '../core';
 import { ISimpleStorageClientDecoding } from '../interfaces';
 import { SimpleStorage__factory } from '@aragon/simple-storage-ethers';
 

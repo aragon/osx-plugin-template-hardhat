@@ -1,6 +1,6 @@
 import * as BUILD_METADATA from '../../../../contracts/src/build-metadata.json';
-import { SimpleStorageClientCore } from '../../core';
 import { PrepareInstallationParams } from '../../types';
+import { SimpleStorageClientCore } from '../core';
 import { ISimpleStorageClientEstimation } from '../interfaces';
 import { PluginRepo__factory } from '@aragon/osx-ethers';
 import {
