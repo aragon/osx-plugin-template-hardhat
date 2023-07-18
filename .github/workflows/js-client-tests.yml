@@ -44,8 +44,13 @@ jobs:
         run: yarn install --frozen-lockfile
         working-directory: packages/js-client
 
-      - name: Build subpackages
-        run: yarn run build:js-client
+      - name: Build Ethers Contracts
+        run: yarn run build:npm
+        working-directory: packages/ethers-contracts
+
+      - name: Build JS Client
+        run: yarn run build
+        working-directory: packages/js-client
 
       - name: Integration test
         run: yarn test integration --ci --coverage --passWithNoTests
