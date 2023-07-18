@@ -46,6 +46,8 @@ jobs:
 
       - name: Build subpackages
         run: yarn run build
+        env:
+          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
 
       - name: Integration test
         run: yarn test integration --ci --coverage --passWithNoTests
