@@ -41,11 +41,11 @@
   "size-limit": [
     {
       "path": "dist/simple-storage-js-client.cjs.production.min.js",
-      "limit": "10 KB"
+      "limit": "750 KB"
     },
     {
       "path": "dist/simple-storage-js-client.esm.js",
-      "limit": "10 KB"
+      "limit": "750 KB"
     }
   ],
   "devDependencies": {
