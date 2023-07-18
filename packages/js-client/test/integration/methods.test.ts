@@ -1,3 +1,5 @@
+
+import * as mockedGraphqlRequest from '../mocks/graphql-request';
 import {
   NumbersQueryParams,
   NumbersSortBy,
@@ -13,7 +15,6 @@ import { contextParamsLocalChain } from '../constants';
 import { buildSimpleStorageDao } from '../helpers/build-daos';
 import * as deployContracts from '../helpers/deploy-contracts';
 import * as ganacheSetup from '../helpers/ganache-setup';
-import * as mockedGraphqlRequest from '../mocks/graphql-request';
 import {
   ContextCore,
   LIVE_CONTRACTS,
