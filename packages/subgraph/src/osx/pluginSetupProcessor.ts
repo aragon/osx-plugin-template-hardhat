@@ -60,7 +60,33 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
   //////////////////////////////////////////////////////////////
   let setupId = event.params.preparedSetupId;
   let preparationId = getPluginPreparationId(dao, plugin, setupId);
-  if (!preparationId) {
+  if (preparationId) {
+    let preparationEntity = new PluginPreparation(preparationId);
+
+    // Add preparation specific data
+    updatePreparationDataForInstallationPrepared(preparationEntity, event);
+
+    preparationEntity.save();
+
+    //////////////////////////////////////////////////////////////
+    // Index plugin
+    //////////////////////////////////////////////////////////////
+    let pluginEntity = Plugin.load(installationId.toHexString());
+    if (!pluginEntity) {
+      pluginEntity = new Plugin(installationId.toHexString());
+    }
+    pluginEntity.dao = daoId;
+
+    // Add plugin preparation specific data
+    updatePluginDataForInstallationPrepared(pluginEntity, event);
+
+    // Create template
+    let context = new DataSourceContext();
+    context.setString('daoAddress', daoId);
+    PluginTemplate.createWithContext(plugin, context);
+
+    pluginEntity.save();
+  } else {
     log.error('Failed to get preparationId for dao {}, plugin {}, setupId {}', [
       daoId,
       plugin.toHexString(),
@@ -68,32 +94,6 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
     ]);
     return;
   }
-
-  let preparationEntity = new PluginPreparation(preparationId);
-
-  // Add preparation specific data
-  updatePreparationDataForInstallationPrepared(preparationEntity, event);
-
-  preparationEntity.save();
-
-  //////////////////////////////////////////////////////////////
-  // Index plugin
-  //////////////////////////////////////////////////////////////
-  let pluginEntity = Plugin.load(installationId.toHexString());
-  if (!pluginEntity) {
-    pluginEntity = new Plugin(installationId.toHexString());
-  }
-  pluginEntity.dao = daoId;
-
-  // Add plugin preparation specific data
-  updatePluginDataForInstallationPrepared(pluginEntity, event);
-
-  // Create template
-  let context = new DataSourceContext();
-  context.setString('daoAddress', daoId);
-  PluginTemplate.createWithContext(plugin, context);
-
-  pluginEntity.save();
 }
 
 export function handleInstallationApplied(event: InstallationApplied): void {
@@ -130,7 +130,25 @@ export function handleUpdatePrepared(event: UpdatePrepared): void {
 
   let setupId = event.params.preparedSetupId;
   let preparationId = getPluginPreparationId(dao, plugin, setupId);
-  if (!preparationId) {
+  if (preparationId) {
+    let preparationEntity = new PluginPreparation(preparationId);
+
+    // Add preparation specific data
+    updatePreparationDataForUpdatePrepared(preparationEntity, event);
+
+    preparationEntity.save();
+
+    let pluginEntity = Plugin.load(installationId.toHexString());
+    if (!pluginEntity) {
+      pluginEntity = new Plugin(installationId.toHexString());
+      pluginEntity.dao = getDaoId(dao);
+    }
+
+    // Add plugin preparation specific data
+    updatePluginDataForUpdatePrepared(pluginEntity, event);
+
+    pluginEntity.save();
+  } else {
     log.error('Failed to get preparationId for dao {}, plugin {}, setupId {}', [
       dao.toHexString(),
       plugin.toHexString(),
@@ -138,24 +156,6 @@ export function handleUpdatePrepared(event: UpdatePrepared): void {
     ]);
     return;
   }
-
-  let preparationEntity = new PluginPreparation(preparationId);
-
-  // Add preparation specific data
-  updatePreparationDataForUpdatePrepared(preparationEntity, event);
-
-  preparationEntity.save();
-
-  let pluginEntity = Plugin.load(installationId.toHexString());
-  if (!pluginEntity) {
-    pluginEntity = new Plugin(installationId.toHexString());
-    pluginEntity.dao = getDaoId(dao);
-  }
-
-  // Add plugin preparation specific data
-  updatePluginDataForUpdatePrepared(pluginEntity, event);
-
-  pluginEntity.save();
 }
 
 export function handleUpdateApplied(event: UpdateApplied): void {
@@ -195,7 +195,25 @@ export function handleUninstallationPrepared(
   let setupId = event.params.preparedSetupId;
 
   let preparationId = getPluginPreparationId(dao, plugin, setupId);
-  if (!preparationId) {
+  if (preparationId) {
+    let preparationEntity = new PluginPreparation(preparationId);
+
+    // Add preparation specific data
+    updatePreparationDataForUninstallationPrepared(preparationEntity, event);
+
+    preparationEntity.save();
+
+    let pluginEntity = Plugin.load(installationId.toHexString());
+    if (!pluginEntity) {
+      pluginEntity = new Plugin(installationId.toHexString());
+      pluginEntity.dao = getDaoId(dao);
+    }
+
+    // Add plugin preparation specific data
+    updatePluginDataForUninstallationPrepared(pluginEntity, event);
+
+    pluginEntity.save();
+  } else {
     log.error('Failed to get preparationId for dao {}, plugin {}, setupId {}', [
       dao.toHexString(),
       plugin.toHexString(),
@@ -203,24 +221,6 @@ export function handleUninstallationPrepared(
     ]);
     return;
   }
-
-  let preparationEntity = new PluginPreparation(preparationId);
-
-  // Add preparation specific data
-  updatePreparationDataForUninstallationPrepared(preparationEntity, event);
-
-  preparationEntity.save();
-
-  let pluginEntity = Plugin.load(installationId.toHexString());
-  if (!pluginEntity) {
-    pluginEntity = new Plugin(installationId.toHexString());
-    pluginEntity.dao = getDaoId(dao);
-  }
-
-  // Add plugin preparation specific data
-  updatePluginDataForUninstallationPrepared(pluginEntity, event);
-
-  pluginEntity.save();
 }
 
 export function handleUninstallationApplied(

@@ -29,7 +29,7 @@ export function getPluginPreparationId(
   let preparationId = installationId
     .toHexString()
     .concat('_')
-    .concat(pluginSetup.toHexString());
+    .concat(setupId.toHexString());
 
   return preparationId;
 }
