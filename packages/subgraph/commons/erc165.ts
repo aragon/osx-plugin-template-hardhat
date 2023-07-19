@@ -6,7 +6,7 @@ export function supportsInterface(
   // eslint-disable-next-line @typescript-eslint/no-inferrable-types
   expected: boolean = true
 ): boolean {
-  let result = ethereum.call(
+  const result = ethereum.call(
     new ethereum.SmartContractCall(
       contract._name, // '',
       contract._address, // address,

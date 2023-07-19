@@ -7,7 +7,6 @@ import {
   UpdatePrepared,
 } from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
 import {Plugin, PluginPreparation} from '../../generated/schema';
-import {BigInt} from '@graphprotocol/graph-ts';
 
 /////////////////
 // InstallationPrepared
@@ -17,6 +16,10 @@ export function updatePreparationDataForInstallationPrepared(
   event: InstallationPrepared
 ): void {
   // Add `PluginPreparation` specific data for this plugin
+
+  // Remove: the following code is used to silence the linter
+  pluginPreparationEntity;
+  event;
 }
 
 export function updatePluginDataForInstallationPrepared(
@@ -26,6 +29,10 @@ export function updatePluginDataForInstallationPrepared(
   // Add `Plugin` specific data for this plugin
   //   pluginEntity.onlyListed = false;
   //   pluginEntity.proposalCount = BigInt.zero();
+
+  // Remove: the following code is used to silence the linter
+  pluginEntity;
+  event;
 }
 
 /////////////////
@@ -36,6 +43,10 @@ export function updatePluginDataForInstallationApplied(
   event: InstallationApplied
 ): void {
   // Add `Plugin` specific data for this plugin
+
+  // Remove: the following code is used to silence the linter
+  pluginEntity;
+  event;
 }
 
 /////////////////
@@ -46,6 +57,10 @@ export function updatePreparationDataForUpdatePrepared(
   event: UpdatePrepared
 ): void {
   // Add `PluginPreparation` specific data for this plugin
+
+  // Remove: the following code is used to silence the linter
+  pluginPreparationEntity;
+  event;
 }
 
 export function updatePluginDataForUpdatePrepared(
@@ -53,6 +68,10 @@ export function updatePluginDataForUpdatePrepared(
   event: UpdatePrepared
 ): void {
   // Add `Plugin` specific data for this plugin
+
+  // Remove: the following code is used to silence the linter
+  pluginEntity;
+  event;
 }
 
 /////////////////
@@ -63,6 +82,10 @@ export function updatePluginDataForUpdateApplied(
   event: UpdateApplied
 ): void {
   // Add `Plugin` specific data for this plugin
+
+  // Remove: the following code is used to silence the linter
+  pluginEntity;
+  event;
 }
 
 /////////////////
@@ -73,6 +96,10 @@ export function updatePreparationDataForUninstallationPrepared(
   event: UninstallationPrepared
 ): void {
   // Add `PluginPreparation` specific data for this plugin
+
+  // Remove: the following code is used to silence the linter
+  pluginPreparationEntity;
+  event;
 }
 
 export function updatePluginDataForUninstallationPrepared(
@@ -82,6 +109,10 @@ export function updatePluginDataForUninstallationPrepared(
   // Add `Plugin` specific data for this plugin
   //   pluginEntity.onlyListed = false;
   //   pluginEntity.proposalCount = BigInt.zero();
+
+  // Remove: the following code is used to silence the linter
+  pluginEntity;
+  event;
 }
 
 /////////////////
@@ -92,4 +123,8 @@ export function updatePluginDataForUninstallationApplied(
   event: UninstallationApplied
 ): void {
   // Add `Plugin` specific data for this plugin
+
+  // Remove: the following code is used to silence the linter
+  pluginEntity;
+  event;
 }

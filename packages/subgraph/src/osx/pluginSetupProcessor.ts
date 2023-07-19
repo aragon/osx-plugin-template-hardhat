@@ -28,10 +28,10 @@ import {
 import {DataSourceContext, log} from '@graphprotocol/graph-ts';
 
 export function handleInstallationPrepared(event: InstallationPrepared): void {
-  let pluginRepo = event.params.pluginSetupRepo.toHexString();
+  const pluginRepo = event.params.pluginSetupRepo.toHexString();
 
   // Check if the prepared plugin is our plugin.
-  let isThisPlugin = pluginRepo === PLUGIN_REPO_ADDRESS;
+  const isThisPlugin = pluginRepo === PLUGIN_REPO_ADDRESS;
 
   if (!isThisPlugin) {
     return;
@@ -40,16 +40,16 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
   //////////////////////////////////////////////////////////////
   // Index DAO
   //////////////////////////////////////////////////////////////
-  let dao = event.params.dao;
-  let daoId = getDaoId(dao);
+  const dao = event.params.dao;
+  const daoId = getDaoId(dao);
   let doaEntity = Dao.load(daoId);
   if (!doaEntity) {
     doaEntity = new Dao(daoId);
     doaEntity.save();
   }
 
-  let plugin = event.params.plugin;
-  let installationId = getPluginInstallationId(dao, plugin);
+  const plugin = event.params.plugin;
+  const installationId = getPluginInstallationId(dao, plugin);
   if (!installationId) {
     log.error('Failed to get installationId', [daoId, plugin.toHexString()]);
     return;
@@ -58,10 +58,10 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
   //////////////////////////////////////////////////////////////
   // Index preparation
   //////////////////////////////////////////////////////////////
-  let setupId = event.params.preparedSetupId;
-  let preparationId = getPluginPreparationId(dao, plugin, setupId);
+  const setupId = event.params.preparedSetupId;
+  const preparationId = getPluginPreparationId(dao, plugin, setupId);
   if (preparationId) {
-    let preparationEntity = new PluginPreparation(preparationId);
+    const preparationEntity = new PluginPreparation(preparationId);
 
     // Add preparation specific data
     updatePreparationDataForInstallationPrepared(preparationEntity, event);
@@ -81,7 +81,7 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
     updatePluginDataForInstallationPrepared(pluginEntity, event);
 
     // Create template
-    let context = new DataSourceContext();
+    const context = new DataSourceContext();
     context.setString('daoAddress', daoId);
     PluginTemplate.createWithContext(plugin, context);
 
@@ -97,11 +97,11 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
 }
 
 export function handleInstallationApplied(event: InstallationApplied): void {
-  let dao = event.params.dao;
-  let plugin = event.params.plugin;
+  const dao = event.params.dao;
+  const plugin = event.params.plugin;
 
   // Check if the applied is our plugin.
-  let installationId = getPluginInstallationId(dao, plugin);
+  const installationId = getPluginInstallationId(dao, plugin);
   if (!installationId) {
     return;
   }
@@ -119,19 +119,19 @@ export function handleInstallationApplied(event: InstallationApplied): void {
 }
 
 export function handleUpdatePrepared(event: UpdatePrepared): void {
-  let dao = event.params.dao;
-  let plugin = event.params.setupPayload.plugin;
+  const dao = event.params.dao;
+  const plugin = event.params.setupPayload.plugin;
 
   // Check if the update preparation plugin is our plugin.
-  let installationId = getPluginInstallationId(dao, plugin);
+  const installationId = getPluginInstallationId(dao, plugin);
   if (!installationId) {
     return;
   }
 
-  let setupId = event.params.preparedSetupId;
-  let preparationId = getPluginPreparationId(dao, plugin, setupId);
+  const setupId = event.params.preparedSetupId;
+  const preparationId = getPluginPreparationId(dao, plugin, setupId);
   if (preparationId) {
-    let preparationEntity = new PluginPreparation(preparationId);
+    const preparationEntity = new PluginPreparation(preparationId);
 
     // Add preparation specific data
     updatePreparationDataForUpdatePrepared(preparationEntity, event);
@@ -159,11 +159,11 @@ export function handleUpdatePrepared(event: UpdatePrepared): void {
 }
 
 export function handleUpdateApplied(event: UpdateApplied): void {
-  let dao = event.params.dao;
-  let plugin = event.params.plugin;
+  const dao = event.params.dao;
+  const plugin = event.params.plugin;
 
   // Check if the applied update for the plugin is our plugin.
-  let installationId = getPluginInstallationId(dao, plugin);
+  const installationId = getPluginInstallationId(dao, plugin);
   if (!installationId) {
     return;
   }
@@ -183,20 +183,20 @@ export function handleUpdateApplied(event: UpdateApplied): void {
 export function handleUninstallationPrepared(
   event: UninstallationPrepared
 ): void {
-  let dao = event.params.dao;
-  let plugin = event.params.setupPayload.plugin;
+  const dao = event.params.dao;
+  const plugin = event.params.setupPayload.plugin;
 
   // Check if the prepared uninstallation is for our plugin.
-  let installationId = getPluginInstallationId(dao, plugin);
+  const installationId = getPluginInstallationId(dao, plugin);
   if (!installationId) {
     return;
   }
 
-  let setupId = event.params.preparedSetupId;
+  const setupId = event.params.preparedSetupId;
 
-  let preparationId = getPluginPreparationId(dao, plugin, setupId);
+  const preparationId = getPluginPreparationId(dao, plugin, setupId);
   if (preparationId) {
-    let preparationEntity = new PluginPreparation(preparationId);
+    const preparationEntity = new PluginPreparation(preparationId);
 
     // Add preparation specific data
     updatePreparationDataForUninstallationPrepared(preparationEntity, event);
@@ -226,11 +226,11 @@ export function handleUninstallationPrepared(
 export function handleUninstallationApplied(
   event: UninstallationApplied
 ): void {
-  let dao = event.params.dao;
-  let plugin = event.params.plugin;
+  const dao = event.params.dao;
+  const plugin = event.params.plugin;
 
   // Check if the applied uninstallation is for our plugin.
-  let installationId = getPluginInstallationId(dao, plugin);
+  const installationId = getPluginInstallationId(dao, plugin);
   if (!installationId) {
     return;
   }
