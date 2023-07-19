@@ -46,11 +46,9 @@ type Plugin implements PluginInstallation @entity {
   dao: Dao!
 
   "Set plugin specific related data below:"
-  proposalCount: BigInt
+  initializedCount: Int
   proposals: [PluginProposal!]! @derivedFrom(field: "plugin")
   members: [PluginMember!]! @derivedFrom(field: "plugin")
-  minApprovals: Int
-  onlyListed: Boolean
 }
 
 type PluginMember @entity {

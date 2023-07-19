@@ -59,8 +59,8 @@ templates:
       abis:
         - name: Plugin
           file: $PLUGIN_MODULE/artifacts/src/SimpleStorage.sol/SimpleStorage.json
-      # eventHandlers:
-      #   - event: MembershipContractAnnounced(indexed address)
-      #     handler: handleMembershipContractAnnounced
+      eventHandlers:
+        - event: Initialized(uint8) # initialized event from OZ's Initializable abstract contract 
+          handler: handleInitialized
       file: ./src/plugin/plugin.ts
 
