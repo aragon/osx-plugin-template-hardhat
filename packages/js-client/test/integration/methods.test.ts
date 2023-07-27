@@ -3,8 +3,8 @@ import * as mockedGraphqlRequest from '../mocks/graphql-request';
 import {
   NumbersQueryParams,
   NumbersSortBy,
-  SimpleStorageClient,
-  SimpleStorageContext,
+  MyPluginClient,
+  MyPluginContext,
 } from '../../src';
 import { QueryNumber, QueryNumbers } from '../../src/internal/graphql-queries';
 import {
@@ -12,7 +12,7 @@ import {
   SubgraphNumberListItem,
 } from '../../src/internal/types';
 import { contextParamsLocalChain } from '../constants';
-import { buildSimpleStorageDao } from '../helpers/build-daos';
+import { buildMyPluginDao } from '../helpers/build-daos';
 import * as deployContracts from '../helpers/deploy-contracts';
 import * as ganacheSetup from '../helpers/ganache-setup';
 import {
@@ -37,10 +37,10 @@ describe('Methods', () => {
   beforeAll(async () => {
     server = await ganacheSetup.start();
     deployment = await deployContracts.deploy();
-    dao = await buildSimpleStorageDao(deployment);
-    contextParamsLocalChain.simpleStorageRepoAddress =
-      deployment.simpleStorageRepo.address;
-    contextParamsLocalChain.simpleStoragePluginAddress = dao!.plugins[0];
+    dao = await buildMyPluginDao(deployment);
+    contextParamsLocalChain.myPluginRepoAddress =
+      deployment.myPluginRepo.address;
+    contextParamsLocalChain.myPluginPluginAddress = dao!.plugins[0];
     contextParamsLocalChain.ensRegistryAddress = deployment.ensRegistry.address;
     LIVE_CONTRACTS.goerli.pluginSetupProcessor =
       deployment.pluginSetupProcessor.address;
@@ -51,8 +51,8 @@ describe('Methods', () => {
   });
 
   it('Should prepare an installation', async () => {
-    const context = new SimpleStorageContext(contextParamsLocalChain);
-    const client = new SimpleStorageClient(context);
+    const context = new MyPluginContext(contextParamsLocalChain);
+    const client = new MyPluginClient(context);
     const networkSpy = jest.spyOn(JsonRpcProvider.prototype, 'getNetwork');
     const defaultGetNetworkImplementation = networkSpy.getMockImplementation();
     networkSpy.mockImplementation(() =>
@@ -100,8 +100,8 @@ describe('Methods', () => {
   });
 
   it('Should get a number', async () => {
-    const context = new SimpleStorageContext(contextParamsLocalChain);
-    const client = new SimpleStorageClient(context);
+    const context = new MyPluginContext(contextParamsLocalChain);
+    const client = new MyPluginClient(context);
     const mockedClient = mockedGraphqlRequest.getMockedInstance(
       client.graphql.getClient()
     );
@@ -124,8 +124,8 @@ describe('Methods', () => {
   });
 
   it('Should get a list of numbers', async () => {
-    const context = new SimpleStorageContext(contextParamsLocalChain);
-    const client = new SimpleStorageClient(context);
+    const context = new MyPluginContext(contextParamsLocalChain);
+    const client = new MyPluginClient(context);
     const mockedClient = mockedGraphqlRequest.getMockedInstance(
       client.graphql.getClient()
     );

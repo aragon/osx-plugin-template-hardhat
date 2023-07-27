@@ -1,31 +1,31 @@
-import { SimpleStorageContext } from './context';
+import {MyPluginContext} from './context';
 import {
-  ISimpleStorageClient,
-  ISimpleStorageClientDecoding,
-  ISimpleStorageClientEncoding,
-  ISimpleStorageClientEstimation,
-  ISimpleStorageClientMethods,
+  IMyPluginClient,
+  IMyPluginClientDecoding,
+  IMyPluginClientEncoding,
+  IMyPluginClientEstimation,
+  IMyPluginClientMethods,
   SimpleStoragClientEstimation,
-  SimpleStorageClientDecoding,
-  SimpleStorageClientEncoding,
-  SimpleStorageClientMethods,
+  MyPluginClientDecoding,
+  MyPluginClientEncoding,
+  MyPluginClientMethods,
 } from './internal';
-import { SimpleStorageClientCore } from './internal/core';
+import {MyPluginClientCore} from './internal/core';
 
-export class SimpleStorageClient
-  extends SimpleStorageClientCore
-  implements ISimpleStorageClient
+export class MyPluginClient
+  extends MyPluginClientCore
+  implements IMyPluginClient
 {
-  public methods: ISimpleStorageClientMethods;
-  public estimation: ISimpleStorageClientEstimation;
-  public encoding: ISimpleStorageClientEncoding;
-  public decoding: ISimpleStorageClientDecoding;
+  public methods: IMyPluginClientMethods;
+  public estimation: IMyPluginClientEstimation;
+  public encoding: IMyPluginClientEncoding;
+  public decoding: IMyPluginClientDecoding;
 
-  constructor(pluginContext: SimpleStorageContext) {
+  constructor(pluginContext: MyPluginContext) {
     super(pluginContext);
-    this.methods = new SimpleStorageClientMethods(pluginContext);
+    this.methods = new MyPluginClientMethods(pluginContext);
     this.estimation = new SimpleStoragClientEstimation(pluginContext);
-    this.encoding = new SimpleStorageClientEncoding(pluginContext);
-    this.decoding = new SimpleStorageClientDecoding(pluginContext);
+    this.encoding = new MyPluginClientEncoding(pluginContext);
+    this.decoding = new MyPluginClientDecoding(pluginContext);
   }
 }

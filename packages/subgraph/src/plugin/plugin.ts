@@ -1,9 +1,9 @@
 import {getPluginInstallationId} from '../../commons/ids';
 import {Plugin} from '../../generated/schema';
-import {Initialized} from '../../generated/templates/Plugin/Plugin';
+import {NumberStored} from '../../generated/templates/Plugin/Plugin';
 import {Address, dataSource} from '@graphprotocol/graph-ts';
 
-export function handleInitialized(event: Initialized): void {
+export function handleNumberStored(event: NumberStored): void {
   const pluginAddress = event.address;
 
   const context = dataSource.context();
@@ -17,9 +17,7 @@ export function handleInitialized(event: Initialized): void {
   if (installationId) {
     const pluginEntity = Plugin.load(installationId.toHexString());
     if (pluginEntity) {
-      const initCount = event.params.version;
-      pluginEntity.initializedCount = initCount;
-
+      pluginEntity.number = event.params.number;
       pluginEntity.save();
     }
   }

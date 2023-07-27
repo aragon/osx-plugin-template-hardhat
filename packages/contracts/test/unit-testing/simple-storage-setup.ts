@@ -2,9 +2,9 @@ import {PLUGIN_SETUP_CONTRACT_NAME} from '../../plugin-settings';
 import buildMetadata from '../../src/build-metadata.json';
 import {
   DAO,
-  SimpleStorageSetup,
-  SimpleStorageSetup__factory,
-  SimpleStorage__factory,
+  MyPluginSetup,
+  MyPluginSetup__factory,
+  MyPlugin__factory,
 } from '../../typechain';
 import {deployTestDao} from '../helpers/test-dao';
 import {Operation, getNamedTypesFromMetadata} from '../helpers/types';
@@ -21,17 +21,17 @@ import {expect} from 'chai';
 import {ethers} from 'hardhat';
 
 describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
-  let signers: SignerWithAddress[];
-  let simpleStorageSetup: SimpleStorageSetup;
-  let SimpleStorageSetup: SimpleStorageSetup__factory;
+  let alice: SignerWithAddress;
+  let myPluginSetup: MyPluginSetup;
+  let MyPluginSetup: MyPluginSetup__factory;
   let dao: DAO;
 
   before(async () => {
-    signers = await ethers.getSigners();
-    dao = await deployTestDao(signers[0]);
+    [alice] = await ethers.getSigners();
+    dao = await deployTestDao(alice);
 
-    SimpleStorageSetup = new SimpleStorageSetup__factory(signers[0]);
-    simpleStorageSetup = await SimpleStorageSetup.deploy();
+    MyPluginSetup = new MyPluginSetup__factory(alice);
+    myPluginSetup = await MyPluginSetup.deploy();
   });
 
   describe('prepareInstallation', async () => {
@@ -48,17 +48,17 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
 
     it('returns the plugin, helpers, and permissions', async () => {
       const nonce = await ethers.provider.getTransactionCount(
-        simpleStorageSetup.address
+        myPluginSetup.address
       );
       const anticipatedPluginAddress = ethers.utils.getContractAddress({
-        from: simpleStorageSetup.address,
+        from: myPluginSetup.address,
         nonce,
       });
 
       const {
         plugin,
         preparedSetupData: {helpers, permissions},
-      } = await simpleStorageSetup.callStatic.prepareInstallation(
+      } = await myPluginSetup.callStatic.prepareInstallation(
         dao.address,
         initData
       );
@@ -76,14 +76,12 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
         ],
       ]);
 
-      await simpleStorageSetup.prepareInstallation(dao.address, initData);
-      const simpleStorage = new SimpleStorage__factory(signers[0]).attach(
-        plugin
-      );
+      await myPluginSetup.prepareInstallation(dao.address, initData);
+      const myPlugin = new MyPlugin__factory(alice).attach(plugin);
 
       // initialization is correct
-      expect(await simpleStorage.dao()).to.eq(dao.address);
-      expect(await simpleStorage.number()).to.be.eq(defaultInitData.number);
+      expect(await myPlugin.dao()).to.eq(dao.address);
+      expect(await myPlugin.number()).to.be.eq(defaultInitData.number);
     });
   });
 
@@ -91,12 +89,14 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
     it('returns the permissions', async () => {
       const dummyAddr = ADDRESS_ZERO;
 
-      const permissions =
-        await simpleStorageSetup.callStatic.prepareUninstallation(dao.address, {
+      const permissions = await myPluginSetup.callStatic.prepareUninstallation(
+        dao.address,
+        {
           plugin: dummyAddr,
           currentHelpers: [],
           data: EMPTY_DATA,
-        });
+        }
+      );
 
       expect(permissions.length).to.be.equal(1);
       expect(permissions).to.deep.equal([

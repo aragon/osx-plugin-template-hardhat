@@ -1,9 +1,9 @@
 import buildMetadata from './src/build-metadata.json';
 import releaseMetadata from './src/release-metadata.json';
 
-export const PLUGIN_REPO_ENS_NAME = 'test-1';
-export const PLUGIN_CONTRACT_NAME = 'SimpleStorage';
-export const PLUGIN_SETUP_CONTRACT_NAME = 'SimpleStorageSetup';
+export const PLUGIN_REPO_ENS_NAME = 'test-2';
+export const PLUGIN_CONTRACT_NAME = 'MyPlugin';
+export const PLUGIN_SETUP_CONTRACT_NAME = 'MyPluginSetup';
 
 export const VERSION = {
   release: 1, // Increment this number ONLY if breaking/incompatible changes were made. Updates between releases are NOT possible.

@@ -1,7 +1,7 @@
 import {
   PluginRepo,
-  SimpleStorageSetup,
-  SimpleStorageSetup__factory,
+  MyPluginSetup,
+  MyPluginSetup__factory,
 } from '../../typechain';
 import {getPluginInfo, osxContracts} from '../../utils/helpers';
 import {toHex} from '../../utils/ipfs';
@@ -12,21 +12,21 @@ import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {deployments, ethers} from 'hardhat';
 
-let signers: SignerWithAddress[];
-let repoRegistry: PluginRepoRegistry;
-let pluginRepo: PluginRepo;
-
 async function deployAll() {
   await deployments.fixture();
 }
 
 describe('PluginRepo Deployment', function () {
+  let alice: SignerWithAddress;
+  let repoRegistry: PluginRepoRegistry;
+  let pluginRepo: PluginRepo;
+
   before(async () => {
     const hardhatForkNetwork = process.env.NETWORK_NAME
       ? process.env.NETWORK_NAME
       : 'mainnet';
 
-    signers = await ethers.getSigners();
+    [alice] = await ethers.getSigners();
 
     // Deploymen should be empty
     expect(await deployments.all()).to.be.empty;
@@ -40,12 +40,12 @@ describe('PluginRepo Deployment', function () {
     // plugin repo registry
     repoRegistry = PluginRepoRegistry__factory.connect(
       osxContracts[hardhatForkNetwork]['PluginRepoRegistry'],
-      signers[0]
+      alice
     );
 
     pluginRepo = PluginRepo__factory.connect(
       getPluginInfo('hardhat')['hardhat'].address,
-      signers[0]
+      alice
     );
   });
 
@@ -57,7 +57,7 @@ describe('PluginRepo Deployment', function () {
     expect(
       await pluginRepo.isGranted(
         pluginRepo.address,
-        signers[0].address,
+        alice.address,
         ethers.utils.id('ROOT_PERMISSION'),
         ethers.constants.AddressZero
       )
@@ -66,7 +66,7 @@ describe('PluginRepo Deployment', function () {
     expect(
       await pluginRepo.isGranted(
         pluginRepo.address,
-        signers[0].address,
+        alice.address,
         ethers.utils.id('UPGRADE_REPO_PERMISSION'),
         ethers.constants.AddressZero
       )
@@ -75,7 +75,7 @@ describe('PluginRepo Deployment', function () {
     expect(
       await pluginRepo.isGranted(
         pluginRepo.address,
-        signers[0].address,
+        alice.address,
         ethers.utils.id('MAINTAINER_PERMISSION'),
         ethers.constants.AddressZero
       )
@@ -83,12 +83,12 @@ describe('PluginRepo Deployment', function () {
   });
 
   context('PluginSetup Publication', async () => {
-    let setup: SimpleStorageSetup;
+    let setup: MyPluginSetup;
 
     before(async () => {
-      setup = SimpleStorageSetup__factory.connect(
-        (await deployments.get('SimpleStorageSetup')).address,
-        signers[0]
+      setup = MyPluginSetup__factory.connect(
+        (await deployments.get('MyPluginSetup')).address,
+        alice
       );
     });
     it('registerd the setup', async () => {

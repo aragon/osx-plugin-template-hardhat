@@ -5,7 +5,6 @@ import '@nomiclabs/hardhat-etherscan';
 import '@openzeppelin/hardhat-upgrades';
 import '@typechain/hardhat';
 import {config as dotenvConfig} from 'dotenv';
-import {BigNumber} from 'ethers';
 import 'hardhat-deploy';
 import 'hardhat-gas-reporter';
 import {extendEnvironment, HardhatUserConfig} from 'hardhat/config';
@@ -73,10 +72,9 @@ const accounts = process.env.PRIVATE_KEY
 for (const network in networks) {
   // special treatement for hardhat
   if (network.startsWith('hardhat')) {
-    networks[network].accounts = accounts.map(account => ({
-      privateKey: account,
-      balance: BigNumber.from(10).pow(20).toString(), // Set balance to 100 ETH
-    }));
+    networks[network].accounts = {
+      mnemonic: 'test test test test test test test test test test test junk',
+    };
     continue;
   }
   networks[network].accounts = accounts;
@@ -99,9 +97,22 @@ const config: HardhatUserConfig = {
       polygonMumbai: process.env.POLYGONSCAN_API_KEY || '',
     },
   },
+
   namedAccounts: {
     deployer: 0,
+    alice: 0,
+    bob: 1,
+    carol: 2,
+    dave: 3,
+    eve: 4,
+    frank: 5,
+    grace: 6,
+    harold: 7,
+    ivan: 8,
+    judy: 9,
+    mallory: 10,
   },
+
   gasReporter: {
     currency: 'USD',
     enabled: process.env.REPORT_GAS === 'true' ? true : false,

@@ -1,8 +1,5 @@
 import {PLUGIN_SETUP_CONTRACT_NAME} from '../../plugin-settings';
-import {
-  SimpleStorageSetup__factory,
-  SimpleStorage__factory,
-} from '../../typechain';
+import {MyPluginSetup__factory, MyPlugin__factory} from '../../typechain';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import {setTimeout} from 'timers/promises';
@@ -14,11 +11,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, network} = hre;
 
   const setupDeployment = await deployments.get(PLUGIN_SETUP_CONTRACT_NAME);
-  const setup = SimpleStorageSetup__factory.connect(
+  const setup = MyPluginSetup__factory.connect(
     setupDeployment.address,
     deployer
   );
-  const implementation = SimpleStorage__factory.connect(
+  const implementation = MyPlugin__factory.connect(
     await setup.implementation(),
     deployer
   );

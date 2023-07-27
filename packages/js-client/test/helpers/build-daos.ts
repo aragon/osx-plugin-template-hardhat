@@ -1,20 +1,20 @@
-import { Deployment } from './deploy-contracts';
+import {Deployment} from './deploy-contracts';
 import * as aragonContracts from '@aragon/osx-ethers';
-import { AddressZero } from '@ethersproject/constants';
-import { id } from '@ethersproject/hash';
-import { defaultAbiCoder } from 'ethers/lib/utils';
+import {AddressZero} from '@ethersproject/constants';
+import {id} from '@ethersproject/hash';
+import {defaultAbiCoder} from 'ethers/lib/utils';
 
 export async function createDao(
   daoFactory: aragonContracts.DAOFactory,
   daoSettings: aragonContracts.DAOFactory.DAOSettingsStruct,
   pluginSettings: aragonContracts.DAOFactory.PluginSettingsStruct[]
-): Promise<{ dao: string; plugins: string[] }> {
+): Promise<{dao: string; plugins: string[]}> {
   const tx = await daoFactory.createDao(daoSettings, pluginSettings);
   const receipt = await tx.wait();
   const registryInterface =
     aragonContracts.DAORegistry__factory.createInterface();
   const registeredLog = receipt.logs.find(
-    (log) =>
+    log =>
       log.topics[0] ===
       id(registryInterface.getEvent('DAORegistered').format('sighash'))
   );
@@ -22,7 +22,7 @@ export async function createDao(
   const pluginSetupProcessorInterface =
     aragonContracts.PluginSetupProcessor__factory.createInterface();
   const installedLogs = receipt.logs.filter(
-    (log) =>
+    log =>
       log.topics[0] ===
       id(
         pluginSetupProcessorInterface
@@ -38,16 +38,16 @@ export async function createDao(
   return {
     dao: registeredParsed.args[0],
     plugins: installedLogs.map(
-      (log) => pluginSetupProcessorInterface.parseLog(log).args[1]
+      log => pluginSetupProcessorInterface.parseLog(log).args[1]
     ),
   };
 }
 
-export async function buildSimpleStorageDao(deployment: Deployment) {
+export async function buildMyPluginDao(deployment: Deployment) {
   try {
-    const latestVersion = await deployment.simpleStorageRepo[
+    const latestVersion = await deployment.myPluginRepo[
       'getLatestVersion(address)'
-    ](deployment.simpleStorageSetup.address);
+    ](deployment.myPluginSetup.address);
     return await createDao(
       deployment.daoFactory,
       {
@@ -59,7 +59,7 @@ export async function buildSimpleStorageDao(deployment: Deployment) {
       [
         {
           pluginSetupRef: {
-            pluginSetupRepo: deployment.simpleStorageRepo.address,
+            pluginSetupRepo: deployment.myPluginRepo.address,
             versionTag: latestVersion.tag,
           },
           data: defaultAbiCoder.encode(['uint256'], [1]),

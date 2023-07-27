@@ -1,5 +1,6 @@
 import {PLUGIN_CONTRACT_NAME} from '../../plugin-settings';
-import {DAO, SimpleStorage, SimpleStorage__factory} from '../../typechain';
+import {DAO, MyPlugin, MyPlugin__factory} from '../../typechain';
+import '../../typechain/src/MyPlugin';
 import {deployWithProxy} from '../../utils/helpers';
 import {deployTestDao} from '../helpers/test-dao';
 import {STORE_PERMISSION_ID} from './simple-storage-common';
@@ -14,70 +15,64 @@ export const defaultInitData: InitData = {
 };
 
 describe(PLUGIN_CONTRACT_NAME, function () {
-  let signers: SignerWithAddress[];
+  let alice: SignerWithAddress;
+  let bob: SignerWithAddress;
   let dao: DAO;
-  let SimpleStorage: SimpleStorage__factory;
-  let simpleStorage: SimpleStorage;
+  let myPlugin: MyPlugin;
   let defaultInput: InitData;
 
   before(async () => {
-    signers = await ethers.getSigners();
-    dao = await deployTestDao(signers[0]);
+    [alice, bob] = await ethers.getSigners();
+    dao = await deployTestDao(alice);
 
     defaultInput = {number: BigNumber.from(123)};
-
-    SimpleStorage = new SimpleStorage__factory(signers[0]);
   });
 
   beforeEach(async () => {
-    simpleStorage = await deployWithProxy<SimpleStorage>(SimpleStorage);
+    myPlugin = await deployWithProxy<MyPlugin>(new MyPlugin__factory(alice));
+
+    await myPlugin.initialize(dao.address, defaultInput.number);
   });
 
   describe('initialize', async () => {
     it('reverts if trying to re-initialize', async () => {
-      await simpleStorage.initialize(dao.address, defaultInput.number);
-
       await expect(
-        simpleStorage.initialize(dao.address, defaultInput.number)
+        myPlugin.initialize(dao.address, defaultInput.number)
       ).to.be.revertedWith('Initializable: contract is already initialized');
     });
 
     it('stores the number', async () => {
-      await simpleStorage.initialize(dao.address, defaultInput.number);
-
-      expect(await simpleStorage.number()).to.equal(defaultInput.number);
+      expect(await myPlugin.number()).to.equal(defaultInput.number);
     });
   });
 
-  describe('storing', async () => {
-    describe('storeNumber', async () => {
-      const newNumber = BigNumber.from(456);
+  describe('storeNumber', async () => {
+    const newNumber = BigNumber.from(456);
 
-      beforeEach(async () => {
-        await simpleStorage.initialize(dao.address, defaultInput.number);
-      });
+    beforeEach(async () => {
+      await dao.grant(myPlugin.address, alice.address, STORE_PERMISSION_ID);
+    });
 
-      it('reverts if sender lacks permission', async () => {
-        await expect(simpleStorage.storeNumber(newNumber))
-          .to.be.revertedWithCustomError(SimpleStorage, 'DaoUnauthorized')
-          .withArgs(
-            dao.address,
-            simpleStorage.address,
-            signers[0].address,
-            STORE_PERMISSION_ID
-          );
-      });
-
-      it('stores the number', async () => {
-        await dao.grant(
-          simpleStorage.address,
-          signers[0].address,
+    it('reverts if sender lacks permission', async () => {
+      await expect(myPlugin.connect(bob).storeNumber(newNumber))
+        .to.be.revertedWithCustomError(myPlugin, 'DaoUnauthorized')
+        .withArgs(
+          dao.address,
+          myPlugin.address,
+          bob.address,
           STORE_PERMISSION_ID
         );
+    });
 
-        await expect(simpleStorage.storeNumber(newNumber)).to.not.be.reverted;
-        expect(await simpleStorage.number()).to.equal(newNumber);
-      });
+    it('stores the number', async () => {
+      await expect(myPlugin.storeNumber(newNumber)).to.not.be.reverted;
+      expect(await myPlugin.number()).to.equal(newNumber);
+    });
+
+    it('emits the NumberStored event', async () => {
+      await expect(myPlugin.storeNumber(newNumber))
+        .to.emit(myPlugin, 'NumberStored')
+        .withArgs(newNumber);
     });
   });
 });

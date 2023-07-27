@@ -1,4 +1,4 @@
-import { ContextState, OverriddenState } from '@aragon/sdk-client-common';
+import {ContextState, OverriddenState} from '@aragon/sdk-client-common';
 
 export type SubgraphNumberListItem = {
   id: string;
@@ -14,13 +14,13 @@ export type SubgraphNumber = {
   };
 };
 
-export type SimpleStorageContextState = ContextState & {
+export type MyPluginContextState = ContextState & {
   // extend the Context state with a new state for storing
   // the new parameters
-  simpleStoragePluginAddress: string;
-  simpleStorageRepoAddress: string;
+  myPluginPluginAddress: string;
+  myPluginRepoAddress: string;
 };
 
-export type SimpleStorageOverriddenState = OverriddenState & {
-  [key in keyof SimpleStorageContextState]: boolean;
+export type MyPluginOverriddenState = OverriddenState & {
+  [key in keyof MyPluginContextState]: boolean;
 };

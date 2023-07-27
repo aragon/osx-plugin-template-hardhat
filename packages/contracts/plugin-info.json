@@ -1,27 +1,28 @@
 {
   "goerli": {
-    "repo": "test-1",
-    "address": "0xEF30A43458d846bb754DBEE17958Dbc7a7b98618",
+    "repo": "test-2",
+    "address": "0xE56a8AfAE1F31013E41B08ce71d43f3008E50fd2",
     "args": [],
-    "blockNumberOfDeployment": 9203689,
+    "blockNumberOfDeployment": 9418499,
     "releases": {
       "1": {
         "builds": {
           "1": {
             "setup": {
-              "name": "SimpleStorageSetup",
-              "address": "0x49ABA4462c560BE3a02Dc0A57a96E88cB8c1EE5b",
+              "name": "MyPluginSetup",
+              "address": "0x5F186fDFc79f890A3C01acFc1EE5c8e8c2977881",
               "args": [],
-              "blockNumberOfDeployment": 9203690
+              "blockNumberOfDeployment": 9418501
             },
             "implementation": {
-              "name": "SimpleStorage",
-              "address": "0xDF4a1f58bE59e59E8502DD424aF564f9D7B92581",
+              "name": "MyPlugin",
+              "address": "0x5BF9D9CB63741C76d58765659a9Ce9405e5322cB",
               "args": [],
-              "blockNumberOfDeployment": 9203690
+              "blockNumberOfDeployment": 9418501
             },
+            "helpers": [],
             "buildMetadataURI": "ipfs://QmY919VZ9gkeF6L169qQo89ucsUB9ScTaJVbGn8vMGGHxr",
-            "blockNumberOfPublication": 9203691
+            "blockNumberOfPublication": 9418503
           }
         },
         "releaseMetadataURI": "ipfs://QmVD1gtE5PdjhLuuRcjhiUqmnFXScVZbZ2oXEvXcKnd3b4"

@@ -8,7 +8,7 @@ import {Operation} from './types';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 
 export async function createPluginSetupProcessor(
-  signer: SignerWithAddress,
+  deployer: SignerWithAddress,
   dao: DAO
 ): Promise<PluginSetupProcessor> {
   // Create the PluginSetupProcessor
@@ -17,7 +17,7 @@ export async function createPluginSetupProcessor(
     ? process.env.NETWORK_NAME
     : 'mainnet';
 
-  const psp = new PluginSetupProcessor__factory(signer).attach(
+  const psp = new PluginSetupProcessor__factory(deployer).attach(
     osxContracts[hardhatForkNetwork].PluginSetupProcessor
   );
 
@@ -25,17 +25,17 @@ export async function createPluginSetupProcessor(
   await dao.applySingleTargetPermissions(psp.address, [
     {
       operation: Operation.Grant,
-      who: signer.address,
+      who: deployer.address,
       permissionId: await psp.APPLY_INSTALLATION_PERMISSION_ID(),
     },
     {
       operation: Operation.Grant,
-      who: signer.address,
+      who: deployer.address,
       permissionId: await psp.APPLY_UPDATE_PERMISSION_ID(),
     },
     {
       operation: Operation.Grant,
-      who: signer.address,
+      who: deployer.address,
       permissionId: await psp.APPLY_UNINSTALLATION_PERMISSION_ID(),
     },
   ]);

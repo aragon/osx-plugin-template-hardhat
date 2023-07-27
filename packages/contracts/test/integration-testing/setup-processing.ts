@@ -1,10 +1,10 @@
 import {METADATA} from '../../plugin-settings';
 import {
   PluginRepo,
-  SimpleStorage,
-  SimpleStorageSetup,
-  SimpleStorageSetup__factory,
-  SimpleStorage__factory,
+  MyPlugin,
+  MyPluginSetup,
+  MyPluginSetup__factory,
+  MyPlugin__factory,
 } from '../../typechain';
 import {PluginSetupRefStruct} from '../../typechain/@aragon/osx/framework/dao/DAOFactory';
 import {getPluginInfo, osxContracts} from '../../utils/helpers';
@@ -24,14 +24,14 @@ import {BigNumber} from 'ethers';
 import {ethers} from 'hardhat';
 
 describe('PluginSetup Processing', function () {
-  let signers: SignerWithAddress[];
+  let alice: SignerWithAddress;
 
   let psp: PluginSetupProcessor;
   let dao: DAO;
   let pluginRepo: PluginRepo;
 
   before(async () => {
-    signers = await ethers.getSigners();
+    [alice] = await ethers.getSigners();
 
     const hardhatForkNetwork = 'goerli';
 
@@ -45,11 +45,11 @@ describe('PluginSetup Processing', function () {
     // PSP
     psp = PluginSetupProcessor__factory.connect(
       osxContracts[hardhatForkNetwork]['PluginSetupProcessor'],
-      signers[0]
+      alice
     );
 
     // Deploy DAO.
-    dao = await deployTestDao(signers[0]);
+    dao = await deployTestDao(alice);
 
     await dao.grant(
       dao.address,
@@ -58,36 +58,36 @@ describe('PluginSetup Processing', function () {
     );
     await dao.grant(
       psp.address,
-      signers[0].address,
+      alice.address,
       ethers.utils.id('APPLY_INSTALLATION_PERMISSION')
     );
     await dao.grant(
       psp.address,
-      signers[0].address,
+      alice.address,
       ethers.utils.id('APPLY_UNINSTALLATION_PERMISSION')
     );
     await dao.grant(
       psp.address,
-      signers[0].address,
+      alice.address,
       ethers.utils.id('APPLY_UPDATE_PERMISSION')
     );
 
     pluginRepo = PluginRepo__factory.connect(
       getPluginInfo(hardhatForkNetwork)[hardhatForkNetwork].address,
-      signers[0]
+      alice
     );
   });
 
   context('Build 1', async () => {
-    let setup: SimpleStorageSetup;
+    let setup: MyPluginSetup;
     let pluginSetupRef: PluginSetupRefStruct;
-    let plugin: SimpleStorage;
+    let plugin: MyPlugin;
 
     before(async () => {
       // Deploy setups.
-      setup = SimpleStorageSetup__factory.connect(
+      setup = MyPluginSetup__factory.connect(
         (await pluginRepo['getLatestVersion(uint8)'](1)).pluginSetup,
-        signers[0]
+        alice
       );
 
       pluginSetupRef = {
@@ -114,9 +114,9 @@ describe('PluginSetup Processing', function () {
         )
       );
 
-      plugin = SimpleStorage__factory.connect(
+      plugin = MyPlugin__factory.connect(
         results.preparedEvent.args.plugin,
-        signers[0]
+        alice
       );
     });
 

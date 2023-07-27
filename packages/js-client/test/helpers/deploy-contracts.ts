@@ -1,27 +1,25 @@
-import { ERC1967ABI, ERC1967Bytecode } from '../abi';
+import {ERC1967ABI, ERC1967Bytecode} from '../abi';
 import * as aragonContracts from '@aragon/osx-ethers';
 import {
-  SimpleStorageSetup,
-  SimpleStorageSetup__factory,
+  MyPluginSetup,
+  MyPluginSetup__factory,
 } from '@aragon/simple-storage-ethers';
 import ENSRegistry from '@ensdomains/ens-contracts/artifacts/contracts/registry/ENSRegistry.sol/ENSRegistry.json';
 import PublicResolver from '@ensdomains/ens-contracts/artifacts/contracts/resolvers/PublicResolver.sol/PublicResolver.json';
-import { Signer } from '@ethersproject/abstract-signer';
-import { hexlify } from '@ethersproject/bytes';
-import { AddressZero, HashZero } from '@ethersproject/constants';
-import { Contract, ContractFactory } from '@ethersproject/contracts';
-import { id, namehash } from '@ethersproject/hash';
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { toUtf8Bytes } from '@ethersproject/strings';
-import { parseEther } from '@ethersproject/units';
+import {Signer} from '@ethersproject/abstract-signer';
+import {hexlify} from '@ethersproject/bytes';
+import {AddressZero, HashZero} from '@ethersproject/constants';
+import {Contract, ContractFactory} from '@ethersproject/contracts';
+import {id, namehash} from '@ethersproject/hash';
+import {JsonRpcProvider} from '@ethersproject/providers';
+import {toUtf8Bytes} from '@ethersproject/strings';
+import {parseEther} from '@ethersproject/units';
 
-export type Deployment = OsxDeployment &
-  SimpleStorageDeployment &
-  EnsDeployment;
+export type Deployment = OsxDeployment & MyPluginDeployment & EnsDeployment;
 
-export type SimpleStorageDeployment = {
-  simpleStorageRepo: aragonContracts.PluginRepo;
-  simpleStorageSetup: SimpleStorageSetup;
+export type MyPluginDeployment = {
+  myPluginRepo: aragonContracts.PluginRepo;
+  myPluginSetup: MyPluginSetup;
 };
 
 export type OsxDeployment = {
@@ -44,10 +42,7 @@ export async function deploy(): Promise<Deployment> {
   const deployOwnerWallet = provider.getSigner();
   const ens = await deployEnsContracts(deployOwnerWallet);
   const osx = await deployOsxContracts(deployOwnerWallet, ens);
-  const simpleSotrage = await deploySimpleStorageContracts(
-    deployOwnerWallet,
-    osx
-  );
+  const simpleSotrage = await deployMyPluginContracts(deployOwnerWallet, osx);
 
   // send ETH to hardcoded wallet in tests
   await deployOwnerWallet.sendTransaction({
@@ -61,30 +56,28 @@ export async function deploy(): Promise<Deployment> {
   };
 }
 
-export async function deploySimpleStorageContracts(
-  signer: Signer,
+export async function deployMyPluginContracts(
+  deployer: Signer,
   osx: OsxDeployment
-): Promise<SimpleStorageDeployment> {
-  const simpleStorageFactory = new SimpleStorageSetup__factory();
-  const simpleStoragePluginSetup = await simpleStorageFactory
-    .connect(signer)
-    .deploy();
+): Promise<MyPluginDeployment> {
+  const myPluginFactory = new MyPluginSetup__factory();
+  const myPluginPluginSetup = await myPluginFactory.connect(deployer).deploy();
 
-  const simpleStorageRepoAddress = await deployPlugin(
+  const myPluginRepoAddress = await deployPlugin(
     'simple-storage',
-    simpleStoragePluginSetup.address,
-    await signer.getAddress(),
+    myPluginPluginSetup.address,
+    await deployer.getAddress(),
     osx.pluginRepoFactory
   );
 
-  const simpleStorageRepo = aragonContracts.PluginRepo__factory.connect(
-    simpleStorageRepoAddress,
-    signer
+  const myPluginRepo = aragonContracts.PluginRepo__factory.connect(
+    myPluginRepoAddress,
+    deployer
   );
 
   return {
-    simpleStorageRepo,
-    simpleStorageSetup: simpleStoragePluginSetup,
+    myPluginRepo,
+    myPluginSetup: myPluginPluginSetup,
   };
 }
 
@@ -120,7 +113,7 @@ export async function deployOsxContracts(
   ens: EnsDeployment
 ): Promise<OsxDeployment> {
   try {
-    const { ensRegistry, ensResolver } = ens;
+    const {ensRegistry, ensResolver} = ens;
     const proxyFactory = new ContractFactory(
       ERC1967ABI,
       ERC1967Bytecode,
@@ -326,7 +319,7 @@ async function deployEnsContracts(signer: Signer) {
       await signer.getAddress(),
       publicResolver.address
     );
-    return { ensRegistry: registry, ensResolver: publicResolver };
+    return {ensRegistry: registry, ensResolver: publicResolver};
   } catch (e) {
     throw e;
   }

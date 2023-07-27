@@ -58,9 +58,9 @@ templates:
         - Dao
       abis:
         - name: Plugin
-          file: $PLUGIN_MODULE/artifacts/src/SimpleStorage.sol/SimpleStorage.json
+          file: $PLUGIN_MODULE/artifacts/src/MyPlugin.sol/MyPlugin.json
       eventHandlers:
-        - event: Initialized(uint8) # initialized event from OZ's Initializable abstract contract 
-          handler: handleInitialized
+        - event: NumberStored(uint256)
+          handler: handleNumberStored
       file: ./src/plugin/plugin.ts
 

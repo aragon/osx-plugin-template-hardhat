@@ -191,18 +191,18 @@ export async function findEvent<T>(tx: ContractTransaction, eventName: string) {
   return event as T | undefined;
 }
 
-export async function findEventTopicLog(
+export async function findEventTopicLog<T>(
   tx: ContractTransaction,
   iface: Interface,
   eventName: string
-): Promise<LogDescription> {
+): Promise<LogDescription & (T | LogDescription)> {
   const receipt = await tx.wait();
   const topic = iface.getEventTopic(eventName);
-  const log = receipt.logs.find(x => x.topics[0] == topic);
+  const log = receipt.logs.find(x => x.topics[0] === topic);
   if (!log) {
-    throw new Error(`No logs found for this event ${eventName} topic.`);
+    throw new Error(`No logs found for the topic of event "${eventName}".`);
   }
-  return iface.parseLog(log);
+  return iface.parseLog(log) as LogDescription & (T | LogDescription);
 }
 
 type DeployOptions = {

@@ -9,14 +9,14 @@ import {
   PrepareInstallationStepValue,
 } from '@aragon/sdk-client-common';
 
-export interface ISimpleStorageClient {
-  methods: ISimpleStorageClientMethods;
-  estimation: ISimpleStorageClientEstimation;
-  encoding: ISimpleStorageClientEncoding;
-  decoding: ISimpleStorageClientDecoding;
+export interface IMyPluginClient {
+  methods: IMyPluginClientMethods;
+  estimation: IMyPluginClientEstimation;
+  encoding: IMyPluginClientEncoding;
+  decoding: IMyPluginClientDecoding;
 }
 
-export interface ISimpleStorageClientMethods {
+export interface IMyPluginClientMethods {
   // fill with methods
   prepareInstallation(
     params: PrepareInstallationParams
@@ -24,14 +24,14 @@ export interface ISimpleStorageClientMethods {
   getNumber(daoAddressOrEns: string): Promise<bigint>;
   getNumbers(params: NumbersQueryParams): Promise<NumberListItem[]>;
 }
-export interface ISimpleStorageClientEstimation {
+export interface IMyPluginClientEstimation {
   prepareInstallation(
     params: PrepareInstallationParams
   ): Promise<GasFeeEstimation>;
 }
-export interface ISimpleStorageClientEncoding {
+export interface IMyPluginClientEncoding {
   storeNumberAction(number: bigint): DaoAction;
 }
-export interface ISimpleStorageClientDecoding {
+export interface IMyPluginClientDecoding {
   storeNumberAction(data: Uint8Array): bigint;
 }

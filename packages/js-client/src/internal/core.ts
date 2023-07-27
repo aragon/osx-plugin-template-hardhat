@@ -1,13 +1,13 @@
-import { SimpleStorageContext } from '../context';
-import { ClientCore } from '@aragon/sdk-client-common';
+import {MyPluginContext} from '../context';
+import {ClientCore} from '@aragon/sdk-client-common';
 
-export class SimpleStorageClientCore extends ClientCore {
-  public simpleStoragePluginAddress: string;
-  public simpleStorageRepoAddress: string;
+export class MyPluginClientCore extends ClientCore {
+  public myPluginPluginAddress: string;
+  public myPluginRepoAddress: string;
 
-  constructor(pluginContext: SimpleStorageContext) {
+  constructor(pluginContext: MyPluginContext) {
     super(pluginContext);
-    this.simpleStoragePluginAddress = pluginContext.simpleStoragePluginAddress;
-    this.simpleStorageRepoAddress = pluginContext.simpleStorageRepoAddress;
+    this.myPluginPluginAddress = pluginContext.myPluginPluginAddress;
+    this.myPluginRepoAddress = pluginContext.myPluginRepoAddress;
   }
 }

@@ -1,17 +1,17 @@
 import * as BUILD_METADATA from '../../../../contracts/src/build-metadata.json';
-import { PrepareInstallationParams } from '../../types';
-import { SimpleStorageClientCore } from '../core';
-import { ISimpleStorageClientEstimation } from '../interfaces';
-import { PluginRepo__factory } from '@aragon/osx-ethers';
+import {PrepareInstallationParams} from '../../types';
+import {MyPluginClientCore} from '../core';
+import {IMyPluginClientEstimation} from '../interfaces';
+import {PluginRepo__factory} from '@aragon/osx-ethers';
 import {
   GasFeeEstimation,
   prepareGenericInstallationEstimation,
 } from '@aragon/sdk-client-common';
-import { SimpleStorage__factory } from '@aragon/simple-storage-ethers';
+import {MyPlugin__factory} from '@aragon/simple-storage-ethers';
 
 export class SimpleStoragClientEstimation
-  extends SimpleStorageClientCore
-  implements ISimpleStorageClientEstimation
+  extends MyPluginClientCore
+  implements IMyPluginClientEstimation
 {
   public async prepareInstallation(
     params: PrepareInstallationParams
@@ -23,7 +23,7 @@ export class SimpleStoragClientEstimation
       const signer = this.web3.getConnectedSigner();
       // connect to the plugin repo
       const pluginRepo = PluginRepo__factory.connect(
-        this.simpleStorageRepoAddress,
+        this.myPluginRepoAddress,
         signer
       );
       // get latest release
@@ -37,7 +37,7 @@ export class SimpleStoragClientEstimation
 
     return prepareGenericInstallationEstimation(this.web3, {
       daoAddressOrEns: params.daoAddressOrEns,
-      pluginRepo: this.simpleStorageRepoAddress,
+      pluginRepo: this.myPluginRepoAddress,
       version,
       installationAbi: BUILD_METADATA.pluginSetup.prepareInstallation.inputs,
       installationParams: [params.settings.number],
@@ -46,11 +46,11 @@ export class SimpleStoragClientEstimation
 
   public async storeNumber(number: bigint): Promise<GasFeeEstimation> {
     const signer = this.web3.getConnectedSigner();
-    const simpleStorage = SimpleStorage__factory.connect(
-      this.simpleStoragePluginAddress,
+    const myPlugin = MyPlugin__factory.connect(
+      this.myPluginPluginAddress,
       signer
     );
-    const estimation = await simpleStorage.estimateGas.storeNumber(number);
+    const estimation = await myPlugin.estimateGas.storeNumber(number);
     return this.web3.getApproximateGasFee(estimation.toBigInt());
   }
 }

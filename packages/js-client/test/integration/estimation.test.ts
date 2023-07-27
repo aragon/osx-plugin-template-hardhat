@@ -1,6 +1,6 @@
-import { SimpleStorageClient, SimpleStorageContext } from '../../src';
+import { MyPluginClient, MyPluginContext } from '../../src';
 import { contextParamsLocalChain } from '../constants';
-import { buildSimpleStorageDao } from '../helpers/build-daos';
+import { buildMyPluginDao } from '../helpers/build-daos';
 import * as deployContracts from '../helpers/deploy-contracts';
 import * as ganacheSetup from '../helpers/ganache-setup';
 import {
@@ -23,10 +23,10 @@ describe('Estimation', () => {
   beforeAll(async () => {
     server = await ganacheSetup.start();
     deployment = await deployContracts.deploy();
-    dao = await buildSimpleStorageDao(deployment);
-    contextParamsLocalChain.simpleStorageRepoAddress =
-      deployment.simpleStorageRepo.address;
-    contextParamsLocalChain.simpleStoragePluginAddress = dao!.plugins[0];
+    dao = await buildMyPluginDao(deployment);
+    contextParamsLocalChain.myPluginRepoAddress =
+      deployment.myPluginRepo.address;
+    contextParamsLocalChain.myPluginPluginAddress = dao!.plugins[0];
     contextParamsLocalChain.ensRegistryAddress = deployment.ensRegistry.address;
     LIVE_CONTRACTS.goerli.pluginSetupProcessor =
       deployment.pluginSetupProcessor.address;
@@ -37,8 +37,8 @@ describe('Estimation', () => {
   });
 
   it('Should estimate the gas fees for prepareing an installation', async () => {
-    const context = new SimpleStorageContext(contextParamsLocalChain);
-    const client = new SimpleStorageClient(context);
+    const context = new MyPluginContext(contextParamsLocalChain);
+    const client = new MyPluginClient(context);
     const networkSpy = jest.spyOn(JsonRpcProvider.prototype, 'getNetwork');
     const defaultGetNetworkImplementation = networkSpy.getMockImplementation();
     networkSpy.mockImplementation(() =>
