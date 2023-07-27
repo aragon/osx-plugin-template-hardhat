@@ -1,4 +1,4 @@
-import {ContextState, OverriddenState} from '@aragon/sdk-client-common';
+import { ContextState, OverriddenState } from '@aragon/sdk-client-common';
 
 export type SubgraphNumberListItem = {
   id: string;

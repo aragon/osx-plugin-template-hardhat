@@ -5,11 +5,11 @@ import {
   NumbersSortBy,
   PrepareInstallationParams,
 } from '../../types';
-import {MyPluginClientCore} from '../core';
-import {QueryNumber, QueryNumbers} from '../graphql-queries';
-import {IMyPluginClientMethods} from '../interfaces';
-import {SubgraphNumber, SubgraphNumberListItem} from '../types';
-import {toNumber, toNumberListItem} from '../utils';
+import { MyPluginClientCore } from '../core';
+import { QueryNumber, QueryNumbers } from '../graphql-queries';
+import { IMyPluginClientMethods } from '../interfaces';
+import { SubgraphNumber, SubgraphNumberListItem } from '../types';
+import { toNumber, toNumberListItem } from '../utils';
 import {
   prepareGenericInstallation,
   PrepareInstallationStepValue,
@@ -40,10 +40,10 @@ export class MyPluginClientMethods
   public async getNumber(daoAddressOrEns: string): Promise<bigint> {
     const query = QueryNumber;
     const name = 'Numbers';
-    type T = {dao: SubgraphNumber};
-    const {dao} = await this.graphql.request<T>({
+    type T = { dao: SubgraphNumber };
+    const { dao } = await this.graphql.request<T>({
       query,
-      params: {id: daoAddressOrEns},
+      params: { id: daoAddressOrEns },
       name,
     });
     return toNumber(dao);
@@ -63,14 +63,14 @@ export class MyPluginClientMethods
       sortBy,
     };
     const name = 'Numbers';
-    type T = {daos: SubgraphNumberListItem[]};
-    const {daos} = await this.graphql.request<T>({
+    type T = { daos: SubgraphNumberListItem[] };
+    const { daos } = await this.graphql.request<T>({
       query,
       params,
       name,
     });
     return Promise.all(
-      daos.map(async number => {
+      daos.map(async (number) => {
         return toNumberListItem(number);
       })
     );

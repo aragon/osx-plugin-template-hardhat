@@ -5,7 +5,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const [deployer] = await hre.ethers.getSigners();
 
   console.log(
-    `\Using account "${
+    `Using account "${
       deployer.address
     }" with a balance of ${hre.ethers.utils.formatEther(
       await deployer.getBalance()
