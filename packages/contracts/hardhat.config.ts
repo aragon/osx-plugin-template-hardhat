@@ -21,15 +21,14 @@ if (!process.env.INFURA_API_KEY) {
 }
 
 const apiUrls: NetworkNameMapping = {
-  arbitrumOne: 'https://arbitrumOne.infura.io/v3/',
-  arbitrumGoerli: 'https://arbitrumGoerli.infura.io/v3/',
   mainnet: 'https://mainnet.infura.io/v3/',
   goerli: 'https://goerli.infura.io/v3/',
   polygon: 'https://polygon-mainnet.infura.io/v3/',
   polygonMumbai: 'https://polygon-mumbai.infura.io/v3/',
+  baseGoerli: 'https://goerli.base.org',
 };
 
-const networks: {[index: string]: NetworkUserConfig} = {
+export const networks: {[index: string]: NetworkUserConfig} = {
   hardhat: {
     chainId: 31337,
     forking: {
@@ -37,14 +36,6 @@ const networks: {[index: string]: NetworkUserConfig} = {
         apiUrls[process.env.NETWORK_NAME ? process.env.NETWORK_NAME : 'mainnet']
       }${process.env.INFURA_API_KEY}`,
     },
-  },
-  arbitrumOne: {
-    chainId: 42161,
-    url: `${apiUrls.arbitrumOne}${process.env.INFURA_API_KEY}`,
-  },
-  arbitrumGoerli: {
-    chainId: 421613,
-    url: `${apiUrls.arbitrumGoerli}${process.env.INFURA_API_KEY}`,
   },
   mainnet: {
     chainId: 1,
@@ -61,6 +52,11 @@ const networks: {[index: string]: NetworkUserConfig} = {
   polygonMumbai: {
     chainId: 80001,
     url: `${apiUrls.polygonMumbai}${process.env.INFURA_API_KEY}`,
+  },
+  baseGoerli: {
+    chainId: 84531,
+    url: `${apiUrls.baseGoerli}`,
+    gasPrice: 20000000000,
   },
 };
 
@@ -89,13 +85,22 @@ const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   etherscan: {
     apiKey: {
-      arbitrumOne: process.env.ARBISCAN_API_KEY || '',
-      arbitrumGoerli: process.env.ARBISCAN_API_KEY || '',
       mainnet: process.env.ETHERSCAN_API_KEY || '',
       goerli: process.env.ETHERSCAN_API_KEY || '',
       polygon: process.env.POLYGONSCAN_API_KEY || '',
       polygonMumbai: process.env.POLYGONSCAN_API_KEY || '',
+      baseGoerli: process.env.BASESCAN_API_KEY || '',
     },
+    customChains: [
+      {
+        network: 'baseGoerli',
+        chainId: 84531,
+        urls: {
+          apiURL: 'https://api-goerli.basescan.org/api',
+          browserURL: 'https://goerli.basescan.org',
+        },
+      },
+    ],
   },
 
   namedAccounts: {

@@ -28,5 +28,35 @@
         "releaseMetadataURI": "ipfs://QmVD1gtE5PdjhLuuRcjhiUqmnFXScVZbZ2oXEvXcKnd3b4"
       }
     }
+  },
+  "baseGoerli": {
+    "repo": "test-2",
+    "address": "0xE3Bb449856e0A2A60f16e6bB7E59cEfB073DdAa1",
+    "args": [],
+    "blockNumberOfDeployment": 7850354,
+    "releases": {
+      "1": {
+        "builds": {
+          "1": {
+            "setup": {
+              "name": "MyPluginSetup",
+              "address": "0x604570fA0f83785ea925575d165725170eC316Cc",
+              "args": [],
+              "blockNumberOfDeployment": 7850358
+            },
+            "implementation": {
+              "name": "MyPlugin",
+              "address": "0x634a771777b306ba1B5F4ec85853b997d2Bf6827",
+              "args": [],
+              "blockNumberOfDeployment": 7850358
+            },
+            "helpers": [],
+            "buildMetadataURI": "ipfs://QmY919VZ9gkeF6L169qQo89ucsUB9ScTaJVbGn8vMGGHxr",
+            "blockNumberOfPublication": 7850362
+          }
+        },
+        "releaseMetadataURI": "ipfs://QmVD1gtE5PdjhLuuRcjhiUqmnFXScVZbZ2oXEvXcKnd3b4"
+      }
+    }
   }
 }
