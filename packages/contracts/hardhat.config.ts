@@ -5,6 +5,7 @@ import '@nomiclabs/hardhat-etherscan';
 import '@openzeppelin/hardhat-upgrades';
 import '@typechain/hardhat';
 import {config as dotenvConfig} from 'dotenv';
+import {parseUnits} from 'ethers/lib/utils';
 import 'hardhat-deploy';
 import 'hardhat-gas-reporter';
 import {extendEnvironment, HardhatUserConfig} from 'hardhat/config';
@@ -25,6 +26,7 @@ const apiUrls: NetworkNameMapping = {
   goerli: 'https://goerli.infura.io/v3/',
   polygon: 'https://polygon-mainnet.infura.io/v3/',
   polygonMumbai: 'https://polygon-mumbai.infura.io/v3/',
+  baseMainnet: 'https://developer-access-mainnet.base.org',
   baseGoerli: 'https://goerli.base.org',
 };
 
@@ -53,10 +55,15 @@ export const networks: {[index: string]: NetworkUserConfig} = {
     chainId: 80001,
     url: `${apiUrls.polygonMumbai}${process.env.INFURA_API_KEY}`,
   },
+  baseMainnet: {
+    chainId: 8453,
+    url: `${apiUrls.baseMainnet}`,
+    gasPrice: parseUnits('1.6', 'gwei').toNumber(),
+  },
   baseGoerli: {
     chainId: 84531,
     url: `${apiUrls.baseGoerli}`,
-    gasPrice: 20000000000,
+    gasPrice: parseUnits('20.0', 'gwei').toNumber(),
   },
 };
 
@@ -89,6 +96,7 @@ const config: HardhatUserConfig = {
       goerli: process.env.ETHERSCAN_API_KEY || '',
       polygon: process.env.POLYGONSCAN_API_KEY || '',
       polygonMumbai: process.env.POLYGONSCAN_API_KEY || '',
+      baseMainnet: process.env.BASESCAN_API_KEY || '',
       baseGoerli: process.env.BASESCAN_API_KEY || '',
     },
     customChains: [

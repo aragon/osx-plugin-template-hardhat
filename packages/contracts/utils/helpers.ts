@@ -26,6 +26,7 @@ export const networkNameMapping: NetworkNameMapping = {
   goerli: 'goerli',
   polygon: 'polygon',
   polygonMumbai: 'mumbai',
+  baseMainnet: 'baseMainnet',
   baseGoerli: 'baseGoerli',
 };
 
