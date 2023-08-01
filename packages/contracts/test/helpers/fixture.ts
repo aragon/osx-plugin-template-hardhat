@@ -1,4 +1,4 @@
-import networks from './networks.json';
+import {networks} from '../../hardhat.config';
 import {network} from 'hardhat';
 
 export async function initializeFork(
