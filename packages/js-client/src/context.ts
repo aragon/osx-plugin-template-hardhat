@@ -1,36 +1,34 @@
 import {
   MyPluginContextState,
   MyPluginOverriddenState,
-} from './internal/types';
-import { MyPluginContextParams } from './types';
-import { Context, ContextCore } from '@aragon/sdk-client-common';
+} from "./internal/types";
+import { MyPluginContextParams } from "./types";
+import { Context, ContextCore } from "@aragon/sdk-client-common";
 
 // set your defaults here or import them from a package
-const DEFAULT_SIMPLE_STORAGE_PLUGIN_ADDRESS =
-  '0x1234567890123456789012345678901234567890';
-const DEFAULT_SIMPLE_STORAGE_Repo_ADDRESS =
-  '0x2345678901234567890123456789012345678901';
+const DEFAULT_SIMPLE_STORAGE_REPO_ADDRESS =
+  "0x1234567890123456789012345678901234567890";
 
 export class MyPluginContext extends ContextCore {
   // super is called before the properties are initialized
   // so we initialize them to the value of the parent class
   protected state: MyPluginContextState = this.state;
-  // TODO
-  // fix typo in the overridden property name
+
+  // TODO: fix typo in the overridden property name
   protected overriden: MyPluginOverriddenState = this.overriden;
   constructor(
     contextParams?: Partial<MyPluginContextParams>,
-    aragonContext?: Context
+    aragonContext?: Context,
   ) {
-    // call the parent constructor
-    // so it does not complain and we
-    // can use this
+    // call the parent constructor so it does not complain and we can use this
     super();
+
     // set the context params inherited from the context
     if (aragonContext) {
       // copy the context properties to this
       Object.assign(this, aragonContext);
     }
+
     // contextParams have priority over the aragonContext
     if (contextParams) {
       // overide the context params with the ones passed to the constructor
@@ -42,14 +40,16 @@ export class MyPluginContext extends ContextCore {
     // the super function will call this set
     // so we need to call the parent set first
     super.set(contextParams);
+
     // set the default values for the new params
     this.setDefaults();
+
     // override default params if specified in the context
-    if (contextParams.myPluginPluginAddress) {
-      // override the myPluginPluginAddress value
-      this.state.myPluginPluginAddress = contextParams.myPluginPluginAddress;
+    if (contextParams.myPluginAddress) {
+      // override the myPluginAddress value
+      this.state.myPluginAddress = contextParams.myPluginAddress;
       // set the overriden flag to true in case set is called again
-      this.overriden.myPluginPluginAddress = true;
+      this.overriden.myPluginAddress = true;
     }
 
     if (contextParams.myPluginRepoAddress) {
@@ -59,17 +59,14 @@ export class MyPluginContext extends ContextCore {
   }
 
   private setDefaults() {
-    if (!this.overriden.myPluginPluginAddress) {
-      // set the default value for myPluginPluginAddress
-      this.state.myPluginPluginAddress = DEFAULT_SIMPLE_STORAGE_PLUGIN_ADDRESS;
-    }
-    if (!this.overriden.myPluginPluginAddress) {
-      this.state.myPluginPluginAddress = DEFAULT_SIMPLE_STORAGE_Repo_ADDRESS;
+    // Optional: set the default for parameters that might be known ahead of time
+    if (!this.overriden.myPluginAddress) {
+      this.state.myPluginAddress = DEFAULT_SIMPLE_STORAGE_REPO_ADDRESS;
     }
   }
 
-  get myPluginPluginAddress(): string {
-    return this.state.myPluginPluginAddress;
+  get myPluginAddress(): string {
+    return this.state.myPluginAddress;
   }
 
   get myPluginRepoAddress(): string {
