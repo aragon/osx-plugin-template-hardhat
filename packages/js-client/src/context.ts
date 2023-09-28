@@ -36,7 +36,7 @@ export class MyPluginContext extends ContextCore {
     }
   }
 
-  public set(contextParams: MyPluginContextParams) {
+  public set(contextParams: Partial<MyPluginContextParams>) {
     // the super function will call this set
     // so we need to call the parent set first
     super.set(contextParams);

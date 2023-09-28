@@ -9,7 +9,7 @@ export type MyPluginContextParams = ContextParams & {
   // Those with a default value are optional
 
   myPluginAddress: string;
-  myPluginRepoAddress?: string;
+  myPluginRepoAddress: string;
   // add custom params here
 };
 

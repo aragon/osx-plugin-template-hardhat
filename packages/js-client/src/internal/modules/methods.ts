@@ -96,8 +96,9 @@ export class MyPluginClientMethods extends ClientCore
     newNumber: bigint,
   ): AsyncGenerator<StoreNumberStepValue> {
     const signer = this.web3.getSigner();
-    const storageClient = new MyPlugin__factory(signer).attach(
+    const storageClient = MyPlugin__factory.connect(
       this.myPluginAddress,
+      signer,
     );
 
     const tx = await storageClient.storeNumber(newNumber);
