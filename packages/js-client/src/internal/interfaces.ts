@@ -1,3 +1,4 @@
+import { Networkish } from "@ethersproject/providers";
 import {
   NumberListItem,
   NumbersQueryParams,
@@ -7,6 +8,7 @@ import { StoreNumberStepValue } from "./types";
 import {
   DaoAction,
   GasFeeEstimation,
+  PluginInstallItem,
   PrepareInstallationStepValue,
 } from "@aragon/sdk-client-common";
 
@@ -37,6 +39,10 @@ export interface IMyPluginClientEstimation {
   ): Promise<GasFeeEstimation>;
 }
 export interface IMyPluginClientEncoding {
+  getPluginInstallItem(
+    params: PrepareInstallationParams,
+    network: Networkish,
+  ): PluginInstallItem;
   storeNumberAction(number: bigint): DaoAction;
 }
 export interface IMyPluginClientDecoding {
