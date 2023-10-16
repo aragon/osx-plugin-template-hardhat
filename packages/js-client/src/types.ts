@@ -2,7 +2,7 @@ import {
   ContextParams,
   Pagination,
   VersionTag,
-} from "@aragon/sdk-client-common";
+} from '@aragon/sdk-client-common';
 
 // Parameters to pass to the Context constructor
 export type MyPluginContextParams = ContextParams & {
@@ -27,8 +27,8 @@ export type NumbersQueryParams = Pagination & {
 };
 
 export enum NumbersSortBy {
-  NUMBER = "number",
-  CREATED_AT = "createdAt",
+  NUMBER = 'number',
+  CREATED_AT = 'createdAt',
 }
 
 export type NumberListItem = {

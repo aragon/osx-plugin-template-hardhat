@@ -1,47 +1,45 @@
-import { MyPluginContext } from "../../src";
-import { MyPluginContextParams } from "../../src/types";
-import { ADDRESS_ONE } from "../constants";
+import { MyPluginContext } from '../../src';
+import { MyPluginContextParams } from '../../src/types';
+import { ADDRESS_ONE } from '../constants';
 import {
   Context,
   GRAPHQL_NODES,
   IPFS_NODES,
   LIVE_CONTRACTS,
-} from "@aragon/sdk-client-common";
-import { Client as IpfsClient } from "@aragon/sdk-ipfs";
-import { JsonRpcProvider } from "@ethersproject/providers";
-import { Wallet } from "@ethersproject/wallet";
-import { GraphQLClient } from "graphql-request";
+} from '@aragon/sdk-client-common';
+import { Client as IpfsClient } from '@aragon/sdk-ipfs';
+import { JsonRpcProvider } from '@ethersproject/providers';
+import { Wallet } from '@ethersproject/wallet';
+import { GraphQLClient } from 'graphql-request';
 
-// @ts-ignore
-declare const describe, it, beforeEach, expect;
-
-describe("Context instances", () => {
+describe('Context instances', () => {
   let contextParams: MyPluginContextParams;
   const TEST_WALLET =
-    "8d7d56a9efa4158d232edbeaae601021eb3477ad77b5f3c720601fd74e8e04bb";
+    '8d7d56a9efa4158d232edbeaae601021eb3477ad77b5f3c720601fd74e8e04bb';
   const web3endpoints = {
-    working: ["https://cloudflare-eth.com/"],
-    failing: ["https://bad-url-gateway.io/"],
+    working: ['https://cloudflare-eth.com/'],
+    failing: ['https://bad-url-gateway.io/'],
   };
   beforeEach(() => {
     // reset contextParams
     contextParams = {
       // General parameters
-      network: "mainnet",
+      network: 'mainnet',
       signer: new Wallet(TEST_WALLET),
-      daoFactoryAddress: "0x1234",
+      daoFactoryAddress: '0x1234',
       web3Providers: web3endpoints.working,
       gasFeeEstimationFactor: 0.1,
       graphqlNodes: [],
       ipfsNodes: [],
       // Plugin specific parameters
-      myPluginAddress: "notDefault",
+      myPluginAddress: 'notDefault',
+      myPluginRepoAddress: 'notDefaultRepo',
     };
   });
-  it("Should create an empty context and have default values", () => {
+  it('Should create an empty context and have default values', () => {
     const context = new MyPluginContext();
     expect(context).toBeInstanceOf(MyPluginContext);
-    expect(context.network.name).toBe("homestead");
+    expect(context.network.name).toBe('homestead');
     expect(context.network.chainId).toBe(1);
     expect(context.daoFactoryAddress).toBe(LIVE_CONTRACTS.homestead.daoFactory);
     expect(context.ensRegistryAddress).toBe(context.network.ensAddress);
@@ -50,7 +48,7 @@ describe("Context instances", () => {
     expect(context.ipfs.length).toBe(IPFS_NODES.homestead.length);
     expect(context.graphql.length).toBe(GRAPHQL_NODES.homestead.length);
     expect(context.myPluginAddress).toBe(
-      "0x2345678901234567890123456789012345678901",
+      '0x2345678901234567890123456789012345678901'
     );
     context.web3Providers.map((provider) => {
       expect(provider).toBeInstanceOf(JsonRpcProvider);
@@ -62,16 +60,16 @@ describe("Context instances", () => {
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
   });
-  it("Should create a context and have the correct values", () => {
+  it('Should create a context and have the correct values', () => {
     const context = new MyPluginContext(contextParams);
 
     expect(context).toBeInstanceOf(MyPluginContext);
-    expect(context.network.name).toBe("homestead");
+    expect(context.network.name).toBe('homestead');
     expect(context.network.chainId).toBe(1);
     expect(context.daoFactoryAddress).toBe(contextParams.daoFactoryAddress);
     expect(context.ensRegistryAddress).toBe(context.network.ensAddress);
     expect(context.gasFeeEstimationFactor).toBe(
-      contextParams.gasFeeEstimationFactor,
+      contextParams.gasFeeEstimationFactor
     );
     context.web3Providers.map((provider) =>
       expect(provider).toBeInstanceOf(JsonRpcProvider)
@@ -82,27 +80,29 @@ describe("Context instances", () => {
     context.graphql.map((graphqlClient) =>
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
-    expect(context.myPluginAddress).toBe("notDefault");
+    expect(context.myPluginAddress).toBe('notDefault');
+    expect(context.myPluginRepoAddress).toBe('notDefaultRepo');
   });
-  it("Should set a new context and have the correct values", () => {
+  it('Should set a new context and have the correct values', () => {
     const context = new MyPluginContext(contextParams);
     contextParams = {
-      network: "goerli",
+      network: 'goerli',
       signer: new Wallet(TEST_WALLET),
-      daoFactoryAddress: "0x2345",
+      daoFactoryAddress: '0x2345',
       web3Providers: web3endpoints.working,
       gasFeeEstimationFactor: 0.1,
-      ipfsNodes: [{ url: "https://localhost", headers: {} }],
-      graphqlNodes: [{ url: "https://localhost" }],
-      myPluginAddress: "notDefault",
+      ipfsNodes: [{ url: 'https://localhost', headers: {} }],
+      graphqlNodes: [{ url: 'https://localhost' }],
+      myPluginAddress: 'notDefault',
+      myPluginRepoAddress: 'notDefaultRepo',
     };
     context.set(contextParams);
 
     expect(context).toBeInstanceOf(MyPluginContext);
-    expect(context.network.name).toEqual("goerli");
+    expect(context.network.name).toEqual('goerli');
     expect(context.network.chainId).toEqual(5);
     expect(context.signer).toBeInstanceOf(Wallet);
-    expect(context.daoFactoryAddress).toEqual("0x2345");
+    expect(context.daoFactoryAddress).toEqual('0x2345');
     context.web3Providers?.map((provider) =>
       expect(provider).toBeInstanceOf(JsonRpcProvider)
     );
@@ -113,15 +113,16 @@ describe("Context instances", () => {
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
     expect(context.gasFeeEstimationFactor).toEqual(0.1);
-    expect(context.myPluginAddress).toBe("notDefault");
+    expect(context.myPluginAddress).toBe('notDefault');
+    expect(context.myPluginRepoAddress).toBe('notDefaultRepo');
   });
-  it("Should create a context in goerli, update the network and update all the parameters automatically", () => {
+  it('Should create a context in goerli, update the network and update all the parameters automatically', () => {
     const context = new MyPluginContext({
-      network: "goerli",
-      web3Providers: "https://eth-goerli.g.alchemy.com/v2/demo",
+      network: 'goerli',
+      web3Providers: 'https://eth-goerli.g.alchemy.com/v2/demo',
     });
     expect(context).toBeInstanceOf(MyPluginContext);
-    expect(context.network.name).toBe("goerli");
+    expect(context.network.name).toBe('goerli');
     expect(context.network.chainId).toBe(5);
     expect(context.daoFactoryAddress).toBe(LIVE_CONTRACTS.goerli.daoFactory);
     expect(context.ensRegistryAddress).toBe(context.network.ensAddress);
@@ -140,14 +141,14 @@ describe("Context instances", () => {
     );
 
     expect(context.myPluginAddress).toBe(
-      "0x2345678901234567890123456789012345678901",
+      '0x2345678901234567890123456789012345678901'
     );
     context.set({
-      network: "matic",
-      web3Providers: "https://polygon-rpc.com/",
-      myPluginAddress: "otherValue",
+      network: 'matic',
+      web3Providers: 'https://polygon-rpc.com/',
+      myPluginAddress: 'otherValue',
     });
-    expect(context.network.name).toBe("matic");
+    expect(context.network.name).toBe('matic');
     expect(context.network.chainId).toBe(137);
     expect(context.daoFactoryAddress).toBe(LIVE_CONTRACTS.matic.daoFactory);
     expect(context.ensRegistryAddress).toBe(LIVE_CONTRACTS.matic.ensRegistry);
@@ -164,16 +165,16 @@ describe("Context instances", () => {
     context.graphql.map((graphqlClient) =>
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
-    expect(context.myPluginAddress).toBe("otherValue");
+    expect(context.myPluginAddress).toBe('otherValue');
   });
-  it("Should create an empty context, update the network and update all the parameters automatically", () => {
+  it('Should create an empty context, update the network and update all the parameters automatically', () => {
     const context = new MyPluginContext();
     expect(context).toBeInstanceOf(MyPluginContext);
     context.set({
-      network: "matic",
-      web3Providers: "https://polygon-rpc.com/",
+      network: 'matic',
+      web3Providers: 'https://polygon-rpc.com/',
     });
-    expect(context.network.name).toBe("matic");
+    expect(context.network.name).toBe('matic');
     expect(context.network.chainId).toBe(137);
     expect(context.daoFactoryAddress).toBe(LIVE_CONTRACTS.matic.daoFactory);
     expect(context.ensRegistryAddress).toBe(LIVE_CONTRACTS.matic.ensRegistry);
@@ -191,28 +192,28 @@ describe("Context instances", () => {
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
   });
-  it("Should Change the network and update all the parameters", () => {
+  it('Should Change the network and update all the parameters', () => {
     const context = new MyPluginContext();
     context.set({
       ensRegistryAddress: ADDRESS_ONE,
       graphqlNodes: [
         {
-          url: "https://example.com/1",
+          url: 'https://example.com/1',
         },
         {
-          url: "https://example.com/2",
+          url: 'https://example.com/2',
         },
         {
-          url: "https://example.com/3",
+          url: 'https://example.com/3',
         },
       ],
     });
     // Make sure that the prvious propertis are not modified
     // with the networ change becaouse now they are on manual
     // mode
-    context.set({ network: "matic" });
+    context.set({ network: 'matic' });
     expect(context).toBeInstanceOf(MyPluginContext);
-    expect(context.network.name).toBe("matic");
+    expect(context.network.name).toBe('matic');
     expect(context.network.chainId).toBe(137);
     expect(context.daoFactoryAddress).toBe(LIVE_CONTRACTS.matic.daoFactory);
     expect(context.ensRegistryAddress).toBe(ADDRESS_ONE);
@@ -230,58 +231,58 @@ describe("Context instances", () => {
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
   });
-  it("Should create a context with invalid network and fail", () => {
-    contextParams.network = "notexistingnetwork";
+  it('Should create a context with invalid network and fail', () => {
+    contextParams.network = 'notexistingnetwork';
 
     expect(() => {
       new MyPluginContext(contextParams);
     }).toThrow();
   });
-  it("Should create a context with invalid gas fee estimation factor and fail", () => {
+  it('Should create a context with invalid gas fee estimation factor and fail', () => {
     contextParams.gasFeeEstimationFactor = 1.1;
 
     expect(() => {
       new MyPluginContext(contextParams);
     }).toThrow();
   });
-  it("Should create a context with the correct DAOFactory address from the core-contracts-package", () => {
-    contextParams.daoFactoryAddress = "";
-    contextParams.network = "matic";
+  it('Should create a context with the correct DAOFactory address from the core-contracts-package', () => {
+    contextParams.daoFactoryAddress = '';
+    contextParams.network = 'matic';
     const context = new MyPluginContext(contextParams);
 
     expect(context).toBeInstanceOf(MyPluginContext);
-    expect(context.network.name).toEqual("matic");
+    expect(context.network.name).toEqual('matic');
     context.web3Providers?.map((provider) =>
       provider.getNetwork().then((nw) => {
         expect(nw.chainId).toEqual(137);
-        expect(nw.name).toEqual("matic");
+        expect(nw.name).toEqual('matic');
         expect(nw.ensAddress).toEqual(LIVE_CONTRACTS.matic.ensRegistry);
       })
     );
     expect(context.daoFactoryAddress).toEqual(LIVE_CONTRACTS.matic.daoFactory);
     expect(context.ensRegistryAddress).toEqual(
-      LIVE_CONTRACTS.matic.ensRegistry,
+      LIVE_CONTRACTS.matic.ensRegistry
     );
   });
 
-  it("it should use a context to initialize the MyPluginContext", () => {
+  it('it should use a context to initialize the MyPluginContext', () => {
     const context = new Context(contextParams);
     const myPluginContext = new MyPluginContext(
       {
-        myPluginAddress: "notDefault",
+        myPluginAddress: 'notDefault',
       },
-      context,
+      context
     );
-    expect(myPluginContext.network.name).toBe("homestead");
+    expect(myPluginContext.network.name).toBe('homestead');
     expect(myPluginContext.network.chainId).toBe(1);
     expect(myPluginContext.daoFactoryAddress).toBe(
-      contextParams.daoFactoryAddress,
+      contextParams.daoFactoryAddress
     );
     expect(myPluginContext.ensRegistryAddress).toBe(
-      myPluginContext.network.ensAddress,
+      myPluginContext.network.ensAddress
     );
     expect(myPluginContext.gasFeeEstimationFactor).toBe(
-      contextParams.gasFeeEstimationFactor,
+      contextParams.gasFeeEstimationFactor
     );
     myPluginContext.web3Providers.map((provider) =>
       expect(provider).toBeInstanceOf(JsonRpcProvider)
@@ -292,6 +293,6 @@ describe("Context instances", () => {
     myPluginContext.graphql.map((graphqlClient) =>
       expect(graphqlClient).toBeInstanceOf(GraphQLClient)
     );
-    expect(myPluginContext.myPluginAddress).toBe("notDefault");
+    expect(myPluginContext.myPluginAddress).toBe('notDefault');
   });
 });

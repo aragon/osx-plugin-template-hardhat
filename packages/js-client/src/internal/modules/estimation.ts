@@ -1,17 +1,19 @@
-import * as BUILD_METADATA from "../../../../contracts/src/build-metadata.json";
-import { MyPluginContext } from "../../context";
-import { PrepareInstallationParams } from "../../types";
-import { IMyPluginClientEstimation } from "../interfaces";
-import { PluginRepo__factory } from "@aragon/osx-ethers";
-import { MyPlugin__factory } from "../../../../contracts/typechain";
+import * as BUILD_METADATA from '../../../../contracts/src/build-metadata.json';
+import { MyPlugin__factory } from '../../../../contracts/typechain';
+import { MyPluginContext } from '../../context';
+import { PrepareInstallationParams } from '../../types';
+import { IMyPluginClientEstimation } from '../interfaces';
+import { PluginRepo__factory } from '@aragon/osx-ethers';
 import {
   ClientCore,
   GasFeeEstimation,
   prepareGenericInstallationEstimation,
-} from "@aragon/sdk-client-common";
+} from '@aragon/sdk-client-common';
 
-export class SimpleStoragClientEstimation extends ClientCore
-  implements IMyPluginClientEstimation {
+export class SimpleStoragClientEstimation
+  extends ClientCore
+  implements IMyPluginClientEstimation
+{
   private myPluginRepoAddress: string;
   private myPluginAddress: string;
 
@@ -23,7 +25,7 @@ export class SimpleStoragClientEstimation extends ClientCore
   }
 
   public async prepareInstallation(
-    params: PrepareInstallationParams,
+    params: PrepareInstallationParams
   ): Promise<GasFeeEstimation> {
     let version = params.version;
     // if not specified use the lates version
@@ -33,13 +35,13 @@ export class SimpleStoragClientEstimation extends ClientCore
       // connect to the plugin repo
       const pluginRepo = PluginRepo__factory.connect(
         this.myPluginRepoAddress,
-        signer,
+        signer
       );
       // get latest release
       const currentRelease = await pluginRepo.latestRelease();
       // get latest version
-      const latestVersion = await pluginRepo["getLatestVersion(uint8)"](
-        currentRelease,
+      const latestVersion = await pluginRepo['getLatestVersion(uint8)'](
+        currentRelease
       );
       version = latestVersion.tag;
     }
@@ -55,10 +57,7 @@ export class SimpleStoragClientEstimation extends ClientCore
 
   public async storeNumber(number: bigint): Promise<GasFeeEstimation> {
     const signer = this.web3.getConnectedSigner();
-    const myPlugin = MyPlugin__factory.connect(
-      this.myPluginAddress,
-      signer,
-    );
+    const myPlugin = MyPlugin__factory.connect(this.myPluginAddress, signer);
     const estimation = await myPlugin.estimateGas.storeNumber(number);
     return this.web3.getApproximateGasFee(estimation.toBigInt());
   }

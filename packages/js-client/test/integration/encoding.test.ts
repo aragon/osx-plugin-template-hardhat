@@ -1,17 +1,17 @@
-import { MyPluginClient, MyPluginContext } from "../../src";
-import { contextParamsLocalChain } from "../constants";
-import { buildMyPluginDao } from "../helpers/build-daos";
-import * as deployContracts from "../helpers/deploy-contracts";
-import * as ganacheSetup from "../helpers/ganache-setup";
-import { ContextCore, SupportedNetworksArray } from "@aragon/sdk-client-common";
-import { Server } from "ganache";
+import { MyPluginClient, MyPluginContext } from '../../src';
+import { contextParamsLocalChain } from '../constants';
+import { buildMyPluginDao } from '../helpers/build-daos';
+import * as deployContracts from '../helpers/deploy-contracts';
+import * as ganacheSetup from '../helpers/ganache-setup';
+import { ContextCore, SupportedNetworksArray } from '@aragon/sdk-client-common';
+import { Server } from 'ganache';
 
-jest.spyOn(SupportedNetworksArray, "includes").mockReturnValue(true);
+jest.spyOn(SupportedNetworksArray, 'includes').mockReturnValue(true);
 jest
-  .spyOn(ContextCore.prototype, "network", "get")
-  .mockReturnValue({ chainId: 5, name: "goerli" });
+  .spyOn(ContextCore.prototype, 'network', 'get')
+  .mockReturnValue({ chainId: 5, name: 'goerli' });
 
-describe("Encoding", () => {
+describe('Encoding', () => {
   let server: Server;
   let deployment: deployContracts.Deployment;
   beforeAll(async () => {
@@ -28,7 +28,7 @@ describe("Encoding", () => {
     server.close();
   });
 
-  it("should encode an action", async () => {
+  it('should encode an action', async () => {
     const ctx = new MyPluginContext(contextParamsLocalChain);
     const client = new MyPluginClient(ctx);
     const num = BigInt(2);

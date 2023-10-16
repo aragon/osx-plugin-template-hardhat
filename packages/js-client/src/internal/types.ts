@@ -1,4 +1,4 @@
-import { ContextState, OverriddenState } from "@aragon/sdk-client-common";
+import { ContextState, OverriddenState } from '@aragon/sdk-client-common';
 
 export type SubgraphNumberListItem = {
   id: string;
@@ -21,19 +21,19 @@ export type MyPluginContextState = ContextState & {
   myPluginRepoAddress: string;
 };
 
-export type MyPluginOverriddenState =
-  & OverriddenState
-  & {
-    [key in keyof MyPluginContextState]: boolean;
-  };
+export type MyPluginOverriddenState = OverriddenState & {
+  [key in keyof MyPluginContextState]: boolean;
+};
 
 export enum StoreNumberStep {
-  SETTING = "setting",
-  DONE = "done",
+  SETTING = 'setting',
+  DONE = 'done',
 }
-export type StoreNumberStepValue = {
-  status: StoreNumberStep.SETTING;
-  txHash: string;
-} | {
-  status: StoreNumberStep.DONE;
-};
+export type StoreNumberStepValue =
+  | {
+      status: StoreNumberStep.SETTING;
+      txHash: string;
+    }
+  | {
+      status: StoreNumberStep.DONE;
+    };

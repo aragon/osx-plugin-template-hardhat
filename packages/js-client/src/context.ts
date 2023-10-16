@@ -1,13 +1,13 @@
 import {
   MyPluginContextState,
   MyPluginOverriddenState,
-} from "./internal/types";
-import { MyPluginContextParams } from "./types";
-import { Context, ContextCore } from "@aragon/sdk-client-common";
+} from './internal/types';
+import { MyPluginContextParams } from './types';
+import { Context, ContextCore } from '@aragon/sdk-client-common';
 
 // set your defaults here or import them from a package
 const DEFAULT_SIMPLE_STORAGE_REPO_ADDRESS =
-  "0x1234567890123456789012345678901234567890";
+  '0x1234567890123456789012345678901234567890';
 
 export class MyPluginContext extends ContextCore {
   // super is called before the properties are initialized
@@ -18,7 +18,7 @@ export class MyPluginContext extends ContextCore {
   protected overriden: MyPluginOverriddenState = this.overriden;
   constructor(
     contextParams?: Partial<MyPluginContextParams>,
-    aragonContext?: Context,
+    aragonContext?: Context
   ) {
     // call the parent constructor so it does not complain and we can use this
     super();

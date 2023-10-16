@@ -1,4 +1,4 @@
-import { MyPluginContext } from "./context";
+import { MyPluginContext } from './context';
 import {
   IMyPluginClient,
   IMyPluginClientDecoding,
@@ -9,7 +9,7 @@ import {
   MyPluginClientEncoding,
   MyPluginClientMethods,
   SimpleStoragClientEstimation,
-} from "./internal";
+} from './internal';
 
 export class MyPluginClient implements IMyPluginClient {
   public methods: IMyPluginClientMethods;
@@ -22,5 +22,20 @@ export class MyPluginClient implements IMyPluginClient {
     this.estimation = new SimpleStoragClientEstimation(pluginContext);
     this.encoding = new MyPluginClientEncoding(pluginContext);
     this.decoding = new MyPluginClientDecoding(pluginContext);
+  }
+
+  get web3() {
+    const client = this.methods as MyPluginClientMethods;
+    return client.web3;
+  }
+
+  get ipfs() {
+    const client = this.methods as MyPluginClientMethods;
+    return client.ipfs;
+  }
+
+  get graphql() {
+    const client = this.methods as MyPluginClientMethods;
+    return client.graphql;
   }
 }

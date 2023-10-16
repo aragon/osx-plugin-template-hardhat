@@ -1,30 +1,32 @@
-import * as BUILD_METADATA from "../../../../contracts/src/build-metadata.json";
-import { MyPluginContext } from "../../context";
+import * as BUILD_METADATA from '../../../../contracts/src/build-metadata.json';
+import { MyPlugin__factory } from '../../../../contracts/typechain';
+import { MyPluginContext } from '../../context';
 import {
   NumberListItem,
   NumbersQueryParams,
   NumbersSortBy,
   PrepareInstallationParams,
-} from "../../types";
-import { MyPlugin__factory } from "../../../../contracts/typechain";
-import { QueryNumber, QueryNumbers } from "../graphql-queries";
-import { IMyPluginClientMethods } from "../interfaces";
+} from '../../types';
+import { QueryNumber, QueryNumbers } from '../graphql-queries';
+import { IMyPluginClientMethods } from '../interfaces';
 import {
   StoreNumberStep,
   StoreNumberStepValue,
   SubgraphNumber,
   SubgraphNumberListItem,
-} from "../types";
-import { toNumber, toNumberListItem } from "../utils";
+} from '../types';
+import { toNumber, toNumberListItem } from '../utils';
 import {
   ClientCore,
   prepareGenericInstallation,
   PrepareInstallationStepValue,
   SortDirection,
-} from "@aragon/sdk-client-common";
+} from '@aragon/sdk-client-common';
 
-export class MyPluginClientMethods extends ClientCore
-  implements IMyPluginClientMethods {
+export class MyPluginClientMethods
+  extends ClientCore
+  implements IMyPluginClientMethods
+{
   private myPluginRepoAddress: string;
   private myPluginAddress: string;
 
@@ -37,7 +39,7 @@ export class MyPluginClientMethods extends ClientCore
 
   // implementation of the methods in the interface
   public async *prepareInstallation(
-    params: PrepareInstallationParams,
+    params: PrepareInstallationParams
   ): AsyncGenerator<PrepareInstallationStepValue> {
     // do any additionall custom operations here before you prepare your plugin
 
@@ -54,7 +56,7 @@ export class MyPluginClientMethods extends ClientCore
 
   public async getNumber(daoAddressOrEns: string): Promise<bigint> {
     const query = QueryNumber;
-    const name = "Numbers";
+    const name = 'Numbers';
     type T = { dao: SubgraphNumber };
     const { dao } = await this.graphql.request<T>({
       query,
@@ -77,7 +79,7 @@ export class MyPluginClientMethods extends ClientCore
       direction,
       sortBy,
     };
-    const name = "Numbers";
+    const name = 'Numbers';
     type T = { daos: SubgraphNumberListItem[] };
     const { daos } = await this.graphql.request<T>({
       query,
@@ -87,18 +89,18 @@ export class MyPluginClientMethods extends ClientCore
     return Promise.all(
       daos.map(async (number) => {
         return toNumberListItem(number);
-      }),
+      })
     );
   }
 
   // implementation of the methods in the interface
   public async *storeNumber(
-    newNumber: bigint,
+    newNumber: bigint
   ): AsyncGenerator<StoreNumberStepValue> {
     const signer = this.web3.getSigner();
     const storageClient = MyPlugin__factory.connect(
       this.myPluginAddress,
-      signer,
+      signer
     );
 
     const tx = await storageClient.storeNumber(newNumber);
