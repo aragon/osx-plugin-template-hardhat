@@ -9,9 +9,9 @@ export async function uploadToIPFS(content: string): Promise<string> {
     },
   });
 
-  const cid = await client.add(content);
-  await client.pin.add(cid.cid);
-  return cid.path;
+  const res = await client.add(content);
+  await client.pin.add(res.cid);
+  return res.cid.toString();
 }
 
 export function toHex(input: string): BytesLike {
