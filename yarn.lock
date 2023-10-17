@@ -17,17 +17,17 @@
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/osx-ethers@^1.3.0-rc0.1":
-  version "1.3.0-rc0.1"
-  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0-rc0.1.tgz#d8168205d76edfae42e961d5eab5e545c1bacb99"
-  integrity sha512-KjaEoIXG6+P6cxfX2FzmlTc+A67+l44FxpnSSW0GljyI5kcdFlXIrsgOeyj8iIcKo2iHsCkPibjjNgSc3sP6QA==
+"@aragon/osx-ethers@1.3.0-rc0.3", "@aragon/osx-ethers@^1.3.0-rc0.3":
+  version "1.3.0-rc0.3"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0-rc0.3.tgz#53c7ee2888e25704932e4450c1518014cb383093"
+  integrity sha512-8hjNtAni7rGygtZDScJuCUh0QnA5q6gF8zhQycyhCvvjwakxWouLFEySpBPIYoFsMziqFa4E2uu/XyNHQb+YiQ==
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/osx@^1.3.0-rc0.1":
-  version "1.3.0-rc0.1"
-  resolved "https://registry.yarnpkg.com/@aragon/osx/-/osx-1.3.0-rc0.1.tgz#284133efcea4d9c142a24179bc1be6d808f91e6b"
-  integrity sha512-JGfomBRqeHii6qLRUVmmu+s2xsSHIw0RD3Q38ZFN6P0TiYPK5BVnDnWKpC/6uBdxFrwUi3HwWCMevYEr5nBH/w==
+"@aragon/osx@^1.3.0-rc0.3":
+  version "1.3.0-rc0.3"
+  resolved "https://registry.yarnpkg.com/@aragon/osx/-/osx-1.3.0-rc0.3.tgz#d35ff40ccbb1b7e24f0c74ecb31953e14d79be73"
+  integrity sha512-QRxS2jXxYir6p94zjhjfc6HH1R+3D48p0DcMU0nYAzKIhjPXORfEpLTk49CkqldhQkCZZXXKYCwNZ97XzHC00g==
   dependencies:
     "@ensdomains/ens-contracts" "0.0.11"
     "@openzeppelin/contracts" "4.8.1"
