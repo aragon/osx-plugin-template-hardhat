@@ -20,6 +20,8 @@ on:
       - '.github/workflows/js-client-*.yml'
 
 jobs:
+  formatting-linting:
+    uses: ./.github/workflows/formatting-linting.yml
   build-js:
     if: ${{ github.actor != 'arabot-1' || inputs.run }}
     name: Build, lint, and test on Node ${{ matrix.node }} and ${{ matrix.os }}

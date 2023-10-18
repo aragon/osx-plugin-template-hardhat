@@ -1,9 +1,5 @@
 name: 'subgraph'
 
-env:
-  INFURA_API_KEY: ${{secrets.INFURA_API_KEY}}
-  working-directory: packages/subgraph
-
 on:
   workflow_dispatch:
   push:
@@ -12,11 +8,13 @@ on:
       - '.github/workflows/subgraph-*.yml'
 
 jobs:
+  formatting-linting:
+    uses: ./.github/workflows/formatting-linting.yml
   tests:
     runs-on: 'ubuntu-latest'
     defaults:
       run:
-        working-directory: ${{env.working-directory}}
+        working-directory: packages/subgraph
     steps:
       - name: 'Check out the repo'
         uses: 'actions/checkout@v3'
@@ -30,12 +28,10 @@ jobs:
       - name: 'Install the dependencies'
         run: 'yarn install'
 
-      - name: 'Lint the code'
-        run: 'yarn lint'
-
       - name: 'Build the subgraph'
         run: 'yarn build'
         env:
+          INFURA_API_KEY: ${{secrets.INFURA_API_KEY}}
           NETWORK_NAME: 'goerli'
 
       - name: 'Test the subgraph'

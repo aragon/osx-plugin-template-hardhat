@@ -1,19 +1,12 @@
-name: 'formatting'
-
-env:
-  INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
-  working-directory: .
+name: 'formatting & linting'
 
 on:
   workflow_dispatch:
-  push:
+  workflow_call:
 
 jobs:
   checks:
     runs-on: 'ubuntu-latest'
-    defaults:
-      run:
-        working-directory: ${{env.working-directory}}
     steps:
       - name: 'Check out the repo'
         uses: 'actions/checkout@v3'
@@ -29,3 +22,6 @@ jobs:
 
       - name: 'Check code formatting'
         run: yarn prettier:check
+
+      - name: 'Check code linting'
+        run: yarn lint

@@ -1,9 +1,5 @@
 name: 'contracts'
 
-env:
-  INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
-  working-directory: packages/contracts
-
 on:
   workflow_dispatch:
   push:
@@ -12,11 +8,13 @@ on:
       - '.github/workflows/contracts-*.yml'
 
 jobs:
+  formatting-linting:
+    uses: ./.github/workflows/formatting-linting.yml
   tests:
     runs-on: 'ubuntu-latest'
     defaults:
       run:
-        working-directory: ${{env.working-directory}}
+        working-directory: packages/contracts
     steps:
       - name: 'Check out the repo'
         uses: 'actions/checkout@v3'
@@ -30,14 +28,12 @@ jobs:
       - name: 'Install the dependencies'
         run: 'yarn install'
 
-      - name: 'Lint the code'
-        run: 'yarn lint'
-        working-directory: packages/contracts
-
       - name: 'Build the contracts'
         run: 'yarn build'
-        working-directory: packages/contracts
+        env:
+          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }} 
 
       - name: 'Test the contracts and generate the coverage report'
         run: 'yarn coverage'
-        working-directory: packages/contracts
+        env:
+          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }} 
