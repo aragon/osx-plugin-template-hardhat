@@ -12,9 +12,6 @@ import { JsonRpcProvider } from '@ethersproject/providers';
 import { Wallet } from '@ethersproject/wallet';
 import { GraphQLClient } from 'graphql-request';
 
-// @ts-ignore
-declare const describe, it, beforeEach, expect;
-
 describe('Context instances', () => {
   let contextParams: MyPluginContextParams;
   const TEST_WALLET =

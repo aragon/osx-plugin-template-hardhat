@@ -21,7 +21,7 @@ describe('Decoding', () => {
     const dao = await buildMyPluginDao(deployment);
     contextParamsLocalChain.myPluginRepoAddress =
       deployment.myPluginRepo.address;
-    contextParamsLocalChain.myPluginPluginAddress = dao!.plugins[0];
+    contextParamsLocalChain.myPluginPluginAddress = dao.plugins[0];
     contextParamsLocalChain.ensRegistryAddress = deployment.ensRegistry.address;
   });
 
