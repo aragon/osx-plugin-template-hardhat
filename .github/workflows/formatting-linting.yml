@@ -23,7 +23,7 @@ jobs:
       - name: 'Check code formatting'
         run: yarn prettier:check
 
-      - name: 'Lint contracts solitidy'
+      - name: 'Lint contracts solidity'
         run: yarn lint:contracts:sol >> $GITHUB_STEP_SUMMARY
 
       - name: 'Lint contracts ts and js'
