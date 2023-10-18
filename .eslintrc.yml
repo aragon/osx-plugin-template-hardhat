@@ -18,10 +18,10 @@ rules:
     - argsIgnorePattern: '_'
       varsIgnorePattern: '_'
 
-ignorePatterns: 
-  - "*.log"
-  - "*.env"
-  - ".env"
-  - ".DS_Store"
+ignorePatterns:
+  - '*.log'
+  - '*.env'
+  - '.env'
+  - '.DS_Store'
   - .pnp.*
-  - "node_modules"
+  - 'node_modules'

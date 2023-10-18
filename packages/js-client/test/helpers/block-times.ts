@@ -1,4 +1,4 @@
-import { JsonRpcProvider } from '@ethersproject/providers';
+import {JsonRpcProvider} from '@ethersproject/providers';
 
 export function mineBlock(provider: JsonRpcProvider) {
   return provider.send('evm_mine', []);

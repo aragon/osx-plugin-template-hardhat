@@ -1,8 +1,4 @@
-import {
-  ContextParams,
-  Pagination,
-  VersionTag,
-} from '@aragon/sdk-client-common';
+import {ContextParams, Pagination, VersionTag} from '@aragon/sdk-client-common';
 
 export type MyPluginContextParams = ContextParams & {
   // optional so we can set default values for the parameter
