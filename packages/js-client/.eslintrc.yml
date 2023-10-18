@@ -1,0 +1,8 @@
+parser: '@typescript-eslint/parser'
+parserOptions:
+  project: './packages/js-client/tsconfig.json'
+
+# Custom eslint settings for the js-client can be defined here
+ignorePatterns:
+  - dist/
+  - test-environment.js
