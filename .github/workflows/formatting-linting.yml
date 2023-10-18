@@ -21,7 +21,7 @@ jobs:
         run: 'yarn install'
 
       - name: 'Check code formatting'
-        run: yarn prettier:check >> $GITHUB_STEP_SUMMARY
+        run: yarn prettier:check
 
       - name: 'Lint contracts solitidy'
         run: yarn lint:contracts:sol >> $GITHUB_STEP_SUMMARY
