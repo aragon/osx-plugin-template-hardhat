@@ -59,13 +59,13 @@ jobs:
         working-directory: packages/js-client
 
       - name: Integration test
-        run: yarn test integration --ci --coverage --passWithNoTests
+        run: yarn test integration --ci --coverage --passWithNoTests >> $GITHUB_STEP_SUMMARY
         working-directory: packages/js-client
         env:
           IPFS_API_KEY: ${{ secrets.IPFS_API_KEY }}
 
       - name: Run unit tests
-        run: yarn test --testPathIgnorePatterns=/integration --ci --coverage  --passWithNoTests
+        run: yarn test --testPathIgnorePatterns=/integration --ci --coverage  --passWithNoTests >> $GITHUB_STEP_SUMMARY
         working-directory: packages/js-client
         env:
           IPFS_API_KEY: ${{ secrets.IPFS_API_KEY }}

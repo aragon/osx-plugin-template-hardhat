@@ -34,6 +34,6 @@ jobs:
           INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
 
       - name: 'Test the contracts and generate the coverage report'
-        run: 'yarn coverage'
+        run: 'yarn coverage >> $GITHUB_STEP_SUMMARY'
         env:
           INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}

@@ -35,4 +35,4 @@ jobs:
           NETWORK_NAME: 'goerli'
 
       - name: 'Test the subgraph'
-        run: 'yarn test'
+        run: 'yarn test >> $GITHUB_STEP_SUMMARY'
