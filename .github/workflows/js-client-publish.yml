@@ -9,6 +9,8 @@ on:
       - '.github/workflows/js-client-*.yml'
 
 jobs:
+  formatting-linting:
+    uses: ./.github/workflows/formatting-linting.yml
   check_tag:
     runs-on: ubuntu-latest
     outputs:
@@ -59,7 +61,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           cache: 'yarn'
-          node-version: 16.x
+          node-version: 18
           registry-url: https://registry.npmjs.org
       - name: Install deps
         run: yarn install --frozen-lockfile

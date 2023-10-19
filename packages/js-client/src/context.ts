@@ -1,9 +1,6 @@
-import {
-  MyPluginContextState,
-  MyPluginOverriddenState,
-} from './internal/types';
-import { MyPluginContextParams } from './types';
-import { Context, ContextCore } from '@aragon/sdk-client-common';
+import {MyPluginContextState, MyPluginOverriddenState} from './internal/types';
+import {MyPluginContextParams} from './types';
+import {Context, ContextCore} from '@aragon/sdk-client-common';
 
 // set your defaults here or import them from a package
 const DEFAULT_SIMPLE_STORAGE_PLUGIN_ADDRESS =

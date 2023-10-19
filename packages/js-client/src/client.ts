@@ -1,4 +1,4 @@
-import { MyPluginContext } from './context';
+import {MyPluginContext} from './context';
 import {
   IMyPluginClient,
   IMyPluginClientDecoding,
@@ -10,7 +10,7 @@ import {
   MyPluginClientEncoding,
   MyPluginClientMethods,
 } from './internal';
-import { MyPluginClientCore } from './internal/core';
+import {MyPluginClientCore} from './internal/core';
 
 export class MyPluginClient
   extends MyPluginClientCore

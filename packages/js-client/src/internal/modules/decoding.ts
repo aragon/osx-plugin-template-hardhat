@@ -1,6 +1,6 @@
-import { MyPluginClientCore } from '../core';
-import { IMyPluginClientDecoding } from '../interfaces';
-import { MyPlugin__factory } from '@aragon/simple-storage-ethers';
+import {MyPluginClientCore} from '../core';
+import {IMyPluginClientDecoding} from '../interfaces';
+import {MyPlugin__factory} from '@aragon/simple-storage-ethers';
 
 export class MyPluginClientDecoding
   extends MyPluginClientCore

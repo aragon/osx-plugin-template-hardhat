@@ -19,8 +19,7 @@
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "TESTING=true tsdx test --verbose --runInBand",
-    "lint": "prettier --check src test *.json",
-    "lint:fix": "prettier --write src test *.json",
+    "lint": "cd ../../ && yarn run lint:js-client:ts",
     "size": "size-limit",
     "analyze": "size-limit --why",
     "clean": "rm -Rf .turbo dist",
@@ -31,12 +30,6 @@
     "hooks": {
       "pre-commit": "tsdx lint --fix"
     }
-  },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
   },
   "size-limit": [
     {
@@ -64,7 +57,7 @@
     "@aragon/osx-ethers": "1.3.0-rc0.3",
     "@aragon/sdk-client-common": "1.2.0-rc0",
     "@aragon/sdk-common": "1.5.0",
-    "@aragon/simple-storage-ethers": "1.0.0",
+    "@aragon/simple-storage-ethers": "file:../contracts-ethers",
     "@ethersproject/abstract-signer": "^5.7.0",
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/constants": "^5.7.0",
@@ -74,6 +67,9 @@
     "graphql": "^16.6.0",
     "graphql-request": "4.3.0"
   },
+  "bundledDependencies": [
+    "@aragon/simple-storage-ethers"
+  ],
   "jest": {
     "testEnvironment": "./test-environment.js",
     "testTimeout": 120000

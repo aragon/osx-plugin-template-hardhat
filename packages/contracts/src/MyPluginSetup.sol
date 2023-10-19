@@ -9,10 +9,10 @@ import {MyPlugin} from "./MyPlugin.sol";
 /// @title MyPluginSetup
 /// @dev Release 1, Build 1
 contract MyPluginSetup is PluginSetup {
-    address private immutable myPluginImplementation;
+    address private immutable MY_PLUGIN_IMPLEMENTATION;
 
     constructor() {
-        myPluginImplementation = address(new MyPlugin());
+        MY_PLUGIN_IMPLEMENTATION = address(new MyPlugin());
     }
 
     /// @inheritdoc IPluginSetup
@@ -23,7 +23,7 @@ contract MyPluginSetup is PluginSetup {
         uint256 number = abi.decode(_data, (uint256));
 
         plugin = createERC1967Proxy(
-            myPluginImplementation,
+            MY_PLUGIN_IMPLEMENTATION,
             abi.encodeWithSelector(MyPlugin.initialize.selector, _dao, number)
         );
 
@@ -59,6 +59,6 @@ contract MyPluginSetup is PluginSetup {
 
     /// @inheritdoc IPluginSetup
     function implementation() external view returns (address) {
-        return myPluginImplementation;
+        return MY_PLUGIN_IMPLEMENTATION;
     }
 }

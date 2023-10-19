@@ -1,4 +1,4 @@
-import { ERC1967ABI, ERC1967Bytecode } from '../abi';
+import {ERC1967ABI, ERC1967Bytecode} from '../abi';
 import * as aragonContracts from '@aragon/osx-ethers';
 import {
   MyPluginSetup,
@@ -6,14 +6,14 @@ import {
 } from '@aragon/simple-storage-ethers';
 import ENSRegistry from '@ensdomains/ens-contracts/artifacts/contracts/registry/ENSRegistry.sol/ENSRegistry.json';
 import PublicResolver from '@ensdomains/ens-contracts/artifacts/contracts/resolvers/PublicResolver.sol/PublicResolver.json';
-import { Signer } from '@ethersproject/abstract-signer';
-import { hexlify } from '@ethersproject/bytes';
-import { AddressZero, HashZero } from '@ethersproject/constants';
-import { Contract, ContractFactory } from '@ethersproject/contracts';
-import { id, namehash } from '@ethersproject/hash';
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { toUtf8Bytes } from '@ethersproject/strings';
-import { parseEther } from '@ethersproject/units';
+import {Signer} from '@ethersproject/abstract-signer';
+import {hexlify} from '@ethersproject/bytes';
+import {AddressZero, HashZero} from '@ethersproject/constants';
+import {Contract, ContractFactory} from '@ethersproject/contracts';
+import {id, namehash} from '@ethersproject/hash';
+import {JsonRpcProvider} from '@ethersproject/providers';
+import {toUtf8Bytes} from '@ethersproject/strings';
+import {parseEther} from '@ethersproject/units';
 
 export type Deployment = OsxDeployment & MyPluginDeployment & EnsDeployment;
 
@@ -113,7 +113,7 @@ export async function deployOsxContracts(
   ens: EnsDeployment
 ): Promise<OsxDeployment> {
   try {
-    const { ensRegistry, ensResolver } = ens;
+    const {ensRegistry, ensResolver} = ens;
     const proxyFactory = new ContractFactory(
       ERC1967ABI,
       ERC1967Bytecode,
@@ -319,7 +319,7 @@ async function deployEnsContracts(signer: Signer) {
       await signer.getAddress(),
       publicResolver.address
     );
-    return { ensRegistry: registry, ensResolver: publicResolver };
+    return {ensRegistry: registry, ensResolver: publicResolver};
   } catch (e) {
     throw e;
   }

@@ -1,8 +1,8 @@
-import { MyPluginClientCore } from '../core';
-import { IMyPluginClientEncoding } from '../interfaces';
-import { DaoAction } from '@aragon/sdk-client-common';
-import { hexToBytes } from '@aragon/sdk-common';
-import { MyPlugin__factory } from '@aragon/simple-storage-ethers';
+import {MyPluginClientCore} from '../core';
+import {IMyPluginClientEncoding} from '../interfaces';
+import {DaoAction} from '@aragon/sdk-client-common';
+import {hexToBytes} from '@aragon/sdk-common';
+import {MyPlugin__factory} from '@aragon/simple-storage-ethers';
 
 export class MyPluginClientEncoding
   extends MyPluginClientCore

@@ -10,7 +10,7 @@
 // mockedClient.request.mockResolvedValueOnce({
 //   addresslistVotingProposals: [subgraphProposal],
 // });
-import { gql, GraphQLClient } from 'graphql-request';
+import {gql, GraphQLClient} from 'graphql-request';
 
 jest.mock('graphql-request');
 

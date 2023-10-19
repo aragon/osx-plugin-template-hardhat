@@ -1,0 +1,8 @@
+parser: '@typescript-eslint/parser'
+parserOptions:
+  project: './packages/contracts-ethers/tsconfig.json'
+
+# Custom eslint settings for the contracts-ethers can be defined here
+ignorePatterns:
+  - dist/
+  - rollup.config.ts
