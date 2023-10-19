@@ -116,7 +116,7 @@ First build the contracts and
 yarn build
 ```
 
-and generate the [typechain TypesCript bindings](https://github.com/dethcrypto/TypeChain) with
+and generate the [typechain TypeScript bindings](https://github.com/dethcrypto/TypeChain) with
 
 ```sh
 yarn typechain
@@ -141,7 +141,7 @@ yarn test
 
 ### Linting
 
-Lint the Solidity and TypeScrip code alltogether with
+Lint the Solidity and TypeScript code all together with
 
 ```sh
 yarn lint
@@ -185,7 +185,7 @@ Deploy the contracts to the local Hardhat Network with
 yarn deploy
 ```
 
-To deploy to a network such as the sepolia testnet, use
+To deploy to a network such as the Sepolia testnet, use
 
 ```sh
 yarn deploy --network sepolia
