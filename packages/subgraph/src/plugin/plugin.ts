@@ -1,5 +1,5 @@
 import {getPluginInstallationId} from '../../commons/ids';
-import {Plugin} from '../../generated/schema';
+import {DaoPlugin} from '../../generated/schema';
 import {NumberStored} from '../../generated/templates/Plugin/Plugin';
 import {Address, dataSource} from '@graphprotocol/graph-ts';
 
@@ -15,7 +15,7 @@ export function handleNumberStored(event: NumberStored): void {
   );
 
   if (installationId) {
-    const pluginEntity = Plugin.load(installationId.toHexString());
+    const pluginEntity = DaoPlugin.load(installationId.toHexString());
     if (pluginEntity) {
       pluginEntity.number = event.params.number;
       pluginEntity.save();

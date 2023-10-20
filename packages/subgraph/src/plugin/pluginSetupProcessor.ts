@@ -6,29 +6,16 @@ import {
   UpdateApplied,
   UpdatePrepared,
 } from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
-import {Plugin, PluginPreparation} from '../../generated/schema';
+import {DaoPlugin} from '../../generated/schema';
 
 /////////////////
 // InstallationPrepared
 /////////////////
-export function updatePreparationDataForInstallationPrepared(
-  pluginPreparationEntity: PluginPreparation,
-  event: InstallationPrepared
-): void {
-  // Add `PluginPreparation` specific data for this plugin
-
-  // Remove: the following code is used to silence the linter
-  pluginPreparationEntity;
-  event;
-}
-
 export function updatePluginDataForInstallationPrepared(
-  pluginEntity: Plugin,
+  pluginEntity: DaoPlugin,
   event: InstallationPrepared
 ): void {
   // Add `Plugin` specific data for this plugin
-  //   pluginEntity.onlyListed = false;
-  //   pluginEntity.proposalCount = BigInt.zero();
 
   // Remove: the following code is used to silence the linter
   pluginEntity;
@@ -39,7 +26,7 @@ export function updatePluginDataForInstallationPrepared(
 // InstallationApplied
 /////////////////
 export function updatePluginDataForInstallationApplied(
-  pluginEntity: Plugin,
+  pluginEntity: DaoPlugin,
   event: InstallationApplied
 ): void {
   // Add `Plugin` specific data for this plugin
@@ -52,19 +39,8 @@ export function updatePluginDataForInstallationApplied(
 /////////////////
 // UpdatePrepared
 /////////////////
-export function updatePreparationDataForUpdatePrepared(
-  pluginPreparationEntity: PluginPreparation,
-  event: UpdatePrepared
-): void {
-  // Add `PluginPreparation` specific data for this plugin
-
-  // Remove: the following code is used to silence the linter
-  pluginPreparationEntity;
-  event;
-}
-
 export function updatePluginDataForUpdatePrepared(
-  pluginEntity: Plugin,
+  pluginEntity: DaoPlugin,
   event: UpdatePrepared
 ): void {
   // Add `Plugin` specific data for this plugin
@@ -78,7 +54,7 @@ export function updatePluginDataForUpdatePrepared(
 // UpdateApplied
 /////////////////
 export function updatePluginDataForUpdateApplied(
-  pluginEntity: Plugin,
+  pluginEntity: DaoPlugin,
   event: UpdateApplied
 ): void {
   // Add `Plugin` specific data for this plugin
@@ -91,24 +67,11 @@ export function updatePluginDataForUpdateApplied(
 /////////////////
 // UninstallationPrepared
 /////////////////
-export function updatePreparationDataForUninstallationPrepared(
-  pluginPreparationEntity: PluginPreparation,
-  event: UninstallationPrepared
-): void {
-  // Add `PluginPreparation` specific data for this plugin
-
-  // Remove: the following code is used to silence the linter
-  pluginPreparationEntity;
-  event;
-}
-
 export function updatePluginDataForUninstallationPrepared(
-  pluginEntity: Plugin,
+  pluginEntity: DaoPlugin,
   event: UninstallationPrepared
 ): void {
   // Add `Plugin` specific data for this plugin
-  //   pluginEntity.onlyListed = false;
-  //   pluginEntity.proposalCount = BigInt.zero();
 
   // Remove: the following code is used to silence the linter
   pluginEntity;
@@ -119,7 +82,7 @@ export function updatePluginDataForUninstallationPrepared(
 // InstallationApplied
 /////////////////
 export function updatePluginDataForUninstallationApplied(
-  pluginEntity: Plugin,
+  pluginEntity: DaoPlugin,
   event: UninstallationApplied
 ): void {
   // Add `Plugin` specific data for this plugin

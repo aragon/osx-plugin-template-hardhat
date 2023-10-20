@@ -8,45 +8,42 @@ type Action @entity {
   value: BigInt!
   data: Bytes!
   dao: Dao!
-  proposal: IProposal!
   execResult: Bytes
+
+  # Set plugin specific related data below:
+  proposal: IProposal!
 }
 
 # Dao
 
 type Dao @entity {
   id: ID! # use address as id
-  actions: [Action!]! @derivedFrom(field: "dao")
-  proposals: [IProposal!]! @derivedFrom(field: "dao")
-  plugins: [Plugin!]! @derivedFrom(field: "dao")
-}
-
-# Plugins
-
-type PluginPreparation @entity(immutable: true) {
-  # OSX related data
-  id: ID! # psp setupId + installationId
 
   # Set plugin specific related data below:
-}
-
-interface PluginInstallation @entity {
-  # OSX related data
-  id: ID! # psp installationId
-  dao: Dao!
-
-  # Set plugin specific related data below:
+  # actions: [Action!]! @derivedFrom(field: "dao")
+  # proposals: [IProposal!]! @derivedFrom(field: "dao")
 }
 
 # Plugin
 
-type Plugin implements PluginInstallation @entity {
+enum PluginPreparationState {
+  InstallationPrepared
+  Installed
+  UpdatePrepared
+  UninstallPrepared
+  Uninstalled
+}
+
+type DaoPlugin @entity {
   "OSX related data"
   id: ID! # psp installationId
   dao: Dao!
+  pluginAddress: Bytes!
+  pluginInstallationId: Bytes!
+  preparationState: PluginPreparationState!
 
   "Set plugin specific related data below:"
-  number: BigInt!
+  number: BigInt
   proposals: [PluginProposal!]! @derivedFrom(field: "plugin")
   members: [PluginMember!]! @derivedFrom(field: "plugin")
 }
@@ -55,7 +52,7 @@ type PluginMember @entity {
   id: ID! # plugin_address + member_address
   address: String # address as string to facilitate filtering by address on the UI
   proposals: [PluginProposalMember!]! @derivedFrom(field: "approver")
-  plugin: Plugin!
+  plugin: DaoPlugin!
 }
 
 type PluginProposalMember @entity(immutable: true) {
@@ -88,7 +85,7 @@ type PluginProposal implements IProposal @entity {
   actions: [Action!]! @derivedFrom(field: "proposal")
   allowFailureMap: BigInt!
   failureMap: BigInt
-  plugin: Plugin!
+  plugin: DaoPlugin!
   pluginProposalId: BigInt!
   creator: Bytes!
   metadata: String
