@@ -1,7 +1,7 @@
-require('@nomiclabs/hardhat-ethers')
+require('@nomiclabs/hardhat-ethers');
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity: "0.8.19",
+  solidity: '0.8.19',
   networks: {
     hardhat: {
       forking: {
@@ -11,8 +11,8 @@ module.exports = {
       },
       chainId: 5,
       accounts: {
-        count: 3
-      }
-    }
+        count: 3,
+      },
+    },
   },
 };

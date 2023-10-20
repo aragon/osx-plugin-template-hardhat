@@ -5,7 +5,9 @@ module.exports = class CustomTestEnvironment extends TestEnvironment.default {
     await super.setup();
 
     // disable hardhat node logging
-    await this.global.hardhat.provider.send('hardhat_setLoggingEnabled', [false])
+    await this.global.hardhat.provider.send('hardhat_setLoggingEnabled', [
+      false,
+    ]);
 
     if (typeof this.global.TextEncoder === 'undefined') {
       const {TextEncoder, TextDecoder} = require('util');
@@ -16,11 +18,8 @@ module.exports = class CustomTestEnvironment extends TestEnvironment.default {
     const {File, Blob} = require('@web-std/file');
     const {fetch} = require('@web-std/fetch');
     Object.assign(this.global, {FormData, File, Blob, fetch});
-    
   }
   getVmContext() {
     return super.getVmContext();
   }
 };
-
-

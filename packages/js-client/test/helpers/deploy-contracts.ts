@@ -34,7 +34,7 @@ export type EnsDeployment = {
 const WALLET_ADDRESS = '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199';
 
 export async function deploy(): Promise<Deployment> {
-  const deployOwnerWallet = hardhat.provider.getSigner()
+  const deployOwnerWallet = hardhat.provider.getSigner();
   const ens = await deployEnsContracts(deployOwnerWallet);
   const osx = await deployOsxContracts(deployOwnerWallet, ens);
   const simpleSotrage = await deployMyPluginContracts(deployOwnerWallet, osx);

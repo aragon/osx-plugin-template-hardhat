@@ -34,6 +34,6 @@
     "noEmit": true,
     "resolveJsonModule": true,
     // TODO remove once generics are implemented in ContextCore
-    "useDefineForClassFields": false,
+    "useDefineForClassFields": false
   }
 }
