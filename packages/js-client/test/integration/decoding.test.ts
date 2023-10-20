@@ -1,11 +1,7 @@
 import { MyPluginClient, MyPluginContext } from '../../src';
 import { contextParamsLocalChain } from '../constants';
-import { buildMyPluginDao } from '../helpers/build-daos';
-import * as deployContracts from '../helpers/deploy-contracts';
-import * as ganacheSetup from '../helpers/ganache-setup';
 import { ContextCore, SupportedNetworksArray } from '@aragon/sdk-client-common';
 import { hexToBytes } from '@aragon/sdk-common';
-import { Server } from 'ganache';
 
 jest.spyOn(SupportedNetworksArray, 'includes').mockReturnValue(true);
 jest
@@ -13,21 +9,6 @@ jest
   .mockReturnValue({ chainId: 5, name: 'goerli' });
 
 describe('Decoding', () => {
-  let server: Server;
-  let deployment: deployContracts.Deployment;
-  beforeAll(async () => {
-    server = await ganacheSetup.start();
-    deployment = await deployContracts.deploy();
-    const dao = await buildMyPluginDao(deployment);
-    contextParamsLocalChain.myPluginRepoAddress =
-      deployment.myPluginRepo.address;
-    contextParamsLocalChain.myPluginPluginAddress = dao.plugins[0];
-    contextParamsLocalChain.ensRegistryAddress = deployment.ensRegistry.address;
-  });
-
-  afterAll(async () => {
-    server.close();
-  });
 
   it('should decode an action', async () => {
     const ctx = new MyPluginContext(contextParamsLocalChain);
