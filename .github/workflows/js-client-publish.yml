@@ -32,7 +32,7 @@ jobs:
           fi
 
   test:
-    uses: ./.github/workflows/javascript_test.yml
+    uses: ./.github/workflows/js-client-tests.yml
     secrets:
       IPFS_API_KEY: ${{ secrets.IPFS_API_KEY }}
     with:
