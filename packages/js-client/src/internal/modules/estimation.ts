@@ -1,4 +1,5 @@
 import * as BUILD_METADATA from '../../../../contracts/src/build-metadata.json';
+import {MyPlugin__factory} from '../../../types';
 import {PrepareInstallationParams} from '../../types';
 import {MyPluginClientCore} from '../core';
 import {IMyPluginClientEstimation} from '../interfaces';
@@ -7,7 +8,6 @@ import {
   GasFeeEstimation,
   prepareGenericInstallationEstimation,
 } from '@aragon/sdk-client-common';
-import {MyPlugin__factory} from '@aragon/simple-storage-ethers';
 
 export class SimpleStoragClientEstimation
   extends MyPluginClientCore

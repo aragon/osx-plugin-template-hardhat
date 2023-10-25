@@ -42,17 +42,13 @@ jobs:
           cache: 'yarn'
           node-version: ${{ matrix.node }}
 
+      - name: Install contract deps
+        run: yarn install --frozen-lockfile
+        working-directory: packages/contracts
+
       - name: Install deps
         run: yarn install --frozen-lockfile
         working-directory: packages/js-client
-
-      - name: Build Contracts Ethers typings
-        run: yarn run build
-        working-directory: packages/contracts-ethers
-
-      - name: Build Contracts Ethers package
-        run: yarn run build:npm
-        working-directory: packages/contracts-ethers
 
       - name: Build JS Client
         run: yarn run build
