@@ -1,8 +1,4 @@
-import {
-  getDaoId,
-  getPluginInstallationId,
-  getPluginPreparationId,
-} from '../../commons/ids';
+import {getDaoId, getPluginInstallationId} from '../../commons/ids';
 import {
   InstallationApplied,
   InstallationPrepared,
@@ -85,7 +81,7 @@ export function handleInstallationApplied(event: InstallationApplied): void {
     return;
   }
 
-  let pluginEntity = DaoPlugin.load(installationId.toHexString());
+  const pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
     // plugin do not belong to this subgraph, we will ignore it.
     return;
@@ -108,7 +104,7 @@ export function handleUpdatePrepared(event: UpdatePrepared): void {
     return;
   }
 
-  let pluginEntity = DaoPlugin.load(installationId.toHexString());
+  const pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
     // plugin do not belong to this subgraph, we will ignore it.
     return;
@@ -123,7 +119,6 @@ export function handleUpdatePrepared(event: UpdatePrepared): void {
 
 export function handleUpdateApplied(event: UpdateApplied): void {
   const dao = event.params.dao;
-  const daoId = getDaoId(dao);
   const plugin = event.params.plugin;
 
   // Check if the applied update for the plugin is our plugin.
@@ -132,7 +127,7 @@ export function handleUpdateApplied(event: UpdateApplied): void {
     return;
   }
 
-  let pluginEntity = DaoPlugin.load(installationId.toHexString());
+  const pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
     // plugin do not belong to this subgraph, we will ignore it.
     return;
@@ -149,7 +144,6 @@ export function handleUninstallationPrepared(
   event: UninstallationPrepared
 ): void {
   const dao = event.params.dao;
-  const daoId = getDaoId(dao);
   const plugin = event.params.setupPayload.plugin;
 
   // Check if the prepared uninstallation is for our plugin.
@@ -158,7 +152,7 @@ export function handleUninstallationPrepared(
     return;
   }
 
-  let pluginEntity = DaoPlugin.load(installationId.toHexString());
+  const pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
     // plugin do not belong to this subgraph, we will ignore it.
     return;
@@ -175,7 +169,6 @@ export function handleUninstallationApplied(
   event: UninstallationApplied
 ): void {
   const dao = event.params.dao;
-  const daoId = getDaoId(dao);
   const plugin = event.params.plugin;
 
   // Check if the applied uninstallation is for our plugin.
@@ -184,7 +177,7 @@ export function handleUninstallationApplied(
     return;
   }
 
-  let pluginEntity = DaoPlugin.load(installationId.toHexString());
+  const pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
     // plugin do not belong to this subgraph, we will ignore it.
     return;
