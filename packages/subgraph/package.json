@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "lint": "eslint . --ext .ts",
+    "lint": "cd ../../ && yarn run lint:subgraph:ts",
     "build:contracts": "cd ../contracts && yarn build",
     "build:manifest": "scripts/build-manifest.sh",
     "build:subgraph": "scripts/build-subgraph.sh",

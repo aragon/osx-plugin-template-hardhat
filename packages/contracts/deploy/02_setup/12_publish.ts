@@ -22,12 +22,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Upload the metadata to IPFS
   const releaseMetadataURI = `ipfs://${await uploadToIPFS(
-    JSON.stringify(METADATA.release),
-    false
+    JSON.stringify(METADATA.release)
   )}`;
   const buildMetadataURI = `ipfs://${await uploadToIPFS(
-    JSON.stringify(METADATA.build),
-    false
+    JSON.stringify(METADATA.build)
   )}`;
 
   console.log(`Uploaded release metadata: ${releaseMetadataURI}`);

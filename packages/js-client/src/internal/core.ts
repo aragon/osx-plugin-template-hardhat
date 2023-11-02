@@ -1,5 +1,5 @@
-import { MyPluginContext } from '../context';
-import { ClientCore } from '@aragon/sdk-client-common';
+import {MyPluginContext} from '../context';
+import {ClientCore} from '@aragon/sdk-client-common';
 
 export class MyPluginClientCore extends ClientCore {
   public myPluginPluginAddress: string;

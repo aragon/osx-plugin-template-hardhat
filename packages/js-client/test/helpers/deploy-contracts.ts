@@ -1,19 +1,15 @@
-import { ERC1967ABI, ERC1967Bytecode } from '../abi';
+import {MyPluginSetup, MyPluginSetup__factory} from '../../types';
+import {ERC1967ABI, ERC1967Bytecode} from '../abi';
 import * as aragonContracts from '@aragon/osx-ethers';
-import {
-  MyPluginSetup,
-  MyPluginSetup__factory,
-} from '@aragon/simple-storage-ethers';
 import ENSRegistry from '@ensdomains/ens-contracts/artifacts/contracts/registry/ENSRegistry.sol/ENSRegistry.json';
 import PublicResolver from '@ensdomains/ens-contracts/artifacts/contracts/resolvers/PublicResolver.sol/PublicResolver.json';
-import { Signer } from '@ethersproject/abstract-signer';
-import { hexlify } from '@ethersproject/bytes';
-import { AddressZero, HashZero } from '@ethersproject/constants';
-import { Contract, ContractFactory } from '@ethersproject/contracts';
-import { id, namehash } from '@ethersproject/hash';
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { toUtf8Bytes } from '@ethersproject/strings';
-import { parseEther } from '@ethersproject/units';
+import {Signer} from '@ethersproject/abstract-signer';
+import {hexlify} from '@ethersproject/bytes';
+import {AddressZero, HashZero} from '@ethersproject/constants';
+import {Contract, ContractFactory} from '@ethersproject/contracts';
+import {id, namehash} from '@ethersproject/hash';
+import {toUtf8Bytes} from '@ethersproject/strings';
+import {parseEther} from '@ethersproject/units';
 
 export type Deployment = OsxDeployment & MyPluginDeployment & EnsDeployment;
 
@@ -38,8 +34,7 @@ export type EnsDeployment = {
 const WALLET_ADDRESS = '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199';
 
 export async function deploy(): Promise<Deployment> {
-  const provider = new JsonRpcProvider('http://127.0.0.1:8545');
-  const deployOwnerWallet = provider.getSigner();
+  const deployOwnerWallet = hardhat.provider.getSigner();
   const ens = await deployEnsContracts(deployOwnerWallet);
   const osx = await deployOsxContracts(deployOwnerWallet, ens);
   const simpleSotrage = await deployMyPluginContracts(deployOwnerWallet, osx);
@@ -113,7 +108,7 @@ export async function deployOsxContracts(
   ens: EnsDeployment
 ): Promise<OsxDeployment> {
   try {
-    const { ensRegistry, ensResolver } = ens;
+    const {ensRegistry, ensResolver} = ens;
     const proxyFactory = new ContractFactory(
       ERC1967ABI,
       ERC1967Bytecode,
@@ -319,7 +314,7 @@ async function deployEnsContracts(signer: Signer) {
       await signer.getAddress(),
       publicResolver.address
     );
-    return { ensRegistry: registry, ensResolver: publicResolver };
+    return {ensRegistry: registry, ensResolver: publicResolver};
   } catch (e) {
     throw e;
   }

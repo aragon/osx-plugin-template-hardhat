@@ -1,5 +1,5 @@
-import { NumberListItem } from '../types';
-import { SubgraphNumber, SubgraphNumberListItem } from './types';
+import {NumberListItem} from '../types';
+import {SubgraphNumber, SubgraphNumberListItem} from './types';
 
 export function toNumberListItem(
   number: SubgraphNumberListItem
