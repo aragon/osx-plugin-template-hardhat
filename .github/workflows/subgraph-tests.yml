@@ -36,7 +36,7 @@ jobs:
       - name: 'Build the subgraph'
         run: 'yarn build'
         env:
-          NETWORK_NAME: 'goerli'
+          SUBGRAPH_NETWORK_NAME: ${{ vars.SUBGRAPH_NETWORK_NAME }}
 
       - name: 'Test the subgraph'
         run: 'yarn test'
