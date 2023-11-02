@@ -77,7 +77,6 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
 
 export function handleInstallationApplied(event: InstallationApplied): void {
   const dao = event.params.dao;
-  const daoId = getDaoId(dao);
   const plugin = event.params.plugin;
 
   // Check if the applied is our plugin.
@@ -88,10 +87,8 @@ export function handleInstallationApplied(event: InstallationApplied): void {
 
   let pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
-    pluginEntity = new DaoPlugin(installationId.toHexString());
-    pluginEntity.dao = daoId;
-    pluginEntity.pluginAddress = plugin;
-    pluginEntity.pluginInstallationId = installationId;
+    // plugin do not belong to this subgraph, we will ignore it.
+    return;
   }
   pluginEntity.preparationState = 'Installed';
 
@@ -103,7 +100,6 @@ export function handleInstallationApplied(event: InstallationApplied): void {
 
 export function handleUpdatePrepared(event: UpdatePrepared): void {
   const dao = event.params.dao;
-  const daoId = getDaoId(dao);
   const plugin = event.params.setupPayload.plugin;
 
   // Check if the update preparation plugin is our plugin.
@@ -114,10 +110,8 @@ export function handleUpdatePrepared(event: UpdatePrepared): void {
 
   let pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
-    pluginEntity = new DaoPlugin(installationId.toHexString());
-    pluginEntity.dao = daoId;
-    pluginEntity.pluginAddress = plugin;
-    pluginEntity.pluginInstallationId = installationId;
+    // plugin do not belong to this subgraph, we will ignore it.
+    return;
   }
   pluginEntity.preparationState = 'UpdatePrepared';
 
@@ -140,10 +134,8 @@ export function handleUpdateApplied(event: UpdateApplied): void {
 
   let pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
-    pluginEntity = new DaoPlugin(installationId.toHexString());
-    pluginEntity.dao = daoId;
-    pluginEntity.pluginAddress = plugin;
-    pluginEntity.pluginInstallationId = installationId;
+    // plugin do not belong to this subgraph, we will ignore it.
+    return;
   }
   pluginEntity.preparationState = 'Installed';
 
@@ -168,10 +160,8 @@ export function handleUninstallationPrepared(
 
   let pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
-    pluginEntity = new DaoPlugin(installationId.toHexString());
-    pluginEntity.dao = daoId;
-    pluginEntity.pluginAddress = plugin;
-    pluginEntity.pluginInstallationId = installationId;
+    // plugin do not belong to this subgraph, we will ignore it.
+    return;
   }
   pluginEntity.preparationState = 'UninstallPrepared';
 
@@ -196,10 +186,8 @@ export function handleUninstallationApplied(
 
   let pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
-    pluginEntity = new DaoPlugin(installationId.toHexString());
-    pluginEntity.dao = daoId;
-    pluginEntity.pluginAddress = plugin;
-    pluginEntity.pluginInstallationId = installationId;
+    // plugin do not belong to this subgraph, we will ignore it.
+    return;
   }
   pluginEntity.preparationState = 'Uninstalled';
 
