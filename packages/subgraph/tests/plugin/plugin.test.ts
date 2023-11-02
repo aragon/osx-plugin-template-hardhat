@@ -47,8 +47,6 @@ describe('OSx', () => {
       daoPlugin.preparationState = 'installed';
       daoPlugin.save();
 
-      //   assert.fieldEquals('DaoPlugin', installationIdString, 'number', 'null');
-
       const number = '5';
 
       const event = createNewNumberStoredEvent(
