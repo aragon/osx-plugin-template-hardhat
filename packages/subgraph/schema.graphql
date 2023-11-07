@@ -1,29 +1,9 @@
 # Types
-
-# Dao
-type Dao @entity {
-  id: ID! # use address as id
-
-  # Set plugin specific related data below:
-}
-
-# Plugin
-
-enum PluginPreparationState {
-  InstallationPrepared
-  Installed
-  UpdatePrepared
-  UninstallationPrepared
-  Uninstalled
-}
-
 type DaoPlugin @entity {
   "OSX related data"
   id: ID! # psp installationId
-  dao: Dao!
+  dao: Bytes!
   pluginAddress: Bytes!
-  pluginInstallationId: Bytes!
-  preparationState: PluginPreparationState!
 
   "Set plugin specific related data below:"
   number: BigInt

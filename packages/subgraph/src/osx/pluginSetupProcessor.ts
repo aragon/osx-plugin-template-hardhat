@@ -1,23 +1,8 @@
-import {getDaoId, getPluginInstallationId} from '../../commons/ids';
-import {
-  InstallationApplied,
-  InstallationPrepared,
-  UninstallationApplied,
-  UninstallationPrepared,
-  UpdateApplied,
-  UpdatePrepared,
-} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
-import {Dao, DaoPlugin} from '../../generated/schema';
+import {getPluginInstallationId} from '../../commons/ids';
+import {InstallationPrepared} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
+import {DaoPlugin} from '../../generated/schema';
 import {Plugin as PluginTemplate} from '../../generated/templates';
 import {PLUGIN_REPO_ADDRESS} from '../../utils/constants';
-import {
-  updatePluginDataForInstallationApplied,
-  updatePluginDataForInstallationPrepared,
-  updatePluginDataForUninstallationApplied,
-  updatePluginDataForUninstallationPrepared,
-  updatePluginDataForUpdateApplied,
-  updatePluginDataForUpdatePrepared,
-} from '../plugin/pluginSetupProcessor';
 import {Address, DataSourceContext, log} from '@graphprotocol/graph-ts';
 
 export function handleInstallationPrepared(event: InstallationPrepared): void {
@@ -30,162 +15,33 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
     return;
   }
 
-  //////////////////////////////////////////////////////////////
-  // Index DAO
-  //////////////////////////////////////////////////////////////
   const dao = event.params.dao;
-  const daoId = getDaoId(dao);
-  let doaEntity = Dao.load(daoId);
-  if (!doaEntity) {
-    doaEntity = new Dao(daoId);
-    doaEntity.save();
-  }
-
   const plugin = event.params.plugin;
+
   const installationId = getPluginInstallationId(dao, plugin);
   if (!installationId) {
-    log.error('Failed to get installationId', [daoId, plugin.toHexString()]);
+    log.error('Failed to get installationId', [
+      dao.toHexString(),
+      plugin.toHexString(),
+    ]);
     return;
   }
 
-  //////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////
   // Index plugin
-  //////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////
   let pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
     pluginEntity = new DaoPlugin(installationId.toHexString());
   }
-  pluginEntity.dao = daoId;
+  pluginEntity.dao = dao;
   pluginEntity.pluginAddress = plugin;
-  pluginEntity.pluginInstallationId = installationId;
-  pluginEntity.preparationState = 'InstallationPrepared';
 
-  // Add plugin preparation specific data
-  updatePluginDataForInstallationPrepared(pluginEntity, event);
-
-  // Create template
+  // Create plugin template, So subgaph this subgraph can index individual plugin contract from the initial moment (ie. when it is prepared)
   const context = new DataSourceContext();
-  context.setString('daoAddress', daoId);
+  // add dao address to the context, so `PluginInstallationId` can be reconstructed
+  context.setString('daoAddress', dao.toHexString());
   PluginTemplate.createWithContext(plugin, context);
-
-  pluginEntity.save();
-}
-
-export function handleInstallationApplied(event: InstallationApplied): void {
-  const dao = event.params.dao;
-  const plugin = event.params.plugin;
-
-  // Check if the applied is our plugin.
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    return;
-  }
-
-  const pluginEntity = DaoPlugin.load(installationId.toHexString());
-  if (!pluginEntity) {
-    // plugin do not belong to this subgraph, we will ignore it.
-    return;
-  }
-  pluginEntity.preparationState = 'Installed';
-
-  // Add plugin applied specific data
-  updatePluginDataForInstallationApplied(pluginEntity, event);
-
-  pluginEntity.save();
-}
-
-export function handleUpdatePrepared(event: UpdatePrepared): void {
-  const dao = event.params.dao;
-  const plugin = event.params.setupPayload.plugin;
-
-  // Check if the update preparation plugin is our plugin.
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    return;
-  }
-
-  const pluginEntity = DaoPlugin.load(installationId.toHexString());
-  if (!pluginEntity) {
-    // plugin do not belong to this subgraph, we will ignore it.
-    return;
-  }
-  pluginEntity.preparationState = 'UpdatePrepared';
-
-  // Add plugin preparation specific data
-  updatePluginDataForUpdatePrepared(pluginEntity, event);
-
-  pluginEntity.save();
-}
-
-export function handleUpdateApplied(event: UpdateApplied): void {
-  const dao = event.params.dao;
-  const plugin = event.params.plugin;
-
-  // Check if the applied update for the plugin is our plugin.
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    return;
-  }
-
-  const pluginEntity = DaoPlugin.load(installationId.toHexString());
-  if (!pluginEntity) {
-    // plugin do not belong to this subgraph, we will ignore it.
-    return;
-  }
-  pluginEntity.preparationState = 'Installed';
-
-  // Add plugin applied specific data
-  updatePluginDataForUpdateApplied(pluginEntity, event);
-
-  pluginEntity.save();
-}
-
-export function handleUninstallationPrepared(
-  event: UninstallationPrepared
-): void {
-  const dao = event.params.dao;
-  const plugin = event.params.setupPayload.plugin;
-
-  // Check if the prepared uninstallation is for our plugin.
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    return;
-  }
-
-  const pluginEntity = DaoPlugin.load(installationId.toHexString());
-  if (!pluginEntity) {
-    // plugin do not belong to this subgraph, we will ignore it.
-    return;
-  }
-  pluginEntity.preparationState = 'UninstallPrepared';
-
-  // Add plugin preparation specific data
-  updatePluginDataForUninstallationPrepared(pluginEntity, event);
-
-  pluginEntity.save();
-}
-
-export function handleUninstallationApplied(
-  event: UninstallationApplied
-): void {
-  const dao = event.params.dao;
-  const plugin = event.params.plugin;
-
-  // Check if the applied uninstallation is for our plugin.
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    return;
-  }
-
-  const pluginEntity = DaoPlugin.load(installationId.toHexString());
-  if (!pluginEntity) {
-    // plugin do not belong to this subgraph, we will ignore it.
-    return;
-  }
-  pluginEntity.preparationState = 'Uninstalled';
-
-  // Add plugin applied specific data
-  updatePluginDataForUninstallationApplied(pluginEntity, event);
 
   pluginEntity.save();
 }

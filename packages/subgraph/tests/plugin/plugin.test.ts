@@ -14,7 +14,7 @@ import {
   dataSourceMock,
 } from 'matchstick-as';
 
-describe('OSx', () => {
+describe('Plugin', () => {
   beforeEach(function () {
     let context = new DataSourceContext();
     context.setString('daoAddress', DAO_ADDRESS);
@@ -25,15 +25,12 @@ describe('OSx', () => {
     clearStore();
   });
 
-  describe('Plugin', () => {
+  describe('NumberStored Event', () => {
     test('it should store the correct number emitted from the event', () => {
-      const daoAddress = DAO_ADDRESS;
+      const daoAddress = Address.fromString(DAO_ADDRESS);
       const pluginAddress = Address.fromString(CONTRACT_ADDRESS);
 
-      const installationId = getPluginInstallationId(
-        Address.fromString(daoAddress),
-        pluginAddress
-      );
+      const installationId = getPluginInstallationId(daoAddress, pluginAddress);
       if (!installationId) {
         throw new Error('Failed to get installationId');
       }
@@ -43,8 +40,6 @@ describe('OSx', () => {
       let daoPlugin = new DaoPlugin(installationIdString);
       daoPlugin.dao = daoAddress;
       daoPlugin.pluginAddress = pluginAddress;
-      daoPlugin.pluginInstallationId = installationId;
-      daoPlugin.preparationState = 'installed';
       daoPlugin.save();
 
       const number = '5';
