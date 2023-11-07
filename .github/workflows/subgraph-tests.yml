@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - 'packages/subgraph/**'
-      - 'packages/contracts/**' # Make sure to watch changes in contracts as well
+      - 'packages/contracts/**' # Assuming you want to track changes here too
       - '.github/workflows/subgraph-*.yml'
 
 jobs:
@@ -13,9 +13,7 @@ jobs:
     uses: ./.github/workflows/formatting-linting.yml
   tests:
     runs-on: 'ubuntu-latest'
-    defaults:
-      run:
-        working-directory: packages/subgraph
+
     steps:
       - name: 'Check out the repo'
         uses: 'actions/checkout@v3'
@@ -26,18 +24,27 @@ jobs:
           cache: 'yarn'
           node-version: 18
 
+      - name: 'Install root dependencies'
+        run: yarn install
+        working-directory: .
+
       - name: 'Install dependencies for contracts'
         run: yarn install
         working-directory: packages/contracts
 
       - name: 'Install the dependencies for subgraph'
         run: yarn install
+        working-directory: packages/subgraph
 
       - name: 'Build the subgraph'
         run: yarn build
+        working-directory: packages/subgraph
         env:
           SUBGRAPH_NETWORK_NAME: ${{ vars.SUBGRAPH_NETWORK_NAME }}
           INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
 
       - name: 'Test the subgraph'
-        run: yarn test >> $GITHUB_STEP_SUMMARY
+        run: yarn test
+        working-directory: packages/subgraph
+        env:
+          GITHUB_STEP_SUMMARY: ${{ secrets.GITHUB_STEP_SUMMARY }}
