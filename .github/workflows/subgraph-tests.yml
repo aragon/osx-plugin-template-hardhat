@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - 'packages/subgraph/**'
-      - 'packages/contracts/**' # Assuming you want to track changes here too
+      - 'packages/contracts/**'
       - '.github/workflows/subgraph-*.yml'
 
 jobs:
