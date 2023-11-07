@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'packages/subgraph/**'
+      - 'packages/contracts/**' # Make sure to watch changes in contracts as well
       - '.github/workflows/subgraph-*.yml'
 
 jobs:
@@ -25,14 +26,18 @@ jobs:
           cache: 'yarn'
           node-version: 18
 
-      - name: 'Install the dependencies'
-        run: 'yarn install'
+      - name: 'Install dependencies for contracts'
+        run: yarn install
+        working-directory: packages/contracts
+
+      - name: 'Install the dependencies for subgraph'
+        run: yarn install
 
       - name: 'Build the subgraph'
-        run: 'yarn build'
+        run: yarn build
         env:
           SUBGRAPH_NETWORK_NAME: ${{ vars.SUBGRAPH_NETWORK_NAME }}
-          INFURA_API_KEY: ${{secrets.INFURA_API_KEY}}
+          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
 
       - name: 'Test the subgraph'
-        run: 'yarn test >> $GITHUB_STEP_SUMMARY'
+        run: yarn test >> $GITHUB_STEP_SUMMARY
