@@ -52,10 +52,12 @@ Adapt and extend the tests according to your changes and plugin features.
 
 The `packages/contracts/test/integration-testing` folder contains
 
-- setup processing integration tests in the `setup-processing.ts` file
-- deployment integration tests in the `deployment.ts` file
+- deployment tests in the `deployment.ts` file
+  - testing that the deploy scripts publishes the plugin and sets the maintainer permissions correctly
+- setup processing tests in the `setup-processing.ts` file
+  - testing that Aragon OSx `PluginSetupProcessor` can install and uninstall the plugin correctly
 
-The integration tests already provide basic tests for your plugin. Adapt and extend them where needed.
+The prior tests if your plugin can be deployed
 
 ### Deployment Scripts
 
