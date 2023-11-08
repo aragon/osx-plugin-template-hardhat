@@ -6,16 +6,15 @@ import {
   MyPluginSetup__factory,
   MyPlugin__factory,
 } from '../../typechain';
-import {deployTestDao} from '../helpers/test-dao';
-import {Operation, getNamedTypesFromMetadata} from '../helpers/types';
-import {defaultInitData} from './simple-storage';
 import {
   ADDRESS_ZERO,
   EMPTY_DATA,
   NO_CONDITION,
   STORE_PERMISSION_ID,
-  abiCoder,
-} from './simple-storage-common';
+} from '../helpers/constants';
+import {deployTestDao} from '../helpers/test-dao';
+import {Operation, getNamedTypesFromMetadata} from '../helpers/types';
+import {defaultInitData} from './plugin';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {ethers} from 'hardhat';
@@ -38,7 +37,7 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
     let initData: string;
 
     before(async () => {
-      initData = abiCoder.encode(
+      initData = ethers.utils.defaultAbiCoder.encode(
         getNamedTypesFromMetadata(
           buildMetadata.pluginSetup.prepareInstallation.inputs
         ),
