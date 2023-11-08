@@ -5,7 +5,7 @@ then
   export $(cat .env | sed 's/#.*//g' | xargs)
 fi
 
-if [ -z "$NETWORK_NAME" ] || [ -z "$SUBGRAPH_NAME" ] || [ -z "$GRAPH_KEY" ] || [ -z "$SUBGRAPH_VERSION" ]
+if [ -z "$NETWORK_NAME" ] || [ -z "$SUBGRAPH_NAME" ] || [ -z "$GRAPH_KEY" ] || [ -z "$SUBGRAPH_VERSION" ] || [-z "$GRAPH_NODE"]
 then
     echo "env variables are not set properly, exiting..."
     exit -1
@@ -47,7 +47,7 @@ then
 else
     graph deploy $FULLNAME \
         --version-label $SUBGRAPH_VERSION \
-        --node https://app.satsuma.xyz/api/subgraphs/deploy \
+        --node $GRAPH_NODE \
         --deploy-key $GRAPH_KEY > deploy-output.txt
 
     SUBGRAPH_ID=$(grep "Build completed:" deploy-output.txt | grep -oE "Qm[a-zA-Z0-9]{44}")
