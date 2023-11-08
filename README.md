@@ -179,17 +179,23 @@ you can permanently enable the gas reporting by putting the `REPORT_GAS=true` in
 
 ### Deployment
 
+The deploy scripts provided in this repo should already be sufficient to deploy the first and upcoming versions of your plugin.
+
 Deploy the contracts to the local Hardhat Network with
 
 ```sh
 yarn deploy
 ```
 
-To deploy to a network such as the Sepolia testnet, use
+Deploy the contracts to sepolia with
 
 ```sh
 yarn deploy --network sepolia
 ```
+
+This will also create a plugin repo for the first version (`v1.1`) of your plugin.
+
+If you want to deploy a new version of your plugin afterwards (e.g., `1.2`), simply change the `VERSION` entry in the `packages/contracts/plugin-settings.ts` file.
 
 ## Subgraph
 

@@ -36,7 +36,15 @@ export const ERRORS = {
 };
 
 export function getPluginRepoFactoryAddress(networkName: string) {
-  let pluginRepoFactoryAddr: string;
+  return getContractAddress(networkName, 'PluginRepoFactory');
+}
+
+export function getPluginRepoRegistryAddress(networkName: string) {
+  return getContractAddress(networkName, 'PluginRepoRegistry');
+}
+
+function getContractAddress(networkName: string, contractName: string) {
+  let contractAddr: string;
 
   if (
     networkName === 'localhost' ||
@@ -47,19 +55,18 @@ export function getPluginRepoFactoryAddress(networkName: string) {
       ? process.env.NETWORK_NAME
       : 'mainnet';
 
-    pluginRepoFactoryAddr = osxContracts[hardhatForkNetwork].PluginRepoFactory;
+    contractAddr = osxContracts[hardhatForkNetwork][contractName];
     console.log(
-      `Using the "${hardhatForkNetwork}" PluginRepoFactory address (${pluginRepoFactoryAddr}) for deployment testing on network "${networkName}"`
+      `Using the "${hardhatForkNetwork}" ${contractName} address (${contractAddr}) for deployment testing on network "${networkName}"`
     );
   } else {
-    pluginRepoFactoryAddr =
-      osxContracts[networkNameMapping[networkName]].PluginRepoFactory;
+    contractAddr = osxContracts[networkNameMapping[networkName]][contractName];
 
     console.log(
-      `Using the ${networkNameMapping[networkName]} PluginRepoFactory address (${pluginRepoFactoryAddr}) for deployment...`
+      `Using the ${networkNameMapping[networkName]} ${contractName} address (${contractAddr}) for deployment...`
     );
   }
-  return pluginRepoFactoryAddr;
+  return contractAddr;
 }
 
 export function getPluginInfo(networkName: string): any {
