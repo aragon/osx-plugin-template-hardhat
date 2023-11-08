@@ -1,4 +1,4 @@
-import {getPluginInstallationId} from '../../commons/ids';
+import {generatePluginInstallationEntityId} from '../../commons/ids';
 import {DaoPlugin} from '../../generated/schema';
 import {handleNumberStored} from '../../src/plugin/plugin';
 import {CONTRACT_ADDRESS, DAO_ADDRESS} from '../utils/constants';
@@ -30,14 +30,17 @@ describe('Plugin', () => {
       const daoAddress = Address.fromString(DAO_ADDRESS);
       const pluginAddress = Address.fromString(CONTRACT_ADDRESS);
 
-      const installationId = getPluginInstallationId(daoAddress, pluginAddress);
+      const installationId = generatePluginInstallationEntityId(
+        daoAddress,
+        pluginAddress
+      );
       if (!installationId) {
         throw new Error('Failed to get installationId');
       }
-      const installationIdString = installationId.toHexString();
+      const installationIdHex = installationId.toHexString();
 
       // Create state
-      let daoPlugin = new DaoPlugin(installationIdString);
+      let daoPlugin = new DaoPlugin(installationIdHex);
       daoPlugin.dao = daoAddress;
       daoPlugin.pluginAddress = pluginAddress;
       daoPlugin.save();
@@ -53,11 +56,11 @@ describe('Plugin', () => {
 
       assert.fieldEquals(
         'DaoPlugin',
-        installationIdString,
+        installationIdHex,
         'id',
-        installationIdString
+        installationIdHex
       );
-      assert.fieldEquals('DaoPlugin', installationIdString, 'number', number);
+      assert.fieldEquals('DaoPlugin', installationIdHex, 'number', number);
       assert.entityCount('DaoPlugin', 1);
     });
   });

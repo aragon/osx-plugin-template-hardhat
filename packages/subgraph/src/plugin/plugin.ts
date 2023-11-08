@@ -1,4 +1,4 @@
-import {getPluginInstallationId} from '../../commons/ids';
+import {generatePluginInstallationEntityId} from '../../commons/ids';
 import {DaoPlugin} from '../../generated/schema';
 import {NumberStored} from '../../generated/templates/Plugin/Plugin';
 import {Address, dataSource} from '@graphprotocol/graph-ts';
@@ -9,7 +9,7 @@ export function handleNumberStored(event: NumberStored): void {
   const context = dataSource.context();
   const daoId = context.getString('daoAddress');
 
-  const installationId = getPluginInstallationId(
+  const installationId = generatePluginInstallationEntityId(
     Address.fromString(daoId),
     pluginAddress
   );

@@ -1,4 +1,5 @@
-import {getPluginInstallationId} from '../../commons/ids';
+import {generatePluginInstallationEntityId} from '../../commons/ids';
+import {createInstallationPreparedEvent} from '../../commons/test';
 import {handleInstallationPrepared} from '../../src/osx/pluginSetupProcessor';
 import {PLUGIN_REPO_ADDRESS} from '../../utils/constants';
 import {
@@ -12,7 +13,6 @@ import {
   DAO_ADDRESS,
   PLUGIN_SETUP_ID,
 } from '../utils/constants';
-import {createInstallationPreparedEvent} from './utils';
 import {Address, BigInt, Bytes, ethereum} from '@graphprotocol/graph-ts';
 import {assert, afterEach, clearStore, test, describe} from 'matchstick-as';
 
@@ -27,7 +27,7 @@ describe('OSx', () => {
         // Create event
         const daoAddress = DAO_ADDRESS;
         const pluginAddress = CONTRACT_ADDRESS;
-        const installationId = getPluginInstallationId(
+        const installationId = generatePluginInstallationEntityId(
           Address.fromString(daoAddress),
           Address.fromString(pluginAddress)
         );

@@ -1,4 +1,4 @@
-import {getPluginInstallationId} from '../../commons/ids';
+import {generatePluginInstallationEntityId} from '../../commons/ids';
 import {InstallationPrepared} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
 import {DaoPlugin} from '../../generated/schema';
 import {Plugin as PluginTemplate} from '../../generated/templates';
@@ -8,39 +8,43 @@ import {Address, DataSourceContext, log} from '@graphprotocol/graph-ts';
 export function handleInstallationPrepared(event: InstallationPrepared): void {
   const pluginRepo = event.params.pluginSetupRepo;
 
-  // Check if the prepared plugin is our plugin.
-  const isThisPlugin = pluginRepo == Address.fromString(PLUGIN_REPO_ADDRESS);
+  // Determine if the prepared plugin matches the this plugin's repository address.
+  const isTargetPlugin = pluginRepo == Address.fromString(PLUGIN_REPO_ADDRESS);
 
-  if (!isThisPlugin) {
+  // Ignore other plugins.
+  if (!isTargetPlugin) {
     return;
   }
 
   const dao = event.params.dao;
   const plugin = event.params.plugin;
 
-  const installationId = getPluginInstallationId(dao, plugin);
+  // Generate a unique ID for the plugin installation.
+  const installationId = generatePluginInstallationEntityId(dao, plugin);
+  // Log an error and exit if unable to generate the installation ID.
   if (!installationId) {
-    log.error('Failed to get installationId', [
+    log.error('Failed to generate installationId', [
       dao.toHexString(),
       plugin.toHexString(),
     ]);
     return;
   }
 
-  ////////////////////////////////////////////////////////////
-  // Index plugin
-  ////////////////////////////////////////////////////////////
+  // Load or create a new entry for the this plugin using the generated installation ID.
   let pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
     pluginEntity = new DaoPlugin(installationId.toHexString());
   }
+
+  // Set the DAO and plugin address for the plugin entity.
   pluginEntity.dao = dao;
   pluginEntity.pluginAddress = plugin;
 
-  // Create plugin template, So subgaph this subgraph can index individual plugin contract from the initial moment (ie. when it is prepared)
+  // Initialize a context for the plugin data source to enable indexing from the moment of preparation.
   const context = new DataSourceContext();
-  // add dao address to the context, so `PluginInstallationId` can be reconstructed
+  // Include the DAO address in the context for future reference.
   context.setString('daoAddress', dao.toHexString());
+  // Deploy a template for the plugin to facilitate individual contract indexing.
   PluginTemplate.createWithContext(plugin, context);
 
   pluginEntity.save();
