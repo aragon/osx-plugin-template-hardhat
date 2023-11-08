@@ -3,7 +3,8 @@
 pragma solidity 0.8.17;
 
 // Additional, external solidity files can be imported here to generate artifacts and TypeChain bindings.
-// These might be older versions of your own contracts or third-party contracts that you don't import in your code, but require for integration testing or deployment.
+// These might be older versions of your own contracts or third-party contracts that you don't import in
+// your code, but require for integration testing or deployment.
 
 // solhint-disable no-unused-import
 import {DAOFactory} from "@aragon/osx/framework/dao/DAOFactory.sol";
