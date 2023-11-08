@@ -37,29 +37,25 @@
 
 ### Testing
 
-Go to the `packages/contracts/test` folder and
+The `packages/contracts/test` folder contains pre-written unit and integration tests that you can adapt and extend.
 
 #### Unit Testing
 
-Go to the `packages/contracts/test/unit-testing` folder and
+The `packages/contracts/test/integration-testing` folder contains
 
-- adapt the `plugin.ts` plugin implementation contract
-- adapt the `plugin-setup.ts` plugin setup contract (see [our docs](https://devs.aragon.org/docs/osx/how-to-guides/plugin-development/upgradeable-plugin/setup)).
+- plugin implementation contract unit tests in the `plugin.ts` file
+- containing plugin setup contract unit tests in the `plugin-setup.ts` file
+
+Adapt and extend the tests according to your changes and plugin features.
 
 #### Integration Testing
 
-The `packages/contracts/test/integration-testing` contains
+The `packages/contracts/test/integration-testing` folder contains
 
-- the `setup-processing.ts` setup processing tests
-- `deployment.ts` deployment tests
+- setup processing integration tests in the `setup-processing.ts` file
+- deployment integration tests in the `deployment.ts` file
 
-The integration tests already provided will test if you plugin setup can in the `packages/contracts/deploy` should already be sufficient to deploy the first version of your plugin, e.g. to sepolia via
-
-Go to the `packages/contracts/test/integration-testing` folder and
-
-- adapt the `setup-processing.ts` setup processing tests
-
-- adapt the `deployment.ts` deployment tests
+The integration tests already provide basic tests for your plugin. Adapt and extend them where needed.
 
 ### Deployment Scripts
 
