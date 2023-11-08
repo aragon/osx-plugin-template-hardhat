@@ -18,7 +18,17 @@
       "files": "*.md",
       "options": {
         "printWidth": 100,
-        "tabWidth": 2,
+        "tabWidth": 4,
+        "useTabs": false,
+        "singleQuote": true,
+        "bracketSpacing": false
+      }
+    },
+    {
+      "files": "*.yml",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 4,
         "useTabs": false,
         "singleQuote": true,
         "bracketSpacing": false
