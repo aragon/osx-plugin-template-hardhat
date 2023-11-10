@@ -29,6 +29,8 @@ export const networkNameMapping: NetworkNameMapping = {
   polygonMumbai: 'mumbai',
   base: 'base',
   baseGoerli: 'baseGoerli',
+  arbitrum: 'arbitrum',
+  arbitrumGoerli: 'arbitrumGoerli',
 };
 
 export const ERRORS = {
