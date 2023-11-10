@@ -114,7 +114,7 @@ const config: HardhatUserConfig = {
       polygonMumbai: process.env.POLYGONSCAN_API_KEY || '',
       base: process.env.BASESCAN_API_KEY || '',
       baseGoerli: process.env.BASESCAN_API_KEY || '',
-      arbitrum: process.env.ARBISCAN_API_KEY || '',
+      arbitrumOne: process.env.ARBISCAN_API_KEY || '',
       arbitrumGoerli: process.env.ARBISCAN_API_KEY || '',
     },
     customChains: [
