@@ -1,6 +1,5 @@
 import {ethers} from 'hardhat';
 
-export const abiCoder = ethers.utils.defaultAbiCoder;
 export const EMPTY_DATA = '0x';
 
 export const STORE_PERMISSION_ID = ethers.utils.id('STORE_PERMISSION');
