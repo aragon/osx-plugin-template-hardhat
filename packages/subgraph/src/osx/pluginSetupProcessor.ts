@@ -1,248 +1,51 @@
-import {
-  getDaoId,
-  getPluginInstallationId,
-  getPluginPreparationId,
-} from '../../commons/ids';
-import {
-  InstallationApplied,
-  InstallationPrepared,
-  UninstallationApplied,
-  UninstallationPrepared,
-  UpdateApplied,
-  UpdatePrepared,
-} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
-import {Dao, Plugin, PluginPreparation} from '../../generated/schema';
+import {generatePluginInstallationEntityId} from '../../commons/ids';
+import {InstallationPrepared} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
+import {DaoPlugin} from '../../generated/schema';
 import {Plugin as PluginTemplate} from '../../generated/templates';
 import {PLUGIN_REPO_ADDRESS} from '../../utils/constants';
-import {
-  updatePluginDataForInstallationApplied,
-  updatePluginDataForInstallationPrepared,
-  updatePluginDataForUninstallationApplied,
-  updatePluginDataForUninstallationPrepared,
-  updatePluginDataForUpdateApplied,
-  updatePluginDataForUpdatePrepared,
-  updatePreparationDataForInstallationPrepared,
-  updatePreparationDataForUninstallationPrepared,
-  updatePreparationDataForUpdatePrepared,
-} from '../plugin/pluginSetupProcessor';
-import {DataSourceContext, log} from '@graphprotocol/graph-ts';
+import {Address, DataSourceContext, log} from '@graphprotocol/graph-ts';
 
 export function handleInstallationPrepared(event: InstallationPrepared): void {
-  const pluginRepo = event.params.pluginSetupRepo.toHexString();
+  const pluginRepo = event.params.pluginSetupRepo;
 
-  // Check if the prepared plugin is our plugin.
-  const isThisPlugin = pluginRepo === PLUGIN_REPO_ADDRESS;
+  // Determine if the prepared plugin matches the plugin repository address.
+  const isTargetPlugin = pluginRepo == Address.fromString(PLUGIN_REPO_ADDRESS);
 
-  if (!isThisPlugin) {
+  // Ignore other plugins.
+  if (!isTargetPlugin) {
     return;
   }
 
-  //////////////////////////////////////////////////////////////
-  // Index DAO
-  //////////////////////////////////////////////////////////////
-  const dao = event.params.dao;
-  const daoId = getDaoId(dao);
-  let doaEntity = Dao.load(daoId);
-  if (!doaEntity) {
-    doaEntity = new Dao(daoId);
-    doaEntity.save();
-  }
-
-  const plugin = event.params.plugin;
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    log.error('Failed to get installationId', [daoId, plugin.toHexString()]);
-    return;
-  }
-
-  //////////////////////////////////////////////////////////////
-  // Index preparation
-  //////////////////////////////////////////////////////////////
-  const setupId = event.params.preparedSetupId;
-  const preparationId = getPluginPreparationId(dao, plugin, setupId);
-  if (preparationId) {
-    const preparationEntity = new PluginPreparation(preparationId);
-
-    // Add preparation specific data
-    updatePreparationDataForInstallationPrepared(preparationEntity, event);
-
-    preparationEntity.save();
-
-    //////////////////////////////////////////////////////////////
-    // Index plugin
-    //////////////////////////////////////////////////////////////
-    let pluginEntity = Plugin.load(installationId.toHexString());
-    if (!pluginEntity) {
-      pluginEntity = new Plugin(installationId.toHexString());
-    }
-    pluginEntity.dao = daoId;
-
-    // Add plugin preparation specific data
-    updatePluginDataForInstallationPrepared(pluginEntity, event);
-
-    // Create template
-    const context = new DataSourceContext();
-    context.setString('daoAddress', daoId);
-    PluginTemplate.createWithContext(plugin, context);
-
-    pluginEntity.save();
-  } else {
-    log.error('Failed to get preparationId for dao {}, plugin {}, setupId {}', [
-      daoId,
-      plugin.toHexString(),
-      setupId.toHexString(),
-    ]);
-    return;
-  }
-}
-
-export function handleInstallationApplied(event: InstallationApplied): void {
   const dao = event.params.dao;
   const plugin = event.params.plugin;
 
-  // Check if the applied is our plugin.
-  const installationId = getPluginInstallationId(dao, plugin);
+  // Generate a unique ID for the plugin installation.
+  const installationId = generatePluginInstallationEntityId(dao, plugin);
+  // Log an error and exit if unable to generate the installation ID.
   if (!installationId) {
-    return;
-  }
-
-  let pluginEntity = Plugin.load(installationId.toHexString());
-  if (!pluginEntity) {
-    pluginEntity = new Plugin(installationId.toHexString());
-    pluginEntity.dao = getDaoId(dao);
-  }
-
-  // Add plugin applied specific data
-  updatePluginDataForInstallationApplied(pluginEntity, event);
-
-  pluginEntity.save();
-}
-
-export function handleUpdatePrepared(event: UpdatePrepared): void {
-  const dao = event.params.dao;
-  const plugin = event.params.setupPayload.plugin;
-
-  // Check if the update preparation plugin is our plugin.
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    return;
-  }
-
-  const setupId = event.params.preparedSetupId;
-  const preparationId = getPluginPreparationId(dao, plugin, setupId);
-  if (preparationId) {
-    const preparationEntity = new PluginPreparation(preparationId);
-
-    // Add preparation specific data
-    updatePreparationDataForUpdatePrepared(preparationEntity, event);
-
-    preparationEntity.save();
-
-    let pluginEntity = Plugin.load(installationId.toHexString());
-    if (!pluginEntity) {
-      pluginEntity = new Plugin(installationId.toHexString());
-      pluginEntity.dao = getDaoId(dao);
-    }
-
-    // Add plugin preparation specific data
-    updatePluginDataForUpdatePrepared(pluginEntity, event);
-
-    pluginEntity.save();
-  } else {
-    log.error('Failed to get preparationId for dao {}, plugin {}, setupId {}', [
+    log.error('Failed to generate installationId', [
       dao.toHexString(),
       plugin.toHexString(),
-      setupId.toHexString(),
     ]);
     return;
   }
-}
 
-export function handleUpdateApplied(event: UpdateApplied): void {
-  const dao = event.params.dao;
-  const plugin = event.params.plugin;
-
-  // Check if the applied update for the plugin is our plugin.
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    return;
-  }
-
-  let pluginEntity = Plugin.load(installationId.toHexString());
+  // Load or create a new entry for the this plugin using the generated installation ID.
+  let pluginEntity = DaoPlugin.load(installationId.toHexString());
   if (!pluginEntity) {
-    pluginEntity = new Plugin(installationId.toHexString());
-    pluginEntity.dao = getDaoId(dao);
+    pluginEntity = new DaoPlugin(installationId.toHexString());
   }
 
-  // Add plugin applied specific data
-  updatePluginDataForUpdateApplied(pluginEntity, event);
+  // Set the DAO and plugin address for the plugin entity.
+  pluginEntity.dao = dao;
+  pluginEntity.pluginAddress = plugin;
 
-  pluginEntity.save();
-}
-
-export function handleUninstallationPrepared(
-  event: UninstallationPrepared
-): void {
-  const dao = event.params.dao;
-  const plugin = event.params.setupPayload.plugin;
-
-  // Check if the prepared uninstallation is for our plugin.
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    return;
-  }
-
-  const setupId = event.params.preparedSetupId;
-
-  const preparationId = getPluginPreparationId(dao, plugin, setupId);
-  if (preparationId) {
-    const preparationEntity = new PluginPreparation(preparationId);
-
-    // Add preparation specific data
-    updatePreparationDataForUninstallationPrepared(preparationEntity, event);
-
-    preparationEntity.save();
-
-    let pluginEntity = Plugin.load(installationId.toHexString());
-    if (!pluginEntity) {
-      pluginEntity = new Plugin(installationId.toHexString());
-      pluginEntity.dao = getDaoId(dao);
-    }
-
-    // Add plugin preparation specific data
-    updatePluginDataForUninstallationPrepared(pluginEntity, event);
-
-    pluginEntity.save();
-  } else {
-    log.error('Failed to get preparationId for dao {}, plugin {}, setupId {}', [
-      dao.toHexString(),
-      plugin.toHexString(),
-      setupId.toHexString(),
-    ]);
-    return;
-  }
-}
-
-export function handleUninstallationApplied(
-  event: UninstallationApplied
-): void {
-  const dao = event.params.dao;
-  const plugin = event.params.plugin;
-
-  // Check if the applied uninstallation is for our plugin.
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    return;
-  }
-
-  let pluginEntity = Plugin.load(installationId.toHexString());
-  if (!pluginEntity) {
-    pluginEntity = new Plugin(installationId.toHexString());
-    pluginEntity.dao = getDaoId(dao);
-  }
-
-  // Add plugin applied specific data
-  updatePluginDataForUninstallationApplied(pluginEntity, event);
+  // Initialize a context for the plugin data source to enable indexing from the moment of preparation.
+  const context = new DataSourceContext();
+  // Include the DAO address in the context for future reference.
+  context.setString('daoAddress', dao.toHexString());
+  // Deploy a template for the plugin to facilitate individual contract indexing.
+  PluginTemplate.createWithContext(plugin, context);
 
   pluginEntity.save();
 }

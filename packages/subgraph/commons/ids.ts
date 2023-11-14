@@ -1,40 +1,14 @@
+// TODO: Remove this file and import from OSx-commons-subgraph,
+// once the OSx-commons-subgraph npm package is published
 import {
   Address,
   Bytes,
   ethereum,
   crypto,
   ByteArray,
-  log,
 } from '@graphprotocol/graph-ts';
 
-export function getDaoId(dao: Address): string {
-  return dao.toHexString();
-}
-
-export function getPluginPreparationId(
-  dao: Address,
-  plugin: Address,
-  setupId: Bytes
-): string | null {
-  const installationId = getPluginInstallationId(dao, plugin);
-  if (!installationId) {
-    log.critical('Failed to get installationId for dao {}, plugin {}', [
-      dao.toHexString(),
-      plugin.toHexString(),
-    ]);
-
-    return null;
-  }
-
-  const preparationId = installationId
-    .toHexString()
-    .concat('_')
-    .concat(setupId.toHexString());
-
-  return preparationId;
-}
-
-export function getPluginInstallationId(
+export function generatePluginInstallationEntityId(
   dao: Address,
   plugin: Address
 ): Bytes | null {
@@ -57,16 +31,4 @@ export function getPluginInstallationId(
     );
   }
   return null;
-}
-
-export function getPluginVersionId(
-  pluginRepo: string,
-  release: i32,
-  build: i32
-): string {
-  return pluginRepo
-    .concat('_')
-    .concat(release.toString())
-    .concat('_')
-    .concat(build.toString());
 }
