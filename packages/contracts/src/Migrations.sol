@@ -2,8 +2,9 @@
 
 pragma solidity 0.8.17;
 
-// Import all contracts from other repositories to make the openzeppelin-upgrades package work to deploy things.
-// See related issue here https://github.com/OpenZeppelin/openzeppelin-upgrades/issues/86
+// Additional, external solidity files can be imported here to generate artifacts and TypeChain bindings.
+// These might be older versions of your own contracts or third-party contracts that you don't import in
+// your code, but require for integration testing or deployment.
 
 // solhint-disable no-unused-import
 import {DAOFactory} from "@aragon/osx/framework/dao/DAOFactory.sol";

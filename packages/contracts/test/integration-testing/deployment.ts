@@ -91,7 +91,7 @@ describe('PluginRepo Deployment', function () {
         alice
       );
     });
-    it('registerd the setup', async () => {
+    it('registers the setup', async () => {
       const results = await pluginRepo['getVersion((uint8,uint16))']({
         release: 1,
         build: 1,
