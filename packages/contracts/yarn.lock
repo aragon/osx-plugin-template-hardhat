@@ -2,17 +2,17 @@
 # yarn lockfile v1
 
 
-"@aragon/osx-ethers@^1.3.0-rc0.3":
-  version "1.3.0-rc0.3"
-  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0-rc0.3.tgz#53c7ee2888e25704932e4450c1518014cb383093"
-  integrity sha512-8hjNtAni7rGygtZDScJuCUh0QnA5q6gF8zhQycyhCvvjwakxWouLFEySpBPIYoFsMziqFa4E2uu/XyNHQb+YiQ==
+"@aragon/osx-ethers@^1.3.0-rc0.4":
+  version "1.3.0-rc0.4"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0-rc0.4.tgz#878af071e454ef068801104deae8439f0f8f1720"
+  integrity sha512-FDuF6LC1OLnjFK4C8+P4Wf0sORrrUQ/JtUAxL5ABVtBD8JpyyhtdWGDiv/yWIooLyC2l8aqbDLPuiYWhw1DjEQ==
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/osx@^1.3.0-rc0.3":
-  version "1.3.0-rc0.3"
-  resolved "https://registry.yarnpkg.com/@aragon/osx/-/osx-1.3.0-rc0.3.tgz#d35ff40ccbb1b7e24f0c74ecb31953e14d79be73"
-  integrity sha512-QRxS2jXxYir6p94zjhjfc6HH1R+3D48p0DcMU0nYAzKIhjPXORfEpLTk49CkqldhQkCZZXXKYCwNZ97XzHC00g==
+"@aragon/osx@^1.3.0-rc0.4":
+  version "1.3.0-rc0.4"
+  resolved "https://registry.yarnpkg.com/@aragon/osx/-/osx-1.3.0-rc0.4.tgz#c42eba799d9ac57fbe10d5c73bf02681c5d4328d"
+  integrity sha512-vE+zW5LUaPFDvsWWDCESFjibERvWtwsOyqb1pUaB+OS8j9eEZVxsRaSWhe23Nx2vAhUtTF9p77e1vWtCfP/BvQ==
   dependencies:
     "@ensdomains/ens-contracts" "0.0.11"
     "@openzeppelin/contracts" "4.8.1"
@@ -121,27 +121,12 @@
   dependencies:
     "@nomiclabs/hardhat-truffle5" "^2.0.0"
 
-"@ensdomains/buffer@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@ensdomains/buffer/-/buffer-0.1.1.tgz#6c275ba7e457e935405b67876f1f0d980c8baa63"
-  integrity sha512-92SfSiNS8XorgU7OUBHo/i1ZU7JV7iz/6bKuLPNVsMxV79/eI7fJR6jfJJc40zAHjs3ha+Xo965Idomlq3rqnw==
-
 "@ensdomains/ens-contracts@0.0.11":
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/@ensdomains/ens-contracts/-/ens-contracts-0.0.11.tgz#a1cd87af8c454b694acba5be1a44c1b20656a9be"
   integrity sha512-b74OlFcds9eyHy26uE2fGcM+ZCSFtPeRGVbUYWq3NRlf+9t8TIgPwF3rCNwpAFQG0B/AHb4C4hYX2BBJYR1zPg==
   dependencies:
     "@ensdomains/buffer" "^0.0.13"
-    "@ensdomains/solsha1" "0.0.3"
-    "@openzeppelin/contracts" "^4.1.0"
-    dns-packet "^5.3.0"
-
-"@ensdomains/ens-contracts@0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@ensdomains/ens-contracts/-/ens-contracts-0.0.20.tgz#346eac70d666a7864142287ce1759b0f44bd8a5e"
-  integrity sha512-lAHQBVj2WtgbchcrE8ZuFI6DFq+O33wkLAGqsO2gcnn0EUJb65OJIdTqUfvfULKGJjkB2pyHfS/RgMSIW6h1Pw==
-  dependencies:
-    "@ensdomains/buffer" "^0.1.1"
     "@ensdomains/solsha1" "0.0.3"
     "@openzeppelin/contracts" "^4.1.0"
     dns-packet "^5.3.0"
@@ -961,7 +946,7 @@
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.1.tgz#363f7dd08f25f8f77e16d374350c3d6b43340a7a"
   integrity sha512-1wTv+20lNiC0R07jyIAbHU7TNHKRwGiTGRfiNnA8jOWjKT98g5OgLpYWOi40Vgpk8SPLA9EvfJAbAeIyVn+7Bw==
 
-"@openzeppelin/contracts-upgradeable@^4.8.2":
+"@openzeppelin/contracts-upgradeable@^4.9.3":
   version "4.9.3"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.9.3.tgz#ff17a80fb945f5102571f8efecb5ce5915cc4811"
   integrity sha512-jjaHAVRMrE4UuZNfDwjlLGDxTHWIOwTJS2ldnc278a0gevfXfPr8hxKEVBGFBE96kl2G3VHDZhUimw/+G3TG2A==
@@ -971,15 +956,15 @@
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.8.1.tgz#709cfc4bbb3ca9f4460d60101f15dac6b7a2d5e4"
   integrity sha512-xQ6eUZl+RDyb/FiZe1h+U7qr/f4p/SrTSQcTPH2bjur3C5DbuW/zFgCU/b1P/xcIaEqJep+9ju4xDRi3rmChdQ==
 
-"@openzeppelin/contracts@^4.1.0", "@openzeppelin/contracts@^4.8.2":
+"@openzeppelin/contracts@^4.1.0", "@openzeppelin/contracts@^4.9.3":
   version "4.9.3"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.9.3.tgz#00d7a8cf35a475b160b3f0293a6403c511099364"
   integrity sha512-He3LieZ1pP2TNt5JbkPA4PNT9WC3gOTOlDcFGJW4Le4QKqwmiNJCRt44APfxMxvq7OugU/cqYuPcSBzOw38DAg==
 
 "@openzeppelin/defender-base-client@^1.46.0":
-  version "1.49.0"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/defender-base-client/-/defender-base-client-1.49.0.tgz#01a95103b1584b787a2516b22bc31c032d58c9c0"
-  integrity sha512-nG2jslaAUbo2ZW9yBStstxTPscAchN/vRdJ16M34whuZRtUp1bccCBVLdv3oiPOdjwFaa1OBXJkheN+eF8alzA==
+  version "1.52.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/defender-base-client/-/defender-base-client-1.52.0.tgz#7a000eeba9705c75e6be5de5d32e07d377aed55d"
+  integrity sha512-VFNu/pjVpAnFKIfuKT1cn9dRpbcO8FO8EAmVZ2XrrAsKXEWDZ3TNBtACxmj7fAu0ad/TzRkb66o5rMts7Fv7jw==
   dependencies:
     amazon-cognito-identity-js "^6.0.1"
     async-retry "^1.3.3"
@@ -987,7 +972,7 @@
     lodash "^4.17.19"
     node-fetch "^2.6.0"
 
-"@openzeppelin/hardhat-upgrades@^1.27.0":
+"@openzeppelin/hardhat-upgrades@^1.28.0":
   version "1.28.0"
   resolved "https://registry.yarnpkg.com/@openzeppelin/hardhat-upgrades/-/hardhat-upgrades-1.28.0.tgz#6361f313a8a879d8a08a5e395acf0933bc190950"
   integrity sha512-7sb/Jf+X+uIufOBnmHR0FJVWuxEs2lpxjJnLNN6eCJCP8nD0v+Ot5lTOW2Qb/GFnh+fLvJtEkhkowz4ZQ57+zQ==
@@ -1011,9 +996,9 @@
     node-fetch "^2.6.0"
 
 "@openzeppelin/upgrades-core@^1.27.0":
-  version "1.30.1"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/upgrades-core/-/upgrades-core-1.30.1.tgz#725910cbc5b222cf65001ad886959e258052296c"
-  integrity sha512-mFUsZibpiWJv1DR2K89cjbFIseTc2CUV4D2kvPPK5xYke6m7+M87qcr/Xk24mMrdCmG7RWNxQohhVnzESI6Eeg==
+  version "1.31.1"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/upgrades-core/-/upgrades-core-1.31.1.tgz#d4f9ff703c4006d45c02e08819357a4f92860b8b"
+  integrity sha512-BdkTZwvBxgZ9BYYfhOhuivmqZLOZ/bm6mK5eEDZ36I3Fy64a9BDL/NusaDV5XAoGn4La/j9dZSbTtgP/6d8jAQ==
   dependencies:
     cbor "^9.0.0"
     chalk "^4.1.0"
