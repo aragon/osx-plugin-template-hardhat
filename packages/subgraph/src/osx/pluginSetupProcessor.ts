@@ -8,7 +8,7 @@ import {Address, DataSourceContext, log} from '@graphprotocol/graph-ts';
 export function handleInstallationPrepared(event: InstallationPrepared): void {
   const pluginRepo = event.params.pluginSetupRepo;
 
-  // Determine if the prepared plugin matches the this plugin's repository address.
+  // Determine if the prepared plugin matches the plugin repository address.
   const isTargetPlugin = pluginRepo == Address.fromString(PLUGIN_REPO_ADDRESS);
 
   // Ignore other plugins.
