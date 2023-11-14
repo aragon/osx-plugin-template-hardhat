@@ -1,14 +1,18 @@
 import {PLUGIN_REPO_ENS_NAME} from '../../plugin-settings';
+import {ENS__factory} from '../../typechain';
 import {
   findEventTopicLog,
   addDeployedRepo as addCreatedRepo,
   getPluginRepoFactoryAddress,
+  getPluginRepoRegistryAddress,
 } from '../../utils/helpers';
 import {
   PluginRepoFactory__factory,
   PluginRepoRegistry__factory,
   PluginRepo__factory,
+  ENSSubdomainRegistrar__factory,
 } from '@aragon/osx-ethers';
+import {ethers} from 'hardhat';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
@@ -66,3 +70,32 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 export default func;
 func.tags = ['PluginRepo', 'Deployment'];
+func.skip = async (hre: HardhatRuntimeEnvironment) => {
+  // Skip plugin repo creation if the ENS name is taken already
+
+  const [deployer] = await hre.ethers.getSigners();
+
+  const pluginRepoRegistry = PluginRepoRegistry__factory.connect(
+    getPluginRepoRegistryAddress(hre.network.name),
+    deployer
+  );
+
+  const registrar = ENSSubdomainRegistrar__factory.connect(
+    await pluginRepoRegistry.subdomainRegistrar(),
+    deployer
+  );
+
+  const ens = ENS__factory.connect(await registrar.ens(), deployer);
+
+  const recordExists = await ens.recordExists(
+    ethers.utils.namehash(`${PLUGIN_REPO_ENS_NAME}.plugin.dao.eth`)
+  );
+
+  console.log(
+    `ENS name ${PLUGIN_REPO_ENS_NAME}.plugin.dao.eth does ${
+      recordExists ? 'exist already' : 'not exist yet'
+    }`
+  );
+
+  return recordExists;
+};
