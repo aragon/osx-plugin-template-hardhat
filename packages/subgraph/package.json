@@ -9,8 +9,6 @@
     "build:subgraph": "scripts/build-subgraph.sh",
     "build": "yarn build:contracts && yarn build:manifest && yarn build:subgraph",
     "deploy": "scripts/deploy-subgraph.sh",
-    "create:local": "graph create aragon/aragon-core-rinkeby --node http://localhost:8020",
-    "deploy:local": "LOCAL=true scripts/deploy-subgraph.sh",
     "test:fast": "graph test",
     "test": "graph test -r",
     "coverage": "graph test -c",
