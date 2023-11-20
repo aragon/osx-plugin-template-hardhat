@@ -1,5 +1,6 @@
 import {PLUGIN_REPO_ENS_NAME} from '../../plugin-settings';
 import {ENS__factory} from '../../typechain';
+import {PluginRepoRegisteredEvent} from '../../typechain/@aragon/osx/framework/plugin/repo/PluginRepoRegistry';
 import {
   findEventTopicLog,
   addDeployedRepo as addCreatedRepo,
@@ -38,7 +39,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     deployer.address
   );
 
-  const eventLog = await findEventTopicLog(
+  const eventLog = await findEventTopicLog<PluginRepoRegisteredEvent>(
     tx,
     PluginRepoRegistry__factory.createInterface(),
     'PluginRepoRegistered'
