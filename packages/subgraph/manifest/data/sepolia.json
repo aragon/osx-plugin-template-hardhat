@@ -1,0 +1,13 @@
+{
+  "info": "# Do not edit subgraph.yaml,this is a generated file. \n# Instead, edit subgraph.placeholder.yaml and run: yarn manifest",
+  "network": "sepolia",
+  "dataSources": {
+    "PluginSetupProcessors": [
+      {
+        "name": "PluginSetupProcessor",
+        "address": "0xC24188a73dc09aA7C721f96Ad8857B469C01dC9f",
+        "startBlock": 4415294
+      }
+    ]
+  }
+}

@@ -25,21 +25,9 @@ dataSources:
       abis:        
         - name: PluginSetupProcessor
           file: ./imported/PluginSetupProcessor.json
-        - name: ERC165
-          file: ./abis/ERC165.json
       eventHandlers:
         - event: InstallationPrepared(indexed address,indexed address,bytes32,indexed address,(uint8,uint16),bytes,address,(address[],(uint8,address,address,address,bytes32)[]))
           handler: handleInstallationPrepared
-        - event: InstallationApplied(indexed address,indexed address,bytes32,bytes32)
-          handler: handleInstallationApplied
-        - event: UpdatePrepared(indexed address,indexed address,bytes32,indexed address,(uint8,uint16),(address,address[],bytes),(address[],(uint8,address,address,address,bytes32)[]),bytes)
-          handler: handleUpdatePrepared
-        - event: UpdateApplied(indexed address,indexed address,bytes32,bytes32)
-          handler: handleUpdateApplied
-        - event: UninstallationPrepared(indexed address,indexed address,bytes32,indexed address,(uint8,uint16),(address,address[],bytes),(uint8,address,address,address,bytes32)[])
-          handler: handleUninstallationPrepared
-        - event: UninstallationApplied(indexed address,indexed address,bytes32)
-          handler: handleUninstallationApplied
       file: ./src/osx/pluginSetupProcessor.ts
   {{/dataSources.PluginSetupProcessors}}
 # templates
@@ -58,7 +46,7 @@ templates:
         - Dao
       abis:
         - name: Plugin
-          file: $PLUGIN_MODULE/artifacts/src/MyPlugin.sol/MyPlugin.json
+          file: $PLUGIN_MODULE/contracts/artifacts/src/MyPlugin.sol/MyPlugin.json
       eventHandlers:
         - event: NumberStored(uint256)
           handler: handleNumberStored
