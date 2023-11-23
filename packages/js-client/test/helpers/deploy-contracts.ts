@@ -1,3 +1,5 @@
+// @ts-ignore Needed to get the global typing for hardhat
+import * as jestenv from "jest-environment-hardhat"
 import {MyPluginSetup, MyPluginSetup__factory} from '../../types';
 import {ERC1967ABI, ERC1967Bytecode} from '../abi';
 import * as aragonContracts from '@aragon/osx-ethers';
