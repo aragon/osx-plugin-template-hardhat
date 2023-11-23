@@ -10,7 +10,9 @@ import {Contract, ContractFactory} from '@ethersproject/contracts';
 import {id, namehash} from '@ethersproject/hash';
 import {toUtf8Bytes} from '@ethersproject/strings';
 import {parseEther} from '@ethersproject/units';
-import 'jest-environment-hardhat';
+// @ts-expect-error jest fails if we don't import it 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import * as jestenv from "jest-environment-hardhat";
 
 export type Deployment = OsxDeployment & MyPluginDeployment & EnsDeployment;
 

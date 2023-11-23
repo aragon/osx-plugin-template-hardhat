@@ -7,7 +7,9 @@ import {
   LIVE_CONTRACTS,
   SupportedNetworksArray,
 } from '@aragon/sdk-client-common';
-import "jest-environment-hardhat"
+// @ts-expect-error jest fails if we don't import it 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import * as jestenv from "jest-environment-hardhat";
 
 jest.spyOn(SupportedNetworksArray, 'includes').mockReturnValue(true);
 jest
