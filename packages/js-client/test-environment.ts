@@ -1,3 +1,4 @@
+/* eslint-disable */
 const TestEnvironment = require('jest-environment-hardhat/jsdom');
 
 module.exports = class CustomTestEnvironment extends TestEnvironment.default {
@@ -23,3 +24,4 @@ module.exports = class CustomTestEnvironment extends TestEnvironment.default {
     return super.getVmContext();
   }
 };
+/* eslint-enable */

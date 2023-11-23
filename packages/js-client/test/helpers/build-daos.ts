@@ -44,29 +44,25 @@ export async function createDao(
 }
 
 export async function buildMyPluginDao(deployment: Deployment) {
-  try {
-    const latestVersion = await deployment.myPluginRepo[
-      'getLatestVersion(address)'
-    ](deployment.myPluginSetup.address);
-    return await createDao(
-      deployment.daoFactory,
+  const latestVersion = await deployment.myPluginRepo[
+    'getLatestVersion(address)'
+  ](deployment.myPluginSetup.address);
+  return await createDao(
+    deployment.daoFactory,
+    {
+      metadata: '0x',
+      subdomain: 'test-' + Math.floor(Math.random() * 10000),
+      trustedForwarder: AddressZero,
+      daoURI: 'ipfs://...',
+    },
+    [
       {
-        metadata: '0x',
-        subdomain: 'test-' + Math.floor(Math.random() * 10000),
-        trustedForwarder: AddressZero,
-        daoURI: 'ipfs://...',
-      },
-      [
-        {
-          pluginSetupRef: {
-            pluginSetupRepo: deployment.myPluginRepo.address,
-            versionTag: latestVersion.tag,
-          },
-          data: defaultAbiCoder.encode(['uint256'], [1]),
+        pluginSetupRef: {
+          pluginSetupRepo: deployment.myPluginRepo.address,
+          versionTag: latestVersion.tag,
         },
-      ]
-    );
-  } catch (e) {
-    throw e;
-  }
+        data: defaultAbiCoder.encode(['uint256'], [1]),
+      },
+    ]
+  );
 }

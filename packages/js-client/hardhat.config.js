@@ -1,3 +1,4 @@
+/* eslint-disable */
 require('@nomiclabs/hardhat-ethers');
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -16,3 +17,4 @@ module.exports = {
     },
   },
 };
+/* eslint-enable */

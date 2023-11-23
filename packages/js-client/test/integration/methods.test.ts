@@ -21,8 +21,7 @@ import {
   SortDirection,
   SupportedNetworksArray,
 } from '@aragon/sdk-client-common';
-// @ts-ignore Needed to get the global typing for hardhat
-import * as jestenv from "jest-environment-hardhat"
+import "jest-environment-hardhat"
 
 jest.spyOn(SupportedNetworksArray, 'includes').mockReturnValue(true);
 jest
