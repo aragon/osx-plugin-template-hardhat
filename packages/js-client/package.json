@@ -18,9 +18,9 @@
   "scripts": {
     "build:contracts": "cd ../contracts && yarn build",
     "build:typechain": "yarn run build:contracts && find ../contracts/artifacts/src/ -name '*.json' -type f | grep -v '.dbg.json' | xargs typechain --target=ethers-v5 --out-dir ./types",
-    "build": "yarn run build:typechain && tsdx build",
-    "start": "tsdx watch",
-    "test": "TESTING=true jest test --verbose --runInBand",
+    "build": "yarn run build:typechain && dts build",
+    "start": "dts watch",
+    "test": "TESTING=true dts test --verbose --runInBand",
     "lint": "cd ../../ && yarn run lint:js-client:ts",
     "size": "size-limit",
     "analyze": "size-limit --why",
@@ -57,6 +57,7 @@
     "@types/node": "^20.8.7",
     "@uniswap/sdk-core": "^4.0.9",
     "chai": "^4.3.10",
+    "dts-cli": "^2.0.3",
     "ethers": "v5",
     "hardhat": "^2.18.2",
     "husky": "^7.0.4",
@@ -66,10 +67,9 @@
     "size-limit": "^7.0.8",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
-    "tsdx": "^0.14.1",
     "tslib": "^2.3.1",
     "typechain": "^8.3.2",
-    "typescript": "^5.2.2",
+    "typescript": "^5.1",
     "web3": "^1.0.0-beta.36",
     "web3-core-helpers": "^1.2.1",
     "web3-core-promievent": "^1.2.1",
@@ -88,9 +88,6 @@
     "@ethersproject/wallet": "^5.7.0",
     "graphql": "^16.6.0",
     "graphql-request": "4.3.0"
-  },
-  "resolutions": {
-    "**/typescript": "^5.0.0"
   },
   "jest": {
     "preset": "ts-jest",
