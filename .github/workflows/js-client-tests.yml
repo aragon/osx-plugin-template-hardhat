@@ -53,6 +53,8 @@ jobs:
       - name: Build JS Client
         run: yarn run build
         working-directory: packages/js-client
+        env:
+          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
 
       - name: Integration test
         run: yarn test integration --ci --coverage --passWithNoTests >> $GITHUB_STEP_SUMMARY
