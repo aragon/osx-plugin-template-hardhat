@@ -59,7 +59,7 @@ This file will include the types that your client will export, the first type th
 
 There are two additional types that you will need to add in this file.
 
-- `MyPluginState`: This type will be used to define the state of your client, this state will be stored in the context and it will be accessible by the modules. This type should extend the `ClientState` type from `@aragon/sdk-client-common`.
+- `MyPluginState`: This type will be used to define the state of your client, this state will be stored in the context and it will be accessible by the modules. This type should extend the `ClientState` type from `@aragon/sdk-client-common`. This type will include values that will be used by internally by the modules and that should be persisted in the context, for example a client for a service. 
 
 - `MyPluginOverriddenState`: This type will be used to track what values have been modified and what values are default. This type should also extend the `OverriddenState` type from `@aragon/sdk-client-common`.
 
@@ -90,7 +90,7 @@ export type MyPluginOverriddenState = OverriddenState & {
 
 ### `src/context.ts`
 
-The context is the responsible for storing the state of the of the client and setting the default values for the params. The context is also responsible for doing any kind of operation such as modifying some parameter, or using a parameter for creating a client for a service.
+The context is the responsible for storing the state of the of the client and setting the default values for the params. The context is also responsible for doing any kind of operation such as modifying the parameters stored in the state, this could be useful for example if you have a client that is dependant on the chainId, and you want to change the chainId without regenerating an entirely new client .
 
 This `Context` uses the previously defined `state` and `overriddenState` types.
 
@@ -109,6 +109,9 @@ export class MyPluginClientContext extends Context {
     // First we need to set the values in the parent class
     super.set(params);
     // Then we can set the values in our context
+    // We check every value in the context params and set it in the state
+    // and set the overridden state to true so it doesn't get overridden
+    // by the default value
     if (params.myCustomParam) {
       this.state.myCustomParam = params.myCustomParam;
       this.overridden.myCustomParam = true;
