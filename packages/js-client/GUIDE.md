@@ -35,9 +35,9 @@ Additionally, is giving some structure to your plugin, if you plan on doing some
 
 ## Getting started
 
-To get started with your client the first step is to create a nes JS/TS project you can use any tool you want.
+To get started with your client the first step is to create a new JS/TS project you can use any tool you want.  
 
-Once you have your project set up yo need to install the `@aragon/sdk-client-common` package.
+Once you have your project set up you need to install the `@aragon/sdk-client-common` package.  
 
 ```bash
 npm install @aragon/sdk-client-common
@@ -102,7 +102,7 @@ export class MyPluginClientContext extends Context {
 
   constructor(params?: Partial<MyPluginClientParams>) {
     super();
-    this.set(contextParams);
+    this.set(params);
   }
 
   public set(params: Partial<MyPluginClientParams>) {
@@ -145,7 +145,7 @@ export class MyPluginClientContext extends Context {
 }
 ```
 
-You can also add more methods and helpers in this calss that can make your life easieer whule building your client like `getters` or `setters` for the state or a function that sets the defualt values for the state.
+You can also add more methods and helpers in this class that can make your life easier while building your client like `getters` or `setters` for the state or a function that sets the default values for the state.  
 
 This could be an example of a more complete Context class.
 
@@ -164,9 +164,9 @@ export class MyPluginClientContext extends Context {
       // copy the context properties to this
       Object.assign(this, context);
     }
-    if (contextParams) {
+    if (params) {
       // override the context params with the ones passed to the constructor
-      this.set(contextParams);
+      this.set(params);
     }
   }
 
@@ -228,7 +228,7 @@ export class MyPluginClient extends ClientCore {
 }
 ```
 
-Now when you use the client from an UI you will be able to access the modules and the variables.
+Now when you use the client from a UI you will be able to access the modules and the variables.  
 
 ```ts
 const contextParams: MyPluginClientParams = {
