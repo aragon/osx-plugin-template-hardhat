@@ -17,7 +17,7 @@ export class SimpleStoragClientEstimation
     params: PrepareInstallationParams
   ): Promise<GasFeeEstimation> {
     let version = params.version;
-    // if not specified use the lates version
+    // if not specified use the latest version
     if (!version) {
       // get signer
       const signer = this.web3.getConnectedSigner();
