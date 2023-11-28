@@ -539,6 +539,7 @@ export class MyPluginClientMethods implements IMyPluginClientMethods {
   }
 }
 ```
+
 ### Estimation
 
 This module will be used to estimate the gas cost of the methods. This is useful for the UI so it can show the gas cost of a transaction before sending it. This will mimic the methods interface but only with the functions that actually send a transaction to the blockchain.
@@ -556,9 +557,7 @@ We use this for type safety but again is totally optional.
 ```typescript
 // src/internal/interfaces.ts
 export interface IMyPluginClientEstimation {
-  prepareInstallation(
-    params: PrepareInstallationParams
-  ): Promise<GasFeeEstimation>;
+  prepareInstallation(params: PrepareInstallationParams): Promise<GasFeeEstimation>;
 }
 ```
 
@@ -566,15 +565,13 @@ Now in the `src/internal/modules/estimation.ts` file we will create the `MyPlugi
 
 ```typescript
 // src/internal/modules/estimation.ts
+import {PrepareInstallationParams} from '../../types';
 import {MyPluginContext} from '../context';
 import {IMyPluginClientEstimation} from '../interfaces';
-import {PrepareInstallationParams} from '../../types';
 import {GasFeeEstimation} from '@aragon/sdk-client-common';
 
 export class MyPluginClientEstimation implements IMyPluginClientEstimation {
-  public async prepareInstallation(
-    params: PrepareInstallationParams
-  ): Promise<GasFeeEstimation> {
+  public async prepareInstallation(params: PrepareInstallationParams): Promise<GasFeeEstimation> {
     // TODO
     // implement prepareInstallation
   }
@@ -584,17 +581,14 @@ export class MyPluginClientEstimation implements IMyPluginClientEstimation {
 Now we can also use the provided helper function to estimate the gas cost of the `prepareInstallation` method.
 
 ```typescript
-
 // src/internal/modules/estimation.ts
+import {PrepareInstallationParams} from '../../types';
 import {MyPluginContext} from '../context';
 import {IMyPluginClientEstimation} from '../interfaces';
-import {PrepareInstallationParams} from '../../types';
 import {GasFeeEstimation} from '@aragon/sdk-client-common';
 
 export class MyPluginClientEstimation implements IMyPluginClientEstimation {
-  public async prepareInstallation(
-    params: PrepareInstallationParams
-  ): Promise<GasFeeEstimation> {
+  public async prepareInstallation(params: PrepareInstallationParams): Promise<GasFeeEstimation> {
     return prepareGenericInstallationEstimation(this.web3, {
       daoAddressOrEns: params.daoAddressOrEns,
       pluginRepo: this.myPluginRepoAddress,
@@ -637,10 +631,7 @@ import {IMyPluginClientEncoding} from '../interfaces';
 import {DaoAction} from '@aragon/sdk-client-common';
 import {hexToBytes} from '@aragon/sdk-common';
 
-export class MyPluginClientEncoding
-  extends MyPluginClientCore
-  implements IMyPluginClientEncoding
-{
+export class MyPluginClientEncoding extends MyPluginClientCore implements IMyPluginClientEncoding {
   // implementation of the methods in the interface
   public storeNumberAction(number: bigint): DaoAction {
     const iface = MyPlugin__factory.createInterface();
@@ -662,10 +653,7 @@ import {MyPlugin__factory} from '../../../types';
 import {MyPluginClientCore} from '../core';
 import {IMyPluginClientDecoding} from '../interfaces';
 
-export class MyPluginClientDecoding
-  extends MyPluginClientCore
-  implements IMyPluginClientDecoding
-{
+export class MyPluginClientDecoding extends MyPluginClientCore implements IMyPluginClientDecoding {
   public storeNumberAction(data: Uint8Array): bigint {
     const iface = MyPlugin__factory.createInterface();
     const res = iface.decodeFunctionData('storeNumber', data);
