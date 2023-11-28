@@ -35,9 +35,9 @@ Additionally, is giving some structure to your plugin, if you plan on doing some
 
 ## Getting started
 
-To get started with your client the first step is to create a new JS/TS project you can use any tool you want.  
+To get started with your client the first step is to create a new JS/TS project you can use any tool you want.
 
-Once you have your project set up you need to install the `@aragon/sdk-client-common` package.  
+Once you have your project set up you need to install the `@aragon/sdk-client-common` package.
 
 ```bash
 npm install @aragon/sdk-client-common
@@ -59,7 +59,7 @@ This file will include the types that your client will export, the first type th
 
 There are two additional types that you will need to add in this file.
 
-- `MyPluginState`: This type will be used to define the state of your client, this state will be stored in the context and it will be accessible by the modules. This type should extend the `ClientState` type from `@aragon/sdk-client-common`. This type will include values that will be used by internally by the modules and that should be persisted in the context, for example a client for a service. 
+- `MyPluginState`: This type will be used to define the state of your client, this state will be stored in the context and it will be accessible by the modules. This type should extend the `ClientState` type from `@aragon/sdk-client-common`. This type will include values that will be used by internally by the modules and that should be persisted in the context, for example a client for a service.
 
 - `MyPluginOverriddenState`: This type will be used to track what values have been modified and what values are default. This type should also extend the `OverriddenState` type from `@aragon/sdk-client-common`.
 
@@ -148,7 +148,7 @@ export class MyPluginClientContext extends Context {
 }
 ```
 
-You can also add more methods and helpers in this class that can make your life easier while building your client like `getters` or `setters` for the state or a function that sets the default values for the state.  
+You can also add more methods and helpers in this class that can make your life easier while building your client like `getters` or `setters` for the state or a function that sets the default values for the state.
 
 This could be an example of a more complete Context class.
 
@@ -231,7 +231,7 @@ export class MyPluginClient extends ClientCore {
 }
 ```
 
-Now when you use the client from a UI you will be able to access the modules and the variables.  
+Now when you use the client from a UI you will be able to access the modules and the variables.
 
 ```ts
 const contextParams: MyPluginClientParams = {
