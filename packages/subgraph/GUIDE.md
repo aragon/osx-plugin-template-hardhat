@@ -1,6 +1,9 @@
 # Subgraph Template Usage Guide
+
 ## Introduction
+
 This guide will walk you through the process of creating a subgraph for a smart contract. It will cover the following topics:
+
 - [Subgraph Template Usage Guide](#subgraph-template-usage-guide)
   - [Introduction](#introduction)
   - [Install dependencies](#install-dependencies)
@@ -24,7 +27,6 @@ After that you can install the dependencies by running:
 yarn install
 ```
 
-
 ## Included scripts and `.env` file
 
 The current repo contains a set of 3 scripts to help you get started with your subgraph. These scripts are located in the `scripts` folder and are the following:
@@ -43,6 +45,7 @@ yarn build:subgraph
 # Deploy the subgraph
 yarn deploy
 ```
+
 **REMEMBER**: You need to build the contracts before building the subgraph. You can do that by running `yarn build:contracts`
 
 If you use `yarn build` it will build the contracts, the subgraph.yaml file and the subgraph in that order.
@@ -97,4 +100,3 @@ the handling functions will be handling the events specified in the `subgraph.ya
 
 - `handleInstallationPrepared`: Handeles the `InstallationPrepared` event. This event is emitted when the installation is prepared. This event contains the `installationId` and the handler will create a new `PluginEntity` entity with the `installationId` as the id.
 - `handleNumberStored`: Handles the `NumberStored` event. And stores the number in the `pluginEntity` entity in the `number` property.
-
