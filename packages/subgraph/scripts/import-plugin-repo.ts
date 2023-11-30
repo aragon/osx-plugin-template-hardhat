@@ -7,7 +7,7 @@ const rootDir = path.join(__dirname, '../../../'); // Adjust the path as necessa
 dotenv.config({path: path.join(rootDir, '.env')});
 
 // Extract Repo address from the contracts/plugin-info.json
-function extractAndWriteAddressesToTS(jsonPath: string): void {
+function extractAndWriteAddressToTS(jsonPath: string): void {
   // Read the plugin-info.json file
   const pluginInfo = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 
@@ -41,4 +41,4 @@ function extractAndWriteAddressesToTS(jsonPath: string): void {
 }
 
 const pluginInfoPath = path.join(__dirname, '../../contracts/plugin-info.json');
-extractAndWriteAddressesToTS(pluginInfoPath);
+extractAndWriteAddressToTS(pluginInfoPath);
