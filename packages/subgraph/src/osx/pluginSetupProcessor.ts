@@ -2,7 +2,7 @@ import {generatePluginInstallationEntityId} from '../../commons/ids';
 import {InstallationPrepared} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
 import {DaoPlugin} from '../../generated/schema';
 import {Plugin as PluginTemplate} from '../../generated/templates';
-import {PLUGIN_REPO_ADDRESS} from '../../utils/constants';
+import {PLUGIN_REPO_ADDRESS} from '../../imported/repo-address';
 import {Address, DataSourceContext, log} from '@graphprotocol/graph-ts';
 
 export function handleInstallationPrepared(event: InstallationPrepared): void {
