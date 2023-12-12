@@ -2,7 +2,7 @@
 
 ## Contracts
 
-### Writing your Plugin
+### Writing Your Plugin
 
 1. Go to the `packages/contracts/src` folder and
 
@@ -55,7 +55,7 @@ The `packages/contracts/test/integration-testing` folder contains
 - deployment tests in the `deployment.ts` file
   - testing that the deploy scripts publishes the plugin and sets the maintainer permissions correctly
 - setup processing tests in the `setup-processing.ts` file
-  - testing that Aragon OSx `PluginSetupProcessor` can install and uninstall the plugin correctly
+  - testing that Aragon OSx `PluginSetupProcessor` can [apply a plugin setup](https://devs.aragon.org/docs/osx/how-it-works/framework/plugin-management/plugin-setup/#what-happens-during-the-preparation-application) correctly
 
 The prior tests if your plugin can be deployed
 
@@ -75,3 +75,21 @@ The standard deploy scripts in the `packages/contracts/deploy` should already be
   - publishes the plugin setup contract on the plugin repo created in `01_repo/10_create_repo.ts`
 - `99_verification/10_verify-contracts.ts`
   - verifies all deployed contracts
+
+## Subgraph
+
+### Handling Events
+
+The `packages/subgraph/src` folder contains a `plugin` and `osx` subfolder.
+
+In `plugint.ts` inside the `plugin` folder, you can add plugin-related event handlers.
+In `pluginSetupProcessor.ts` inside the `osx` folder, you can add plugin-setup-processor-related event handlers that your plugin might require.
+
+Finally, the events and event handlers must then be linked together in the `subgraph.placeholder.yaml` inside the `packages/subgraph/manifest` folder.
+
+### Testing
+
+The `packages/subgraph/test` folder contains a `plugin` and `osx` subfolder where the tests for the event handlers from the previous section are written.
+
+In `plugint.ts` inside the `plugin` folder, you can test the plugin-related event handlers.
+In `pluginSetupProcessor.ts` inside the `osx` folder, you can test plugin-setup-processor-related event handlers that your plugin might require.

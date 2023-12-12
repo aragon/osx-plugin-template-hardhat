@@ -13,6 +13,7 @@ After [creating a new repository from this template](https://github.com/new?temp
 yarn install && cd packages/contracts && yarn install && yarn build && yarn typechain
 ```
 
+Meanwhile, create an `.env` file from the `.env.example` file and put in the API keys for the services that you want to use.
 You can now develop a plugin by changing the `src/MyPlugin.sol` and `src/MyPluginSetup.sol` files. You can directly import contracts from [Aragon OSx](https://github.com/aragon/osx) as well as OpenZeppelin's [openzeppelin-contracts](https://github.com/OpenZeppelin/openzeppelin-contracts) and [openzeppelin-contracts-upgradeable](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable) that are already set up for you.
 
 ```sol
@@ -68,13 +69,13 @@ The root folder of the repo includes three subfolders:
 └── package.json
 ```
 
-The root-level `package.json` file contains global `dev-dependencies` for formatting and linting. After installing them with
+The root-level `package.json` file contains global `dev-dependencies` for formatting and linting. After installing the dependencies with
 
 ```sh
 yarn install
 ```
 
-you can run the associated `scripts`. With
+you can run the associated [formatting](#formatting) and [linting](#linting) commands.
 
 ### Formatting
 
@@ -99,6 +100,16 @@ yarn lint
 ```
 
 `.sol`, `.js`, and `.ts` files in the subfolders are analyzed with `solhint` and `eslint`, respectively.
+
+### Setting Environment Variables
+
+To be able to work on the contracts, make sure that you have created an `.env` file from the `.env.example` file and put in the API keys for
+
+- [Infura](https://www.infura.io/) that we use as the web3 provider
+- [Alchemy Subgraphs](https://www.alchemy.com/subgraphs) that we use as the subgraph provider
+- the block explorer that you want to use depending on the networks that you want to deploy to
+
+Before deploying, you MUST also change the default hardhat private key (`PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"`).
 
 ## Contracts
 
@@ -147,7 +158,7 @@ Lint the Solidity and TypeScript code all together with
 yarn lint
 ```
 
-or with separately with
+or separately with
 
 ```sh
 yarn lint:sol
@@ -161,7 +172,7 @@ yarn lint:ts
 
 ### Coverage
 
-Generate the code coverage report:
+Generate the code coverage report with
 
 ```sh
 yarn coverage
@@ -169,7 +180,7 @@ yarn coverage
 
 ### Gas Report
 
-See the gas usage per test and average gas per method call:
+See the gas usage per test and average gas per method call with
 
 ```sh
 REPORT_GAS=true yarn test
@@ -199,7 +210,87 @@ If you want to deploy a new version of your plugin afterwards (e.g., `1.2`), sim
 
 ## Subgraph
 
-TODO
+### Installing
+
+In `packages/subgraph`, first run
+
+```sh
+yarn install
+```
+
+which will also run
+
+```sh
+yarn postinstall
+```
+
+subsequently, to build the ABI in the `imported` folder.
+
+### Building
+
+Build the subgraph and
+
+```sh
+yarn build
+```
+
+which will first build the contracts (see [Contracts / Building](#building)) with
+
+```
+yarn build:contracts
+```
+
+second the subgraph manifest with
+
+```sh
+yarn build:manifest
+```
+
+and finally the subgraph itself with
+
+```
+yarn build:subgraph
+```
+
+During development of the subgraph, you might want to clean outdated files that were build, imported, and generated. To do this, run
+
+```sh
+yarn clean
+```
+
+### Testing
+
+Test the subgraph with
+
+```sh
+yarn test
+```
+
+### Linting
+
+Lint the TypeScript code with
+
+```sh
+yarn lint
+```
+
+### Coverage
+
+Generate the code coverage with
+
+```sh
+yarn coverage
+```
+
+### Deployment
+
+To deploy the subgraph to the subgraph provider, write your intended subgraph name and version into the `SUBGRAPH_NAME` and `SUBGRAPH_VERSION` variables [in the `.env` file that you created in the beginning](environment-variables) and pick a network name `SUBGRAPH_NETWORK_NAME` [being supported by the subgraph provider](https://docs.alchemy.com/reference/supported-subgraph-chains). Then run
+
+```sh
+yarn deploy
+```
+
+to deploy the subgraph and check your [Alchemy subgraph dashboard](https://subgraphs.alchemy.com/onboarding) for completion and possible errors.
 
 ## JS Client
 
