@@ -303,6 +303,9 @@ For the workflow to function properly you need to enable the `Allow GitHub Actio
 
 To trigger the workflow go to `Actions -> Template sync` and click `Run Workflow`.
 
+### Sync exceptions
+
+The worklflow is not able to sync the `.templatesyncignore` file and the workflows stored in `.github/workflows`. This is because of some restrictions by the action used and how Github Actions work.
 
 ## License
 
