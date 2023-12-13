@@ -297,7 +297,8 @@ to deploy the subgraph and check your [Alchemy subgraph dashboard](https://subgr
 TODO
 
 ## Template Sync
-This template includes a workflow to sync the new template data into a repo created from this template.  
+
+This template includes a workflow to sync the new template data into a repo created from this template.
 
 For the workflow to function properly you need to enable the `Allow GitHub Actions to create and approve pull requests` permission in `Settings -> Actions -> General`.
 
