@@ -296,6 +296,14 @@ to deploy the subgraph and check your [Alchemy subgraph dashboard](https://subgr
 
 TODO
 
+## Template Sync
+This template includes a workflow to sync the new template data into a repo created from this template.  
+
+For the workflow to function properly you need to enable the `Allow GitHub Actions to create and approve pull requests` permission in `Settings -> Actions -> General`.
+
+To trigger the workflow go to `Actions -> Template sync` and click `Run Workflow`.
+
+
 ## License
 
 This project is licensed under AGPL-3.0-or-later.
