@@ -10,10 +10,6 @@ dist
 node_modules
 typechain
 
-packages/subgraph/imported
-packages/subgraph/generated
-packages/subgraph/tests/.bin
-
 # files
 *.env
 *.log
@@ -22,8 +18,12 @@ packages/subgraph/tests/.bin
 coverage.json
 
 packages/contracts/plugin-info.json
+packages/contracts/deployments/
 
 packages/subgraph/deploy-output.txt
 packages/subgraph/subgraph.yaml
 packages/subgraph/tests/.latest.json
 packages/subgraph/tests/helpers/extended-schema.ts
+packages/subgraph/imported
+packages/subgraph/generated
+packages/subgraph/tests/.bin
