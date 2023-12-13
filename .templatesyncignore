@@ -1,0 +1,20 @@
+# Github Actions cannot sync workflows
+.github/workflows/
+
+# Don't overwrite users package jsons
+**/package.json
+
+# Don't overwrite plugin contracts and configs
+packages/contracts/plugin-info.json
+packages/contracts/plugin-settings.ts
+packages/contracts/src/
+
+# Don't overwrite js-client
+packages/js-client/src/
+packages/js-client/test/
+
+# Don't overwrite subgraph
+packages/subgraph/src/plugin/
+packages/subgraph/tests/plugin/
+packages/subgraph/schema.graphql
+
