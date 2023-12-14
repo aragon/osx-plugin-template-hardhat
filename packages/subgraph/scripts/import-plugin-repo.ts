@@ -40,5 +40,5 @@ function extractAndWriteAddressToTS(jsonPath: string): void {
   );
 }
 
-const pluginInfoPath = path.join(__dirname, '../../contracts/plugin-info.json');
+const pluginInfoPath = path.join(__dirname, '../../../plugin-info.json');
 extractAndWriteAddressToTS(pluginInfoPath);
