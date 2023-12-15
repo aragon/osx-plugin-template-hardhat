@@ -75,7 +75,7 @@ Editing this variables you can change how the subgraph is built and deployed.
 
 ### `manifest/subgraph.placeholder.yaml`
 
-The first step to create a subgraph is to create or edit the `subgraph.placeholder.yaml` file. This file is located in the `manifest` folder. This file contains the template for the `subgraph.yaml` file. This file is used by the `build-manifest.sh` script to generate the `subgraph.yaml` file. You can find more information about the `subgraph.yaml` file [here](https://thegraph.com/docs/define-a-subgraph#the-subgraph-manifest).  
+The first step to create a subgraph is to create or edit the `subgraph.placeholder.yaml` file. This file is located in the `manifest` folder. This file contains the template for the `subgraph.yaml` file. This file is used by the `build-manifest.sh` script to generate the `subgraph.yaml` file. You can find more information about the `subgraph.yaml` file [here](https://thegraph.com/docs/define-a-subgraph#the-subgraph-manifest).
 
 You will see that the `subgraph.placeholder.yaml` file contains some placeholders that will be replaced by the `build-manifest.sh` script. These placeholders are the following:
 
@@ -86,11 +86,11 @@ You will see that the `subgraph.placeholder.yaml` file contains some placeholder
 
 This placeholder are substituted using moustache. You can find more information about it [here](https://mustache.github.io/).
 
-The files containing the replacement values are stored in `manifest/data`. Here you can find a JSON file for each network. The name of the file is the name of the network. For example, the file for the mainnet network is `mainnet.json`. This file contains a property called `dataSources` which holds the information about the contract that will be indexed. In this case, we are only indexing one contract but you can index multiple contracts by adding more objects to the `dataSources` object.  
+The files containing the replacement values are stored in `manifest/data`. Here you can find a JSON file for each network. The name of the file is the name of the network. For example, the file for the mainnet network is `mainnet.json`. This file contains a property called `dataSources` which holds the information about the contract that will be indexed. In this case, we are only indexing one contract but you can index multiple contracts by adding more objects to the `dataSources` object.
 
 ### `schema.graphql`
 
-The second step to create a subgraph is to define the schema. The schema is defined in the `schema.graphql` file located in the `subgraph` folder. This file contains the GraphQL schema that will be used for querying the subgraph. The schema is defined using the GraphQL Schema Definition Language (SDL). You can find more information about it [here](https://graphql.org/learn/schema/).  
+The second step to create a subgraph is to define the schema. The schema is defined in the `schema.graphql` file located in the `subgraph` folder. This file contains the GraphQL schema that will be used for querying the subgraph. The schema is defined using the GraphQL Schema Definition Language (SDL). You can find more information about it [here](https://graphql.org/learn/schema/).
 
 Here you can add your custom entities and how they are related to each other. You can find more information about the schema [here](https://thegraph.com/docs/define-a-subgraph#defining-the-schema).
 
