@@ -169,7 +169,7 @@ GRAPH_KEY="zzzzzzzzzzzz"
 ## Subgraph
 SUBGRAPH_NAME="osx"
 SUBGRAPH_VERSION="v1.0.0"
-SUBGRAPH_NETWORK_NAME="mainnet" #  ["mainnet", "goerli", "sepolia", "polygon", "polygonMumbai", "base", "baseGoerli", "arbitrum", "arbitrumGoerli"]
+SUBGRAPH_NETWORK_NAME="mainnet" #  ["mainnet", "goerli", "sepolia", "polygon", "polygonMumbai", "base", "baseSepolia", "arbitrum", "arbitrumSepolia"]
 ```
 
 - `GRAPH_KEY`: This key will be used for deploying the subgraph.
