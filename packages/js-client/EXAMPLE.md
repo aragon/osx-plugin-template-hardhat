@@ -1,4 +1,4 @@
-# Example of plugin
+# Plugin Example
 
 This file aims to provide an example of how to build a `js-client` following the guide in the [GUIDE.md](./GUIDE.md).
 
@@ -6,7 +6,7 @@ For this example we are going to build a `js-client` for the template plugin in 
 
 ## Initialize the project
 
-The fist step would be initializing a `npm` project. You can use the following commands to do so ot any other tool you prefer.
+The fist step is to initialize a `npm` project. You can use the following commands:
 
 NPM:
 
@@ -24,7 +24,7 @@ cd js-client-example
 yarn init -y
 ```
 
-Now we need to install the common tooling for `js-client` development.
+Now, we need to install the common tooling for `js-client` development.
 
 NPM:
 
@@ -44,14 +44,14 @@ yarn add `@aragon/sdk-client-common`
 yarn add `@aragon/sdk-common`
 ```
 
-Now create a `src` folder and a `index.ts` file inside it.
+Now, create a `src` folder and a `index.ts` file inside it.
 
 ```bash
 mkdir src
 touch src/index.ts
 ```
 
-The index file will be the entry point of our `js-client` and will export everything in the non internal folders.
+The index file will be the entry point of our `js-client` and will export everything in the non-internal folders.
 
 For this use case we will have:
 

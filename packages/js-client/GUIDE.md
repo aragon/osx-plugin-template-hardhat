@@ -17,7 +17,7 @@ The JS client sits as a middle layer between the contracts and the UI. It is res
 
 Using this template and the `@aragon/sdk-client-common` package, you will be able to build a JS client for your plugin in a few minutes.
 
-The `@aragon/sdk-client-common` package provides a set tools to build a JS client for your plugin, it mainly gives you helpers and battle tested logic for handling connections with external services such as:
+The `@aragon/sdk-client-common` package provides a set tools to build a JS client for your plugin. It gives you helpers for handling connections with external services such as:
 
 - Web3 providers
 - Subgraph
@@ -27,7 +27,7 @@ This package handles for you the connection (fail prevention, error handling, co
 
 ### Why a JS client?
 
-As mentioned before, the JS client is a totally optional step in the process of creating an Aragon OS plugin. You can definitely build a plugin without a JS client, but you will be missing some benefits.
+As mentioned before, the JS client is an optional step in the process of creating an Aragon OSx plugin. You can definitely build a plugin without a JS client, but you will be missing some benefits.
 
 Aragon common packages will handle the connection to IPFS, Subgraph and blockchain providers, so you don't have to reinvent the wheel.
 
