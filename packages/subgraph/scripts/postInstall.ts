@@ -1,6 +1,6 @@
-import fs from 'fs';
 // Import the osx-ethers module to access OSX contracts and generate their ABIs for any needed version.
-import * as osx120 from 'osx-ethersV120';
+import * as osx120 from '@aragon/osx-ethers';
+import fs from 'fs';
 import path from 'path';
 
 // Add the contract factories to this array for the contracts you want to generate ABIs for.
