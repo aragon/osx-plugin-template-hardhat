@@ -4,7 +4,7 @@ This file aims to provide an example of how to build a `js-client` following the
 
 For this example we are going to build a `js-client` for the template plugin in this repository.
 
-## Initialize the project
+## Initialize the Project
 
 The fist step is to initialize a `npm` project. You can use the following commands:
 
@@ -65,7 +65,7 @@ export * from './context';
 export * from './types';
 ```
 
-## Create a `client.ts` file
+## Create a `client.ts` File
 
 This file will be the client entry point and will export a `Client` class that will be used to interact with the plugin.
 
@@ -148,7 +148,7 @@ export interface IMyPluginClientDecoding {
 }
 ```
 
-## Create a `context.ts` file
+## Create a `context.ts` File
 
 This file will be the context of the client and will store all the information needed by the plugin and receive the `contextParams` from the `MyPluginClient` constructor.
 

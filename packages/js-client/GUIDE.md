@@ -25,7 +25,7 @@ The `@aragon/sdk-client-common` package provides a set tools to build a JS clien
 
 This package handles for you the connection (fail prevention, error handling, connection retry...) and basic functionality of these services, so you can focus on building your plugin.
 
-### Why a JS client?
+### Why a JS Client?
 
 As mentioned before, the JS client is an optional step in the process of creating an Aragon OSx plugin. You can definitely build a plugin without a JS client, but you will be missing some benefits.
 
@@ -33,7 +33,7 @@ Aragon common packages will handle the connection to IPFS, Subgraph and blockcha
 
 Additionally, is giving some structure to your plugin, if you plan on doing some complex logic in your plugin, it is a good idea to have a JS client to handle it and leave the UI handling only the UI logic.
 
-## Getting started
+## Getting Started
 
 To get started with your client the first step is to create a new JS/TS project you can use any tool you want.
 
@@ -364,7 +364,7 @@ Ensures that the current GraphQL client is up, if it isn't up it changes automat
 
 Makes a request to the current GraphQL client. It will retry the request if it fails switching to the next client.
 
-### Write your own modules
+### Write Your Own Modules
 
 To write your own modules you just need to create a class that extends the `ClientCore` class from `@aragon/sdk-client-common` and receive the context as a parameter.
 
