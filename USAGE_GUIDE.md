@@ -1,7 +1,5 @@
 # Template Usage Guide
 
-## Contracts Template Usage Guide
-
 This guide will walk you through the process of writing the smart contract for a plugin and also creating the subgraph. It will cover the following topics:
 
 - [Contracts Template Usage Guide](#contracts-template-usage-guide)
@@ -20,6 +18,8 @@ This guide will walk you through the process of writing the smart contract for a
     - [`manifest/subgraph.placeholder.yaml`](#manifestsubgraphplaceholderyaml)
     - [`schema.graphql`](#schemagraphql)
   - [Handlers](#handlers)
+
+# Contracts Template Usage Guide
 
 ## Contracts Dependency Installation
 
