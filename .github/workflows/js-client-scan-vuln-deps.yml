@@ -10,13 +10,12 @@ on:
 jobs:
   formatting-linting:
     uses: ./.github/workflows/formatting-linting.yml
-
   scan-vuln-deps-in-repo:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
       actions: read
-      contents: read      
+      contents: read
 
     steps:
       - name: Checkout code
