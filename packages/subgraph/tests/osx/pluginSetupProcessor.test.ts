@@ -1,7 +1,7 @@
 import {generatePluginInstallationEntityId} from '../../commons/ids';
 import {createInstallationPreparedEvent} from '../../commons/test';
+import {PLUGIN_REPO_ADDRESS} from '../../imported/repo-address';
 import {handleInstallationPrepared} from '../../src/osx/pluginSetupProcessor';
-import {PLUGIN_REPO_ADDRESS} from '../../utils/constants';
 import {
   ADDRESS_FIVE,
   ADDRESS_FOUR,

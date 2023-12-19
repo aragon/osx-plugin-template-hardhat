@@ -1,10 +1,10 @@
-import fs from 'fs';
 // Import the osx-ethers module to access OSX contracts and generate their ABIs for any needed version.
-import * as osx120 from 'osx-ethersV120';
+import {PluginSetupProcessor__factory} from '@aragon/osx-ethers';
+import fs from 'fs';
 import path from 'path';
 
 // Add the contract factories to this array for the contracts you want to generate ABIs for.
-const contractFactories = [osx120.PluginSetupProcessor__factory];
+const contractFactories = [PluginSetupProcessor__factory];
 
 function generateABIFiles(contractFactories: any[]): void {
   // Iterate through each contract factory passed.
