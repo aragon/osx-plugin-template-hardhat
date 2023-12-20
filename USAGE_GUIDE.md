@@ -186,7 +186,7 @@ For the `MyPlugin` example, two handlers are already provided:
 
 ## Testing
 
-This template uses `matchstick-as` framework for unit testing.
+This template uses [matchstick-as](https://github.com/LimeChain/matchstick) framework for unit testing.
 Similar to the `src` folder, the `test` folder contains a `plugin` and `osx` subfolder where the tests for the event handlers from the previous section are written.
 
 In `plugin.ts` inside the ``plugin` folder, you can test the plugin-related event handlers. In `pluginSetupProcessor.ts` inside the `osx` folder, you can test plugin-setup-processor-related event handlers that your plugin might require.
