@@ -2,42 +2,29 @@
 
 This guide will walk you through the process of writing the smart contract for a plugin and also creating the subgraph. It will cover the following topics:
 
+- [Dependency Installation](#dependency-installation)
 - [Contracts Template Usage Guide](#contracts-template-usage-guide)
 
-  - [Install dependencies](#contracts-dependency-installation)
   - [Adapt the contracts](#adapt-template-contracts)
-  - [Contract testing](#contract-testing)
-    - [Contract Unit Testing](#contract-unit-testing)
-    - [Contract Integration Testing](#contract-integration-testing)
+  - [testing](#testing)
+    - [Unit Testing](#unit-testing)
+    - [Integration Testing](#integration-testing)
   - [Deployment Scripts](#deployment-scripts)
 
 - [Subgraph Template Usage Guide](#subgraph-template-usage-guide)
-  - [Install dependencies](#subgraph-dependency-installation)
   - [Included scripts and `.env` file](#included-scripts-and-env-file)
   - [Creating a Subgraph](#creating-a-subgraph)
     - [`manifest/subgraph.placeholder.yaml`](#manifestsubgraphplaceholderyaml)
     - [`schema.graphql`](#schemagraphql)
   - [Handlers](#handlers)
+  - [testing](#testing-1)
+
+## Dependency Installation
+
+Before you begin, make sure you installed the necessary dependencies.
+For detailed instructions, refer to the [README](README.md).
 
 # Contracts Template Usage Guide
-
-## Contracts Dependency Installation
-
-Before you begin, make sure you installed the necessary dependencies. This template uses `yarn` so make sure you have it installed. You can install it by running the following command:
-
-```bash
-npm install -g yarn
-```
-
-After that you can install the dependencies by running:
-
-```bash
-cd packages/contracts/
-```
-
-```bash
-yarn install
-```
 
 ## Adapt template contracts
 
@@ -74,11 +61,11 @@ This template contains the boilerplate and it uses `MyPlugin` as the contracts n
 
    If you deploy upcoming versions of your plugin, you must increment the build or release number accordingly (see [our docs on versioning your plugin](https://devs.aragon.org/docs/osx/how-to-guides/plugin-development/publication/versioning)).
 
-### Contract Testing
+### Testing
 
 The `packages/contracts/test` folder contains pre-written unit and integration tests that you can adapt and extend.
 
-#### Contract Unit Testing
+#### Unit Testing
 
 The `packages/contracts/test/integration-testing` folder contains
 
@@ -87,7 +74,7 @@ The `packages/contracts/test/integration-testing` folder contains
 
 Adapt and extend the tests according to your changes and plugin features.
 
-#### Contract Integration Testing
+#### Integration Testing
 
 The `packages/contracts/test/integration-testing` folder contains
 
@@ -116,24 +103,6 @@ The standard deploy scripts in the `packages/contracts/deploy` should already be
   - verifies all deployed contracts
 
 # Subgraph Template Usage Guide
-
-## Subgraph dependency installation
-
-Before you begin, make sure you installed the necessary dependencies. This template uses `yarn` so make sure you have it installed. You can install it by running the following command:
-
-```bash
-npm install -g yarn
-```
-
-After that you can install the dependencies by running:
-
-```bash
-cd packages/subgraph/
-```
-
-```bash
-yarn install
-```
 
 ## Included scripts and `.env` file
 
@@ -204,7 +173,20 @@ Here you can add your custom entities and how they are related to each other. Yo
 
 ## Handlers
 
-Events handler functions are associated with the events in the `subgraph.yaml` file and defined in the `src` folder. For the `MyPlugin` example, two handlers are already provided:
+Events handler functions are associated with the events in the `subgraph.yaml` file and defined in the `src` folder.
+
+The `src` folder contains a `plugin` and `osx` subfolder.
+In `plugin.ts` inside the `plugin` folder, you can add plugin-related event handlers.
+In `pluginSetupProcessor.ts` inside the `osx` folder, you can add plugin-setup-processor-related event handlers that your plugin might require.
+
+For the `MyPlugin` example, two handlers are already provided:
 
 - `handleInstallationPrepared`: Handles the `InstallationPrepared` event. This event is emitted when the installation is prepared. This event contains the `installationId` and the handler will create a new `PluginEntity` entity with the `installationId` as the id.
 - `handleNumberStored`: Handles the `NumberStored` event. And stores the number in the `pluginEntity` entity in the `number` property.
+
+## Testing
+
+This template uses `matchstick-as` framework for unit testing.
+Similar to the `src` folder, the `test` folder contains a `plugin` and `osx` subfolder where the tests for the event handlers from the previous section are written.
+
+In `plugin.ts` inside the ``plugin` folder, you can test the plugin-related event handlers. In `pluginSetupProcessor.ts` inside the `osx` folder, you can test plugin-setup-processor-related event handlers that your plugin might require.
