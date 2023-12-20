@@ -3,7 +3,7 @@
 This guide will walk you through the process of writing the smart contract for a plugin and also creating the subgraph. It will cover the following topics:
 
 - [Dependency Installation](#dependency-installation)
-- [Contracts Template Usage Guide](#contracts-template-usage-guide)
+- [Contracts](#contracts)
 
   - [Adapt the contracts](#adapt-template-contracts)
   - [testing](#testing)
@@ -11,7 +11,7 @@ This guide will walk you through the process of writing the smart contract for a
     - [Integration Testing](#integration-testing)
   - [Deployment Scripts](#deployment-scripts)
 
-- [Subgraph Template Usage Guide](#subgraph-template-usage-guide)
+- [Subgraph](#subgraph)
   - [Included scripts and `.env` file](#included-scripts-and-env-file)
   - [Creating a Subgraph](#creating-a-subgraph)
     - [`manifest/subgraph.placeholder.yaml`](#manifestsubgraphplaceholderyaml)
@@ -24,7 +24,7 @@ This guide will walk you through the process of writing the smart contract for a
 Before you begin, make sure you installed the necessary dependencies.
 For detailed instructions, refer to the [README](README.md).
 
-# Contracts Template Usage Guide
+# Contracts
 
 ## Adapt template contracts
 
@@ -102,7 +102,7 @@ The standard deploy scripts in the `packages/contracts/deploy` should already be
 - `99_verification/10_verify-contracts.ts`
   - verifies all deployed contracts
 
-# Subgraph Template Usage Guide
+# Subgraph
 
 ## Included scripts and `.env` file
 
