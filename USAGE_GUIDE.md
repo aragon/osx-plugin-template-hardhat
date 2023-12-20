@@ -204,7 +204,7 @@ Here you can add your custom entities and how they are related to each other. Yo
 
 ## Handlers
 
-The handling functions will be handling the events specified in the `subgraph.yaml` file. The functions are located in the `src` folder. For this specific case we have 2 handlers:
+Events handler functions are associated with the events in the `subgraph.yaml` file and defined in the `src` folder. For the `MyPlugin` example, two handlers are already provided:
 
-- `handleInstallationPrepared`: Handeles the `InstallationPrepared` event. This event is emitted when the installation is prepared. This event contains the `installationId` and the handler will create a new `PluginEntity` entity with the `installationId` as the id.
+- `handleInstallationPrepared`: Handles the `InstallationPrepared` event. This event is emitted when the installation is prepared. This event contains the `installationId` and the handler will create a new `PluginEntity` entity with the `installationId` as the id.
 - `handleNumberStored`: Handles the `NumberStored` event. And stores the number in the `pluginEntity` entity in the `number` property.
