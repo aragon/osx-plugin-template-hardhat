@@ -161,7 +161,7 @@ You will see that the `subgraph.placeholder.yaml` file contains some placeholder
 - `{{address}}`: The address of the contract that will be indexed.
 - `{{network}}`: The network where the contract is deployed.
 
-This placeholder are substituted using moustache. You can find more information about it [here](https://mustache.github.io/).
+These placeholders are substituted using [mustache](https://mustache.github.io/).
 
 The files containing the replacement values are stored in `manifest/data`. Here you can find a JSON file for each network. The name of the file is the name of the network. For example, the file for the mainnet network is `mainnet.json`. This file contains a property called `dataSources` which holds the information about the contract that will be indexed. In this case, we are only indexing one contract but you can index multiple contracts by adding more objects to the `dataSources` object.
 
@@ -187,6 +187,6 @@ For the `MyPlugin` example, two handlers are already provided:
 ## Testing
 
 This template uses [matchstick-as](https://github.com/LimeChain/matchstick) framework for unit testing.
-Similar to the `src` folder, the `test` folder contains a `plugin` and `osx` subfolder where the tests for the event handlers from the previous section are written.
+Similar to the `src` folder, the `test` folder contains a `plugin` and `osx` subfolder, where the tests for the event handlers from the previous section are written.
 
 In `plugin.test.ts` inside the `plugin` folder, you can test the plugin-related event handlers. In `pluginSetupProcessor.test.ts` inside the `osx` folder, you can test plugin-setup-processor-related event handlers that your plugin might require.
