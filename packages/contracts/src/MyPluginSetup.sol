@@ -4,15 +4,18 @@ pragma solidity ^0.8.8;
 
 import {PermissionLib} from "@aragon/osx-commons-contracts/src/permission/PermissionLib.sol";
 import {PluginSetup, IPluginSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/PluginSetup.sol";
+import {IDAO} from "@aragon/osx-commons-contracts/src/dao/IDAO.sol";
 import {MyPlugin} from "./MyPlugin.sol";
 
 /// @title MyPluginSetup
 /// @dev Release 1, Build 1
 contract MyPluginSetup is PluginSetup {
-    address private immutable MY_PLUGIN_IMPLEMENTATION;
+    address internal immutable IMPLEMENTATION;
+
+    bytes32 internal constant STORE_PERMISSION_ID = keccak256("STORE_PERMISSION");
 
     constructor() {
-        MY_PLUGIN_IMPLEMENTATION = address(new MyPlugin());
+        IMPLEMENTATION = address(new MyPlugin());
     }
 
     /// @inheritdoc IPluginSetup
@@ -23,8 +26,8 @@ contract MyPluginSetup is PluginSetup {
         uint256 number = abi.decode(_data, (uint256));
 
         plugin = createERC1967Proxy(
-            MY_PLUGIN_IMPLEMENTATION,
-            abi.encodeWithSelector(MyPlugin.initialize.selector, _dao, number)
+            IMPLEMENTATION,
+            abi.encodeCall(MyPlugin.initialize, (IDAO(_dao), number))
         );
 
         PermissionLib.MultiTargetPermission[]
@@ -35,7 +38,7 @@ contract MyPluginSetup is PluginSetup {
             where: plugin,
             who: _dao,
             condition: PermissionLib.NO_CONDITION,
-            permissionId: keccak256("STORE_PERMISSION")
+            permissionId: STORE_PERMISSION_ID
         });
 
         preparedSetupData.permissions = permissions;
@@ -53,12 +56,12 @@ contract MyPluginSetup is PluginSetup {
             where: _payload.plugin,
             who: _dao,
             condition: PermissionLib.NO_CONDITION,
-            permissionId: keccak256("STORE_PERMISSION")
+            permissionId: STORE_PERMISSION_ID
         });
     }
 
     /// @inheritdoc IPluginSetup
     function implementation() external view returns (address) {
-        return MY_PLUGIN_IMPLEMENTATION;
+        return IMPLEMENTATION;
     }
 }

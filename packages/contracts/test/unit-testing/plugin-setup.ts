@@ -9,7 +9,7 @@ import {
 } from '../../typechain';
 import {STORE_PERMISSION_ID, defaultInitData} from './plugin';
 import {
-  ADDRESS_ZERO,
+  ADDRESS,
   Operation,
   PERMISSION_MANAGER_FLAGS,
   getNamedTypesFromMetadata,
@@ -93,7 +93,7 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
     it('returns the permissions', async () => {
       const {pluginSetup, daoMock} = await loadFixture(fixture);
 
-      const dummyAddr = ADDRESS_ZERO;
+      const dummyAddr = ADDRESS.ZERO;
       const emptyData = '0x';
 
       const permissions = await pluginSetup.callStatic.prepareUninstallation(
