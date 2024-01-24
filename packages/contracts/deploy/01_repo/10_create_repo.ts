@@ -2,11 +2,11 @@ import {PLUGIN_REPO_ENS_NAME} from '../../plugin-settings';
 import {ENS__factory} from '../../typechain';
 import {PluginRepoRegisteredEvent} from '../../typechain/@aragon/osx/framework/plugin/repo/PluginRepoRegistry';
 import {
-  findEventTopicLog,
   addDeployedRepo as addCreatedRepo,
   getPluginRepoFactoryAddress,
   getPluginRepoRegistryAddress,
 } from '../../utils/helpers';
+import {findEventTopicLog} from '@aragon/osx-commons-sdk';
 import {
   PluginRepoFactory__factory,
   PluginRepoRegistry__factory,

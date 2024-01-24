@@ -1,14 +1,7 @@
 import {activeContractsList} from '@aragon/osx-ethers';
-import {ContractFactory, ContractTransaction} from 'ethers';
-import {
-  Interface,
-  LogDescription,
-  defaultAbiCoder,
-  keccak256,
-} from 'ethers/lib/utils';
+import {defaultAbiCoder, keccak256} from 'ethers/lib/utils';
 import {existsSync, statSync, readFileSync, writeFileSync} from 'fs';
 import {ethers} from 'hardhat';
-import {upgrades} from 'hardhat';
 
 export type NetworkNameMapping = {[index: string]: string};
 
@@ -193,45 +186,4 @@ export function toBytes(string: string) {
 
 export function hashHelpers(helpers: string[]) {
   return keccak256(defaultAbiCoder.encode(['address[]'], [helpers]));
-}
-
-export async function findEvent<T>(tx: ContractTransaction, eventName: string) {
-  const receipt = await tx.wait();
-
-  const event = (receipt.events || []).find(event => event.event === eventName);
-
-  return event as T | undefined;
-}
-
-export async function findEventTopicLog<T>(
-  tx: ContractTransaction,
-  iface: Interface,
-  eventName: string
-): Promise<LogDescription & (T | LogDescription)> {
-  const receipt = await tx.wait();
-  const topic = iface.getEventTopic(eventName);
-  const log = receipt.logs.find(x => x.topics[0] === topic);
-  if (!log) {
-    throw new Error(`No logs found for the topic of event "${eventName}".`);
-  }
-  return iface.parseLog(log) as LogDescription & (T | LogDescription);
-}
-
-type DeployOptions = {
-  constructurArgs?: unknown[];
-  proxyType?: 'uups';
-};
-
-export async function deployWithProxy<T>(
-  contractFactory: ContractFactory,
-  options: DeployOptions = {}
-): Promise<T> {
-  upgrades.silenceWarnings(); // Needed because we pass the `unsafeAllow: ["constructor"]` option.
-
-  return upgrades.deployProxy(contractFactory, [], {
-    kind: options.proxyType || 'uups',
-    initializer: false,
-    unsafeAllow: ['constructor'],
-    constructorArgs: options.constructurArgs || [],
-  }) as unknown as Promise<T>;
 }

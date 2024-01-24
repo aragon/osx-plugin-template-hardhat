@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.8;
 
-import {PermissionLib} from "@aragon/osx/core/permission/PermissionLib.sol";
-import {PluginSetup, IPluginSetup} from "@aragon/osx/framework/plugin/setup/PluginSetup.sol";
+import {PermissionLib} from "@aragon/osx-commons-contracts/src/permission/PermissionLib.sol";
+import {PluginSetup, IPluginSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/PluginSetup.sol";
 import {MyPlugin} from "./MyPlugin.sol";
 
 /// @title MyPluginSetup
