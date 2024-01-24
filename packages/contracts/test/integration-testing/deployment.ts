@@ -4,10 +4,17 @@ import {
   MyPluginSetup__factory,
 } from '../../typechain';
 import {getPluginInfo, osxContracts} from '../../utils/helpers';
-import {toHex} from '../../utils/ipfs';
-import {PluginRepoRegistry__factory} from '@aragon/osx-ethers';
-import {PluginRepoRegistry} from '@aragon/osx-ethers';
-import {PluginRepo__factory} from '@aragon/osx-ethers';
+import {
+  DAO_PERMISSIONS,
+  PERMISSION_MANAGER_FLAGS,
+  PLUGIN_REPO_PERMISSIONS,
+  toHex,
+} from '@aragon/osx-commons-sdk';
+import {
+  PluginRepoRegistry,
+  PluginRepoRegistry__factory,
+  PluginRepo__factory,
+} from '@aragon/osx-ethers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {deployments, ethers} from 'hardhat';
@@ -28,7 +35,7 @@ describe('PluginRepo Deployment', function () {
 
     [alice] = await ethers.getSigners();
 
-    // Deploymen should be empty
+    // Deployment should be empty
     expect(await deployments.all()).to.be.empty;
 
     // Deploy all contracts
@@ -58,8 +65,8 @@ describe('PluginRepo Deployment', function () {
       await pluginRepo.isGranted(
         pluginRepo.address,
         alice.address,
-        ethers.utils.id('ROOT_PERMISSION'),
-        ethers.constants.AddressZero
+        DAO_PERMISSIONS.ROOT_PERMISSION_ID,
+        PERMISSION_MANAGER_FLAGS.NO_CONDITION
       )
     ).to.be.true;
 
@@ -67,8 +74,8 @@ describe('PluginRepo Deployment', function () {
       await pluginRepo.isGranted(
         pluginRepo.address,
         alice.address,
-        ethers.utils.id('UPGRADE_REPO_PERMISSION'),
-        ethers.constants.AddressZero
+        PLUGIN_REPO_PERMISSIONS.UPGRADE_REPO_PERMISSION_ID,
+        PERMISSION_MANAGER_FLAGS.NO_CONDITION
       )
     ).to.be.true;
 
@@ -76,8 +83,8 @@ describe('PluginRepo Deployment', function () {
       await pluginRepo.isGranted(
         pluginRepo.address,
         alice.address,
-        ethers.utils.id('MAINTAINER_PERMISSION'),
-        ethers.constants.AddressZero
+        PLUGIN_REPO_PERMISSIONS.MAINTAINER_PERMISSION_ID,
+        PERMISSION_MANAGER_FLAGS.NO_CONDITION
       )
     ).to.be.true;
   });

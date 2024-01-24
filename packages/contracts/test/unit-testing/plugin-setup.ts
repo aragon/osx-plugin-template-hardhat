@@ -7,9 +7,13 @@ import {
   MyPluginSetup__factory,
   MyPlugin__factory,
 } from '../../typechain';
-import {Operation, getNamedTypesFromMetadata} from '../helpers/types';
 import {STORE_PERMISSION_ID, defaultInitData} from './plugin';
-import {ADDRESS_ZERO, PERMISSION_MANAGER_FLAGS} from '@aragon/osx-commons-sdk';
+import {
+  ADDRESS_ZERO,
+  Operation,
+  PERMISSION_MANAGER_FLAGS,
+  getNamedTypesFromMetadata,
+} from '@aragon/osx-commons-sdk';
 import {loadFixture} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';

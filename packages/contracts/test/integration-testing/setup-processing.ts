@@ -10,7 +10,7 @@ import {PluginSetupRefStruct} from '../../typechain/@aragon/osx/framework/dao/DA
 import {getPluginInfo, osxContracts} from '../../utils/helpers';
 import {initializeFork} from '../helpers/fixture';
 import {installPLugin, uninstallPLugin} from '../helpers/setup';
-import {getNamedTypesFromMetadata} from '../helpers/types';
+import {getNamedTypesFromMetadata} from '@aragon/osx-commons-sdk';
 import {
   PluginRepo,
   PluginRepo__factory,

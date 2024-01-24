@@ -6,8 +6,7 @@ import {
   VERSION,
 } from '../../plugin-settings';
 import {addCreatedVersion, getPluginInfo} from '../../utils/helpers';
-import {toHex} from '../../utils/ipfs';
-import {uploadToIPFS} from '../../utils/ipfs';
+import {uploadToIPFS, toHex} from '@aragon/osx-commons-sdk';
 import {PluginRepo__factory, PluginSetup__factory} from '@aragon/osx-ethers';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';

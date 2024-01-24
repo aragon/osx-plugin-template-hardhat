@@ -4,7 +4,7 @@ import {
   PluginSetupProcessor__factory,
 } from '../../typechain';
 import {osxContracts} from '../../utils/helpers';
-import {Operation} from './types';
+import {Operation} from '@aragon/osx-commons-sdk';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 
 export async function createPluginSetupProcessor(
