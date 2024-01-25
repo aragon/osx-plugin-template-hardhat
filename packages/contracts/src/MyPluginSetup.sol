@@ -3,20 +3,25 @@
 pragma solidity ^0.8.8;
 
 import {PermissionLib} from "@aragon/osx-commons-contracts/src/permission/PermissionLib.sol";
-import {PluginSetup, IPluginSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/PluginSetup.sol";
+import {ProxyLib} from "@aragon/osx-commons-contracts/src/utils/deployment/ProxyLib.sol";
+import {PluginUpgradeableSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/PluginUpgradeableSetup.sol";
+import {IPluginSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/IPluginSetup.sol";
 import {IDAO} from "@aragon/osx-commons-contracts/src/dao/IDAO.sol";
+
 import {MyPlugin} from "./MyPlugin.sol";
 
 /// @title MyPluginSetup
 /// @dev Release 1, Build 1
-contract MyPluginSetup is PluginSetup {
-    address internal immutable IMPLEMENTATION;
+contract MyPluginSetup is PluginUpgradeableSetup {
+    using ProxyLib for address;
 
+    /// @notice Constructs the `PluginUpgradeableSetup` by storing the `MyPlugin` implementation address.
+    /// @dev The implementation address is used to deploy UUPS proxies referencing it and
+    /// to verify the plugin on the respective block explorers.
+    constructor() PluginUpgradeableSetup(address(new MyPlugin())) {}
+
+    /// @notice The ID of the permission required to call the `storeNumber` function.
     bytes32 internal constant STORE_PERMISSION_ID = keccak256("STORE_PERMISSION");
-
-    constructor() {
-        IMPLEMENTATION = address(new MyPlugin());
-    }
 
     /// @inheritdoc IPluginSetup
     function prepareInstallation(
@@ -25,8 +30,7 @@ contract MyPluginSetup is PluginSetup {
     ) external returns (address plugin, PreparedSetupData memory preparedSetupData) {
         uint256 number = abi.decode(_data, (uint256));
 
-        plugin = createERC1967Proxy(
-            IMPLEMENTATION,
+        plugin = IMPLEMENTATION.deployUUPSProxy(
             abi.encodeCall(MyPlugin.initialize, (IDAO(_dao), number))
         );
 
@@ -58,10 +62,5 @@ contract MyPluginSetup is PluginSetup {
             condition: PermissionLib.NO_CONDITION,
             permissionId: STORE_PERMISSION_ID
         });
-    }
-
-    /// @inheritdoc IPluginSetup
-    function implementation() external view returns (address) {
-        return IMPLEMENTATION;
     }
 }

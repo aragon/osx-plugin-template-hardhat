@@ -7,6 +7,7 @@ import {IDAO} from "@aragon/osx-commons-contracts/src/dao/IDAO.sol";
 /// @title MyPlugin
 /// @dev Release 1, Build 1
 contract MyPlugin is PluginUUPSUpgradeable {
+    /// @notice The ID of the permission required to call the `storeNumber` function.
     bytes32 public constant STORE_PERMISSION_ID = keccak256("STORE_PERMISSION");
 
     uint256 public number; // added in build 1

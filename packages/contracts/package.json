@@ -45,7 +45,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@aragon/osx-commons-contracts": "1.4.0-alpha.2",
+    "@aragon/osx-commons-contracts": "1.4.0-alpha.3",
     "@openzeppelin/contracts": "^4.9.5",
     "@openzeppelin/contracts-upgradeable": "^4.9.5"
   },
