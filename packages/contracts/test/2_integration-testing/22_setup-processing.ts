@@ -7,9 +7,15 @@ import {
   MyPlugin__factory,
 } from '../../typechain';
 import {PluginSetupRefStruct} from '../../typechain/@aragon/osx/framework/dao/DAOFactory';
-import {getPluginInfo, osxContracts} from '../../utils/helpers';
-import {initializeFork} from '../helpers/fixture';
+import {
+  getProductionNetworkName,
+  getAragonDeploymentsInfo,
+} from '../../utils/helpers';
 import {installPLugin, uninstallPLugin} from '../helpers/setup';
+import {
+  getLatestNetworkDeployment,
+  getNetworkNameByAlias,
+} from '@aragon/osx-commons-configs';
 import {getNamedTypesFromMetadata} from '@aragon/osx-commons-sdk';
 import {
   PluginRepo,
@@ -21,73 +27,11 @@ import {loadFixture} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {BigNumber} from 'ethers';
-import {ethers} from 'hardhat';
+import env, {deployments, ethers} from 'hardhat';
 
-const HH_FORK_NETWORK = 'goerli'; // TODO loop over all networks
+const productionNetworkName = getProductionNetworkName(env);
 
-type FixtureResult = {
-  deployer: SignerWithAddress;
-  alice: SignerWithAddress;
-  bob: SignerWithAddress;
-  daoMock: DAOMock;
-  psp: PluginSetupProcessor;
-  pluginRepo: PluginRepo;
-  pluginSetup: MyPluginSetup;
-  pluginSetupRef: PluginSetupRefStruct;
-};
-
-async function fixture(): Promise<FixtureResult> {
-  const [deployer, alice, bob] = await ethers.getSigners();
-  const daoMock = await new DAOMock__factory(deployer).deploy();
-
-  // Use the `PluginSetupProcessor` from the fork network
-  const psp = PluginSetupProcessor__factory.connect(
-    osxContracts[HH_FORK_NETWORK]['PluginSetupProcessor'],
-    deployer
-  );
-
-  // TODO
-  const pluginRepo = PluginRepo__factory.connect(
-    getPluginInfo(HH_FORK_NETWORK)[HH_FORK_NETWORK].address,
-    deployer
-  );
-
-  const release = 1;
-  const pluginSetup = MyPluginSetup__factory.connect(
-    (await pluginRepo['getLatestVersion(uint8)'](release)).pluginSetup,
-    deployer
-  );
-
-  const pluginSetupRef = {
-    versionTag: {
-      release: BigNumber.from(1),
-      build: BigNumber.from(1),
-    },
-    pluginSetupRepo: pluginRepo.address,
-  };
-
-  return {
-    deployer,
-    alice,
-    bob,
-    psp,
-    daoMock,
-    pluginRepo,
-    pluginSetup,
-    pluginSetupRef,
-  };
-}
-
-describe('PluginSetup Processing', function () {
-  before(async () => {
-    await initializeFork(
-      HH_FORK_NETWORK,
-      getPluginInfo(HH_FORK_NETWORK)[HH_FORK_NETWORK]['releases']['1'][
-        'builds'
-      ]['1']['blockNumberOfPublication']
-    );
-  });
-
+describe(`PluginSetup processing on network '${productionNetworkName}'`, function () {
   context('Build 1', async () => {
     it('installs & uninstalls', async () => {
       const {deployer, psp, daoMock, pluginSetup, pluginSetupRef} =
@@ -139,3 +83,62 @@ describe('PluginSetup Processing', function () {
     });
   });
 });
+
+type FixtureResult = {
+  deployer: SignerWithAddress;
+  alice: SignerWithAddress;
+  bob: SignerWithAddress;
+  daoMock: DAOMock;
+  psp: PluginSetupProcessor;
+  pluginRepo: PluginRepo;
+  pluginSetup: MyPluginSetup;
+  pluginSetupRef: PluginSetupRefStruct;
+};
+
+async function fixture(): Promise<FixtureResult> {
+  // Deploy all contracts
+  const tags = ['CreateRepo', 'NewVersion'];
+  await deployments.fixture(tags);
+
+  const [deployer, alice, bob] = await ethers.getSigners();
+  const daoMock = await new DAOMock__factory(deployer).deploy();
+
+  // Get the `PluginSetupProcessor` from the network
+  const psp = PluginSetupProcessor__factory.connect(
+    getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
+      .PluginSetupProcessor.address,
+    deployer
+  );
+
+  // Get the deployed `PluginRepo`
+  const network = env.network.name;
+  const pluginRepo = PluginRepo__factory.connect(
+    getAragonDeploymentsInfo(network)[network].address,
+    deployer
+  );
+
+  const release = 1;
+  const pluginSetup = MyPluginSetup__factory.connect(
+    (await pluginRepo['getLatestVersion(uint8)'](release)).pluginSetup,
+    deployer
+  );
+
+  const pluginSetupRef = {
+    versionTag: {
+      release: BigNumber.from(1),
+      build: BigNumber.from(1),
+    },
+    pluginSetupRepo: pluginRepo.address,
+  };
+
+  return {
+    deployer,
+    alice,
+    bob,
+    psp,
+    daoMock,
+    pluginRepo,
+    pluginSetup,
+    pluginSetupRef,
+  };
+}

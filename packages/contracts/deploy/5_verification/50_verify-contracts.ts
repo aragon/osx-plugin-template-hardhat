@@ -1,6 +1,8 @@
 import {verifyContract} from '../../utils/etherscan';
+import {isLocal} from '../../utils/helpers';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
+import path from 'path';
 
 function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -24,15 +26,26 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     );
     await delay(6000);
   }
+
+  console.log(`\n${'-'.repeat(60)}\n`);
 };
 
 export default func;
 
 func.tags = ['Verification'];
 func.runAtTheEnd = true;
-func.skip = (hre: HardhatRuntimeEnvironment) =>
-  Promise.resolve(
-    hre.network.name === 'localhost' ||
-      hre.network.name === 'hardhat' ||
-      hre.network.name === 'coverage'
-  );
+func.skip = async (hre: HardhatRuntimeEnvironment) => {
+  console.log(`\n📋 ${path.basename(__filename)}:`);
+
+  const local = isLocal(hre);
+
+  if (local) {
+    console.log(
+      `Skipping verification for local network ${hre.network.name}...`
+    );
+  } else {
+    console.log(`Starting verification on network ${hre.network.name}...`);
+  }
+
+  return local;
+};

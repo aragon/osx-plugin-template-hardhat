@@ -9,10 +9,7 @@ import {
   InstallationAppliedEvent,
 } from '../../typechain/@aragon/osx/framework/plugin/setup/PluginSetupProcessor';
 import {hashHelpers} from '../../utils/helpers';
-import {
-  findEvent,
-  PLUGIN_SETUP_PROCESSOR_EVENTS,
-} from '@aragon/osx-commons-sdk';
+import {findEvent} from '@aragon/osx-commons-sdk';
 import {expect} from 'chai';
 import {ContractTransaction} from 'ethers';
 
@@ -34,7 +31,7 @@ export async function installPLugin(
 
   const preparedEvent = await findEvent<InstallationPreparedEvent>(
     prepareTx,
-    PLUGIN_SETUP_PROCESSOR_EVENTS.InstallationPrepared
+    psp.interface.getEvent('InstallationPrepared').name
   );
 
   const plugin = preparedEvent.args.plugin;
@@ -48,7 +45,7 @@ export async function installPLugin(
 
   const appliedEvent = await findEvent<InstallationAppliedEvent>(
     applyTx,
-    PLUGIN_SETUP_PROCESSOR_EVENTS.InstallationApplied
+    psp.interface.getEvent('InstallationApplied').name
   );
 
   return {prepareTx, applyTx, preparedEvent, appliedEvent};
@@ -78,7 +75,7 @@ export async function uninstallPLugin(
 
   const preparedEvent = await findEvent<UninstallationPreparedEvent>(
     prepareTx,
-    PLUGIN_SETUP_PROCESSOR_EVENTS.UninstallationPrepared
+    psp.interface.getEvent('UninstallationPrepared').name
   );
 
   const preparedPermissions = preparedEvent.args.permissions;
@@ -91,7 +88,7 @@ export async function uninstallPLugin(
 
   const appliedEvent = await findEvent<UninstallationAppliedEvent>(
     applyTx,
-    PLUGIN_SETUP_PROCESSOR_EVENTS.UninstallationApplied
+    psp.interface.getEvent('UninstallationApplied').name
   );
 
   return {prepareTx, applyTx, preparedEvent, appliedEvent};
@@ -127,7 +124,7 @@ export async function updatePlugin(
   });
   const preparedEvent = await findEvent<UpdatePreparedEvent>(
     prepareTx,
-    PLUGIN_SETUP_PROCESSOR_EVENTS.UpdatePrepared
+    psp.interface.getEvent('UpdatePrepared').name
   );
 
   const applyTx = await psp.applyUpdate(dao.address, {
@@ -139,7 +136,7 @@ export async function updatePlugin(
   });
   const appliedEvent = await findEvent<UpdateAppliedEvent>(
     applyTx,
-    PLUGIN_SETUP_PROCESSOR_EVENTS.UpdateApplied
+    psp.interface.getEvent('UpdateApplied').name
   );
 
   return {prepareTx, applyTx, preparedEvent, appliedEvent};
