@@ -2,10 +2,7 @@
   "goerli": {
     "repo": "my",
     "address": "0x4DaE02F635144c6756B34092CC94b2cC763Ab9aE",
-    "args": [
-      "my",
-      "0xbeC907C237c5d27c7D4cB37b2c17CBB227B5f335"
-    ],
+    "args": ["my", "0xbeC907C237c5d27c7D4cB37b2c17CBB227B5f335"],
     "blockNumberOfDeployment": 10468618,
     "releases": {
       "1": {
