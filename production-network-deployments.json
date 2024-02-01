@@ -1,1 +1,35 @@
-{}
+{
+  "goerli": {
+    "repo": "my",
+    "address": "0x4DaE02F635144c6756B34092CC94b2cC763Ab9aE",
+    "args": [
+      "my",
+      "0xbeC907C237c5d27c7D4cB37b2c17CBB227B5f335"
+    ],
+    "blockNumberOfDeployment": 10468618,
+    "releases": {
+      "1": {
+        "builds": {
+          "1": {
+            "setup": {
+              "name": "MyPluginSetup",
+              "address": "0xFFFFCD9ED4700f6Cdd8B391A729789a2A2752795",
+              "args": [],
+              "blockNumberOfDeployment": 10466806
+            },
+            "implementation": {
+              "name": "MyPlugin",
+              "address": "0xfD82c0994f297425b4333ae63Ed0B79986dd19f2",
+              "args": [],
+              "blockNumberOfDeployment": 10466806
+            },
+            "helpers": [],
+            "buildMetadataURI": "ipfs://QmYQbQrNBVCLCVyYi4RpUqnmCyyAUshak78QAPGSM488oa",
+            "blockNumberOfPublication": 10468619
+          }
+        },
+        "releaseMetadataURI": "ipfs://QmbmASW9zgRehGAFiSivWvbG3ac6hsHTzuYdWPJmAr1p3B"
+      }
+    }
+  }
+}
