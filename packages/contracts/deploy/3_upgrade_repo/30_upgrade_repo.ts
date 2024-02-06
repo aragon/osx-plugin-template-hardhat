@@ -9,6 +9,7 @@ import {
 } from '@aragon/osx-commons-configs';
 import {PLUGIN_REPO_PERMISSIONS} from '@aragon/osx-commons-sdk';
 import {PluginRepo__factory} from '@aragon/osx-ethers';
+import {BytesLike} from 'ethers';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
@@ -52,7 +53,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // Prepare optional initialization data
 
   // TODO Add `initializeFrom` function to `PluginRepo`.
-  const initializeFromCalldata: unknown[] = [];
+  const initializeFromCalldata: BytesLike = [];
   /*
   const initData: unknown[] = [];
   const initializeFromCalldata =
