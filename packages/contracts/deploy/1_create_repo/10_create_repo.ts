@@ -12,6 +12,7 @@ import {
   PluginRepo__factory,
   ENSSubdomainRegistrar__factory,
   PluginRepoFactory__factory,
+  IAddrResolver__factory,
 } from '@aragon/osx-ethers';
 import {Contract} from 'ethers';
 import {ethers} from 'hardhat';
@@ -88,10 +89,8 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
   const recordExists = await ens.recordExists(node);
 
   if (recordExists) {
-    const resolverAddr = await ens.resolver(node);
-    const resolver = new Contract(
-      resolverAddr,
-      ['function addr(bytes32 node) external view returns (address payable)'],
+    const resolver = IAddrResolver__factory.connect(
+      await ens.resolver(node),
       deployer
     );
     const repoAddr = await resolver.addr(node);
