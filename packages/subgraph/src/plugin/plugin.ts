@@ -1,6 +1,6 @@
-import {generatePluginInstallationEntityId} from '../../commons/ids';
 import {DaoPlugin} from '../../generated/schema';
 import {NumberStored} from '../../generated/templates/Plugin/Plugin';
+import {generatePluginInstallationEntityId} from '@aragon/osx-commons-subgraph';
 import {Address, dataSource} from '@graphprotocol/graph-ts';
 
 export function handleNumberStored(event: NumberStored): void {
@@ -15,7 +15,7 @@ export function handleNumberStored(event: NumberStored): void {
   );
 
   if (installationId) {
-    const pluginEntity = DaoPlugin.load(installationId.toHexString());
+    const pluginEntity = DaoPlugin.load(installationId);
     if (pluginEntity) {
       pluginEntity.number = event.params.number;
       pluginEntity.save();

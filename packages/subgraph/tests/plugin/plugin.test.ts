@@ -1,8 +1,8 @@
-import {generatePluginInstallationEntityId} from '../../commons/ids';
 import {DaoPlugin} from '../../generated/schema';
 import {handleNumberStored} from '../../src/plugin/plugin';
 import {CONTRACT_ADDRESS, DAO_ADDRESS} from '../utils/constants';
-import {createNewNumberStoredEvent} from './utils';
+import {createNewNumberStoredEvent} from '../utils/events';
+import {generatePluginInstallationEntityId} from '@aragon/osx-commons-subgraph';
 import {Address, DataSourceContext} from '@graphprotocol/graph-ts';
 import {
   assert,
@@ -30,17 +30,16 @@ describe('Plugin', () => {
       const daoAddress = Address.fromString(DAO_ADDRESS);
       const pluginAddress = Address.fromString(CONTRACT_ADDRESS);
 
-      const installationId = generatePluginInstallationEntityId(
+      let installationId = generatePluginInstallationEntityId(
         daoAddress,
         pluginAddress
       );
       if (!installationId) {
         throw new Error('Failed to get installationId');
       }
-      const installationIdHex = installationId.toHexString();
-
+      installationId = installationId as string;
       // Create state
-      let daoPlugin = new DaoPlugin(installationIdHex);
+      let daoPlugin = new DaoPlugin(installationId);
       daoPlugin.dao = daoAddress;
       daoPlugin.pluginAddress = pluginAddress;
       daoPlugin.save();
@@ -54,13 +53,8 @@ describe('Plugin', () => {
 
       handleNumberStored(event);
 
-      assert.fieldEquals(
-        'DaoPlugin',
-        installationIdHex,
-        'id',
-        installationIdHex
-      );
-      assert.fieldEquals('DaoPlugin', installationIdHex, 'number', number);
+      assert.fieldEquals('DaoPlugin', installationId, 'id', installationId);
+      assert.fieldEquals('DaoPlugin', installationId, 'number', number);
       assert.entityCount('DaoPlugin', 1);
     });
   });
