@@ -78,7 +78,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       pluginRepo.address,
       deployer.address,
       PLUGIN_REPO_PERMISSIONS.MAINTAINER_PERMISSION_ID,
-      '0x00' // TODO
+      []
     )
   ) {
     tx = await pluginRepo.createVersion(
