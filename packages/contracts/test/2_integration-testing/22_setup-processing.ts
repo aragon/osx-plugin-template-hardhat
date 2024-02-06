@@ -1,4 +1,4 @@
-import {METADATA} from '../../plugin-settings';
+import {PLUGIN_REPO_ENS_DOMAIN, METADATA} from '../../plugin-settings';
 import {
   DAOMock,
   DAOMock__factory,
@@ -6,10 +6,7 @@ import {
   MyPluginSetup__factory,
   MyPlugin__factory,
 } from '../../typechain';
-import {
-  getProductionNetworkName,
-  getAragonDeploymentsInfo,
-} from '../../utils/helpers';
+import {getProductionNetworkName, findPluginRepo} from '../../utils/helpers';
 import {installPLugin, uninstallPLugin} from './test-helpers';
 import {
   getLatestNetworkDeployment,
@@ -111,11 +108,13 @@ async function fixture(): Promise<FixtureResult> {
   );
 
   // Get the deployed `PluginRepo`
-  const network = env.network.name;
-  const pluginRepo = PluginRepo__factory.connect(
-    getAragonDeploymentsInfo(network)[network].address,
-    deployer
-  );
+  let pluginRepo;
+  const res = await findPluginRepo(env, PLUGIN_REPO_ENS_DOMAIN);
+  if (res === null) {
+    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+  } else {
+    pluginRepo = res as PluginRepo;
+  }
 
   const release = 1;
   const pluginSetup = MyPluginSetup__factory.connect(

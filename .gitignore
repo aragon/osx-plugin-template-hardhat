@@ -21,8 +21,6 @@ packages/subgraph/tests/.bin
 .pnp.*
 coverage.json
 
-local-network-deployments.json
-
 packages/subgraph/deploy-output.txt
 packages/subgraph/subgraph.yaml
 packages/subgraph/tests/.latest.json

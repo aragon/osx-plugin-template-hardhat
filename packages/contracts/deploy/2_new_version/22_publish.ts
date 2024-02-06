@@ -1,25 +1,23 @@
 import {
+  PLUGIN_REPO_ENS_DOMAIN,
   METADATA,
-  PLUGIN_CONTRACT_NAME,
-  PLUGIN_REPO_ENS_NAME,
+  PLUGIN_REPO_ENS_SUBDOMAIN_NAME,
   PLUGIN_SETUP_CONTRACT_NAME,
   VERSION,
 } from '../../plugin-settings';
-import {IPluginSetup__factory} from '../../typechain';
-import {addCreatedVersion, getAragonDeploymentsInfo} from '../../utils/helpers';
+import {findPluginRepo, getPastVersionCreatedEvents} from '../../utils/helpers';
 import {
   PLUGIN_REPO_PERMISSIONS,
   toHex,
   uploadToIPFS,
 } from '@aragon/osx-commons-sdk';
-import {PluginRepo__factory} from '@aragon/osx-ethers';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(
-    `Publishing ${PLUGIN_SETUP_CONTRACT_NAME} as v${VERSION.release}.${VERSION.build} in the "${PLUGIN_REPO_ENS_NAME}" plugin repo`
+    `Publishing ${PLUGIN_SETUP_CONTRACT_NAME} as v${VERSION.release}.${VERSION.build} in the "${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}" plugin repo`
   );
 
   const {deployments} = hre;
@@ -40,10 +38,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const setup = await deployments.get(PLUGIN_SETUP_CONTRACT_NAME);
 
   // Get PluginRepo
-  const pluginRepo = PluginRepo__factory.connect(
-    getAragonDeploymentsInfo(hre.network.name)[hre.network.name].address,
-    deployer
-  );
+  const pluginRepo = await findPluginRepo(hre, PLUGIN_REPO_ENS_DOMAIN);
+  if (pluginRepo === null) {
+    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+  }
 
   // Check release number
   const latestRelease = await pluginRepo.latestRelease();
@@ -73,7 +71,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
 
   // Create Version
-  let tx;
   if (
     await pluginRepo.callStatic.isGranted(
       pluginRepo.address,
@@ -82,18 +79,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       []
     )
   ) {
-    tx = await pluginRepo.createVersion(
+    const tx = await pluginRepo.createVersion(
       VERSION.release,
       setup.address,
       toHex(buildMetadataURI),
       toHex(releaseMetadataURI)
     );
 
-    const blockNumberOfPublication = (await tx.wait()).blockNumber;
-
     if (setup == undefined || setup?.receipt == undefined) {
       throw Error('setup deployment unavailable');
     }
+
+    await tx.wait();
 
     const version = await pluginRepo['getLatestVersion(uint8)'](
       VERSION.release
@@ -102,33 +99,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       throw Error('something went wrong');
     }
 
-    const implementationAddress = await IPluginSetup__factory.connect(
-      setup.address,
-      deployer
-    ).implementation();
-
     console.log(
-      `Published ${PLUGIN_SETUP_CONTRACT_NAME} at ${setup.address} in PluginRepo ${PLUGIN_REPO_ENS_NAME} at ${pluginRepo.address} at block ${blockNumberOfPublication}.`
-    );
-
-    addCreatedVersion(
-      hre.network.name,
-      {release: VERSION.release, build: version.tag.build},
-      {release: releaseMetadataURI, build: buildMetadataURI},
-      blockNumberOfPublication,
-      {
-        name: PLUGIN_SETUP_CONTRACT_NAME,
-        address: setup.address,
-        args: [],
-        blockNumberOfDeployment: setup.receipt.blockNumber,
-      },
-      {
-        name: PLUGIN_CONTRACT_NAME,
-        address: implementationAddress,
-        args: [],
-        blockNumberOfDeployment: setup.receipt.blockNumber,
-      },
-      []
+      `Published ${PLUGIN_SETUP_CONTRACT_NAME} at ${setup.address} in PluginRepo ${PLUGIN_REPO_ENS_SUBDOMAIN_NAME} at ${pluginRepo.address}.`
     );
   } else {
     throw Error(
@@ -142,19 +114,23 @@ func.tags = [PLUGIN_SETUP_CONTRACT_NAME, 'NewVersion', 'Publication'];
 func.skip = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`\n📢 ${path.basename(__filename)}:`);
 
-  const [deployer] = await hre.ethers.getSigners();
-  const network: string = hre.network.name;
-
   // Get PluginRepo
-  const pluginRepo = PluginRepo__factory.connect(
-    getAragonDeploymentsInfo(network)[network]['address'],
-    deployer
+
+  const pluginRepo = await findPluginRepo(hre, PLUGIN_REPO_ENS_DOMAIN);
+  if (pluginRepo === null) {
+    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+  }
+
+  const pastVersions = await getPastVersionCreatedEvents(pluginRepo);
+
+  // Check if the version was published already
+  const filteredLogs = pastVersions.filter(
+    items =>
+      items.event.args.release === VERSION.release &&
+      items.event.args.build === VERSION.build
   );
 
-  // Check build number
-  const latestBuild = (await pluginRepo.buildCount(VERSION.release)).toNumber();
-
-  if (VERSION.build === latestBuild) {
+  if (filteredLogs.length !== 0) {
     console.log(
       `Build number ${VERSION.build} has already been published for release ${VERSION.release}. Skipping publication...`
     );

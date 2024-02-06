@@ -1,8 +1,18 @@
+import {
+  getLatestNetworkDeployment,
+  getNetworkNameByAlias,
+} from '@aragon/osx-commons-configs';
 import {VersionTag, findEvent} from '@aragon/osx-commons-sdk';
-import {PluginRepoEvents, PluginRepo__factory} from '@aragon/osx-ethers';
+import {
+  ENSSubdomainRegistrar__factory,
+  ENS__factory,
+  IAddrResolver__factory,
+  PluginRepo,
+  PluginRepoEvents,
+  PluginRepo__factory,
+} from '@aragon/osx-ethers';
 import {ContractTransaction} from 'ethers';
-import {defaultAbiCoder, keccak256} from 'ethers/lib/utils';
-import {existsSync, statSync, readFileSync, writeFileSync} from 'fs';
+import {LogDescription, defaultAbiCoder, keccak256} from 'ethers/lib/utils';
 import {ethers} from 'hardhat';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
@@ -26,151 +36,59 @@ export function getProductionNetworkName(hre: HardhatRuntimeEnvironment) {
   return productionNetworkName;
 }
 
-export function getAragonDeploymentsInfo(networkName: string): any {
-  let aragonDeploymentsInfoFilePath: string;
-  let aragonDeploymentsInfo: any = {};
+export async function findPluginRepo(
+  hre: HardhatRuntimeEnvironment,
+  domain: string
+): Promise<PluginRepo | null> {
+  const [deployer] = await hre.ethers.getSigners();
+  const productionNetworkName: string = getProductionNetworkName(hre);
 
-  if (['localhost', 'hardhat', 'coverage'].includes(networkName)) {
-    aragonDeploymentsInfoFilePath = '../../local-network-deployments.json';
-  } else {
-    aragonDeploymentsInfoFilePath = '../../production-network-deployments.json';
-  }
-
-  if (
-    existsSync(aragonDeploymentsInfoFilePath) &&
-    statSync(aragonDeploymentsInfoFilePath).size !== 0
-  ) {
-    aragonDeploymentsInfo = JSON.parse(
-      readFileSync(aragonDeploymentsInfoFilePath, 'utf-8')
-    );
-
-    if (!aragonDeploymentsInfo[networkName]) {
-      aragonDeploymentsInfo[networkName] = {};
-    }
-  } else {
-    aragonDeploymentsInfo[networkName] = {};
-  }
-  return aragonDeploymentsInfo;
-}
-
-export function copyAragonDeploymentsInfoFromProdToLocal(
-  hre: HardhatRuntimeEnvironment
-) {
-  const productionNetworkName = getProductionNetworkName(hre);
-
-  const objToStore: any = {};
-  objToStore[hre.network.name] = getAragonDeploymentsInfo(
-    productionNetworkName
-  )[productionNetworkName];
-
-  writeFileSync(
-    '../../local-network-deployments.json',
-    JSON.stringify(objToStore, null, 2) + '\n'
+  const registrar = ENSSubdomainRegistrar__factory.connect(
+    getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
+      .PluginENSSubdomainRegistrarProxy.address,
+    deployer
   );
-}
 
-function storePluginInfo(networkName: string, aragonDeploymentsInfo: any) {
-  if (['localhost', 'hardhat', 'coverage'].includes(networkName)) {
-    writeFileSync(
-      '../../local-network-deployments.json',
-      JSON.stringify(aragonDeploymentsInfo, null, 2) + '\n'
-    );
+  // Check if the ens record exists already
+  const ens = ENS__factory.connect(await registrar.ens(), deployer);
+  const node = ethers.utils.namehash(domain);
+  const recordExists = await ens.recordExists(node);
+
+  if (!recordExists) {
+    return null;
   } else {
-    writeFileSync(
-      '../../production-network-deployments.json',
-      JSON.stringify(aragonDeploymentsInfo, null, 2) + '\n'
+    const resolver = IAddrResolver__factory.connect(
+      await ens.resolver(node),
+      deployer
     );
+
+    return PluginRepo__factory.connect(await resolver.addr(node), deployer);
   }
 }
 
-export function clearPluginInfo(networkName: string) {
-  if (['localhost', 'hardhat', 'coverage'].includes(networkName)) {
-    writeFileSync(
-      '../../local-network-deployments.json',
-      JSON.stringify({}, null, 2) + '\n'
-    );
-  } else {
-    throw "Information will be lost. You must delete 'production-network-deployments.json' manually.";
-  }
-}
+export type EventWithBlockNumber = {
+  event: LogDescription;
+  blockNumber: number;
+};
 
-export function addDeployedRepo(
-  networkName: string,
-  repoName: string,
-  contractAddr: string,
-  args: unknown[],
-  blockNumber: number
-) {
-  const aragonDeploymentsInfo = getAragonDeploymentsInfo(networkName);
+export async function getPastVersionCreatedEvents(
+  pluginRepo: PluginRepo
+): Promise<EventWithBlockNumber[]> {
+  const eventFilter = pluginRepo.filters['VersionCreated']();
 
-  aragonDeploymentsInfo[networkName]['repo'] = repoName;
-  aragonDeploymentsInfo[networkName]['address'] = contractAddr;
-  aragonDeploymentsInfo[networkName]['args'] = args;
-  aragonDeploymentsInfo[networkName]['blockNumberOfDeployment'] = blockNumber;
+  const logs = await pluginRepo.provider.getLogs({
+    fromBlock: 0,
+    toBlock: 'latest',
+    address: pluginRepo.address,
+    topics: eventFilter.topics,
+  });
 
-  storePluginInfo(networkName, aragonDeploymentsInfo);
-}
-
-export function addCreatedVersion(
-  networkName: string,
-  version: {release: number; build: number},
-  metadataURIs: {release: string; build: string},
-  blockNumberOfPublication: number,
-  setup: {
-    name: string;
-    address: string;
-    args: [];
-    blockNumberOfDeployment: number;
-  },
-  implementation: {
-    name: string;
-    address: string;
-    args: [];
-    blockNumberOfDeployment: number;
-  },
-  helpers:
-    | [
-        {
-          name: string;
-          address: string;
-          args: [];
-          blockNumberOfDeployment: number;
-        }
-      ]
-    | []
-) {
-  const aragonDeploymentsInfo = getAragonDeploymentsInfo(networkName);
-
-  // Releases can already exist
-  if (!aragonDeploymentsInfo[networkName]['releases']) {
-    aragonDeploymentsInfo[networkName]['releases'] = {};
-  }
-  if (!aragonDeploymentsInfo[networkName]['releases'][version.release]) {
-    aragonDeploymentsInfo[networkName]['releases'][version.release] = {};
-    aragonDeploymentsInfo[networkName]['releases'][version.release]['builds'] =
-      {};
-  }
-
-  // Update the releaseMetadataURI
-  aragonDeploymentsInfo[networkName]['releases'][version.release][
-    'releaseMetadataURI'
-  ] = metadataURIs.release;
-
-  aragonDeploymentsInfo[networkName]['releases'][`${version.release}`][
-    'builds'
-  ][`${version.build}`] = {};
-
-  aragonDeploymentsInfo[networkName]['releases'][`${version.release}`][
-    'builds'
-  ][`${version.build}`] = {
-    setup: setup,
-    implementation: implementation,
-    helpers: helpers,
-    buildMetadataURI: metadataURIs.build,
-    blockNumberOfPublication: blockNumberOfPublication,
-  };
-
-  storePluginInfo(networkName, aragonDeploymentsInfo);
+  return logs.map((log, index) => {
+    return {
+      event: pluginRepo.interface.parseLog(log),
+      blockNumber: logs[index].blockNumber,
+    };
+  });
 }
 
 export function toBytes(string: string) {

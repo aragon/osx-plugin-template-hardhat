@@ -1,8 +1,8 @@
-import {PLUGIN_REPO_ENS_NAME} from '../../plugin-settings';
 import {
-  getProductionNetworkName,
-  getAragonDeploymentsInfo,
-} from '../../utils/helpers';
+  PLUGIN_REPO_ENS_DOMAIN,
+  PLUGIN_REPO_ENS_SUBDOMAIN_NAME,
+} from '../../plugin-settings';
+import {findPluginRepo, getProductionNetworkName} from '../../utils/helpers';
 import {
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
@@ -17,17 +17,17 @@ import path from 'path';
 type SemVer = [number, number, number];
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const {network} = hre;
   const [deployer] = await hre.ethers.getSigners();
   const productionNetworkName: string = getProductionNetworkName(hre);
 
-  const pluginRepo = PluginRepo__factory.connect(
-    getAragonDeploymentsInfo(network.name)[network.name]['address'],
-    deployer
-  );
+  // Get PluginRepo
+  const pluginRepo = await findPluginRepo(hre, PLUGIN_REPO_ENS_DOMAIN);
+  if (pluginRepo === null) {
+    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+  }
 
   console.log(
-    `Upgrading plugin repo '${PLUGIN_REPO_ENS_NAME}.plugin.dao.eth' (${pluginRepo.address})...`
+    `Upgrading plugin repo '${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.dao.eth' (${pluginRepo.address})...`
   );
 
   const newPluginRepoImplementation = PluginRepo__factory.connect(
@@ -105,10 +105,10 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
     deployer
   );
 
-  const pluginRepo = PluginRepo__factory.connect(
-    getAragonDeploymentsInfo(hre.network.name)[hre.network.name]['address'],
-    deployer
-  );
+  const pluginRepo = await findPluginRepo(hre, PLUGIN_REPO_ENS_DOMAIN);
+  if (pluginRepo === null) {
+    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+  }
 
   // Compare the current protocol version of the `PluginRepo`
   // TODO Use the `getProtocolVersion` function from osx-commons-sdk
@@ -125,7 +125,7 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
   // Compare versions
   if (JSON.stringify(current) == JSON.stringify(latest)) {
     console.log(
-      `PluginRepo '${PLUGIN_REPO_ENS_NAME}.plugin.dao.eth' (${pluginRepo.address}) has already been upgraded to 
+      `PluginRepo '${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.dao.eth' (${pluginRepo.address}) has already been upgraded to 
       the current protocol version v${latest[0]}.${latest[1]}.${latest[2]}. Skipping upgrade...`
     );
     return true;

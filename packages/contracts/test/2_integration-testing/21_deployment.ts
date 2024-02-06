@@ -1,8 +1,5 @@
-import {METADATA} from '../../plugin-settings';
-import {
-  getProductionNetworkName,
-  getAragonDeploymentsInfo,
-} from '../../utils/helpers';
+import {PLUGIN_REPO_ENS_DOMAIN, METADATA} from '../../plugin-settings';
+import {getProductionNetworkName, findPluginRepo} from '../../utils/helpers';
 import {
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
@@ -18,7 +15,6 @@ import {
   PluginRepo,
   PluginRepoRegistry,
   PluginRepoRegistry__factory,
-  PluginRepo__factory,
 } from '@aragon/osx-ethers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
@@ -45,11 +41,12 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
       deployer
     );
 
-    const network = env.network.name;
-    pluginRepo = PluginRepo__factory.connect(
-      getAragonDeploymentsInfo(network)[network].address,
-      deployer
-    );
+    const res = await findPluginRepo(env, PLUGIN_REPO_ENS_DOMAIN);
+    if (res === null) {
+      throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+    } else {
+      pluginRepo = res as PluginRepo;
+    }
   });
 
   it('creates the repo', async () => {

@@ -1,6 +1,5 @@
 import {
   AragonOSxAsciiArt,
-  copyAragonDeploymentsInfoFromProdToLocal,
   getProductionNetworkName,
   isLocal,
 } from '../../utils/helpers';
@@ -20,16 +19,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const [deployer] = await hre.ethers.getSigners();
 
-  const local = isLocal(hre);
-  if (local) {
+  if (isLocal(hre)) {
     const productionNetworkName: string = getProductionNetworkName(hre);
 
     console.log(
       `Simulated deployment on local network '${hre.network.name}'. Forking production network '${productionNetworkName}'...`
     );
-
-    // Copy the entries of the forked network from `production-network-deployments.json` into `local-network-deployments.json`.
-    copyAragonDeploymentsInfoFromProdToLocal(hre);
 
     // Fork the network provided in the `.env` file
     const networkConfig = getNetworkByNameOrAlias(productionNetworkName)!;

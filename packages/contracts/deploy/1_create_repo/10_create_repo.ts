@@ -1,28 +1,26 @@
-import {PLUGIN_REPO_ENS_NAME} from '../../plugin-settings';
-import {addDeployedRepo, getProductionNetworkName} from '../../utils/helpers';
+import {
+  PLUGIN_REPO_ENS_DOMAIN,
+  PLUGIN_REPO_ENS_SUBDOMAIN_NAME,
+} from '../../plugin-settings';
+import {findPluginRepo, getProductionNetworkName} from '../../utils/helpers';
 import {
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
 } from '@aragon/osx-commons-configs';
 import {findEventTopicLog} from '@aragon/osx-commons-sdk';
 import {
-  ENS__factory,
   PluginRepoRegistryEvents,
   PluginRepoRegistry__factory,
   PluginRepo__factory,
-  ENSSubdomainRegistrar__factory,
   PluginRepoFactory__factory,
-  IAddrResolver__factory,
 } from '@aragon/osx-ethers';
-import {Contract} from 'ethers';
-import {ethers} from 'hardhat';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(
-    `Creating the '${PLUGIN_REPO_ENS_NAME}.plugin.dao.eth' plugin repo through Aragon's 'PluginRepoFactory'...`
+    `Creating the '${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.dao.eth' plugin repo through Aragon's 'PluginRepoFactory'...`
   );
 
   const [deployer] = await hre.ethers.getSigners();
@@ -37,7 +35,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Create the `PluginRepo` through the Aragon `PluginRepoFactory`
   const tx = await pluginRepoFactory.createPluginRepo(
-    PLUGIN_REPO_ENS_NAME,
+    PLUGIN_REPO_ENS_SUBDOMAIN_NAME,
     deployer.address
   );
 
@@ -56,17 +54,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const blockNumberOfDeployment = (await tx.wait()).blockNumber;
 
   console.log(
-    `"${PLUGIN_REPO_ENS_NAME}" PluginRepo deployed at: ${pluginRepo.address} at block ${blockNumberOfDeployment}.`
+    `"${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}" PluginRepo deployed at: ${pluginRepo.address} at block ${blockNumberOfDeployment}.`
   );
 
-  // Store the information
-  addDeployedRepo(
-    hre.network.name,
-    PLUGIN_REPO_ENS_NAME,
-    pluginRepo.address,
-    [PLUGIN_REPO_ENS_NAME, deployer.address],
-    blockNumberOfDeployment
-  );
+  hre.aragonToVerifyContracts.push({
+    address: pluginRepo.address,
+    args: [],
+  });
 };
 
 export default func;
@@ -74,35 +68,27 @@ func.tags = ['CreateRepo'];
 func.skip = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`\n🏗️  ${path.basename(__filename)}:`);
 
-  const [deployer] = await hre.ethers.getSigners();
-  const productionNetworkName: string = getProductionNetworkName(hre);
-
-  const registrar = ENSSubdomainRegistrar__factory.connect(
-    getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
-      .PluginENSSubdomainRegistrarProxy.address,
-    deployer
-  );
-
   // Check if the ens record exists already
-  const ens = ENS__factory.connect(await registrar.ens(), deployer);
-  const node = ethers.utils.namehash(`${PLUGIN_REPO_ENS_NAME}.plugin.dao.eth`);
-  const recordExists = await ens.recordExists(node);
+  const pluginRepo = await findPluginRepo(hre, PLUGIN_REPO_ENS_DOMAIN);
 
-  if (recordExists) {
-    const resolver = IAddrResolver__factory.connect(
-      await ens.resolver(node),
-      deployer
-    );
-    const repoAddr = await resolver.addr(node);
+  const skip = pluginRepo !== null;
 
+  if (skip) {
     console.log(
-      `ENS name '${PLUGIN_REPO_ENS_NAME}.plugin.dao.eth' exists already at '${repoAddr}' on network '${productionNetworkName}'. Skipping deployment...`
+      `ENS name '${PLUGIN_REPO_ENS_DOMAIN}' exists already at '${
+        pluginRepo.address
+      }' on network '${getProductionNetworkName(hre)}'. Skipping deployment...`
     );
+
+    hre.aragonToVerifyContracts.push({
+      address: pluginRepo.address,
+      args: [],
+    });
   } else {
     console.log(
-      `ENS name '${PLUGIN_REPO_ENS_NAME}.plugin.dao.eth' does not exist. Deploying...`
+      `ENS name '${PLUGIN_REPO_ENS_DOMAIN}' does not exist. Deploying...`
     );
   }
 
-  return recordExists;
+  return skip;
 };
