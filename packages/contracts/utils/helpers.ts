@@ -1,6 +1,5 @@
-import {VersionCreatedEvent} from '../typechain/@aragon/osx/framework/plugin/repo/PluginRepo';
 import {VersionTag, findEvent} from '@aragon/osx-commons-sdk';
-import {PluginRepo__factory} from '@aragon/osx-ethers';
+import {PluginRepoEvents, PluginRepo__factory} from '@aragon/osx-ethers';
 import {ContractTransaction} from 'ethers';
 import {defaultAbiCoder, keccak256} from 'ethers/lib/utils';
 import {existsSync, statSync, readFileSync, writeFileSync} from 'fs';
@@ -212,11 +211,12 @@ export async function createVersion(
 
   await tx.wait();
 
-  const versionCreatedEvent = await findEvent<VersionCreatedEvent>(
-    tx,
-    pluginRepo.interface.events['VersionCreated(uint8,uint16,address,bytes)']
-      .name
-  );
+  const versionCreatedEvent =
+    await findEvent<PluginRepoEvents.VersionCreatedEvent>(
+      tx,
+      pluginRepo.interface.events['VersionCreated(uint8,uint16,address,bytes)']
+        .name
+    );
 
   // Check if versionCreatedEvent is not undefined
   if (versionCreatedEvent) {
