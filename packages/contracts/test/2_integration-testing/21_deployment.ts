@@ -87,12 +87,10 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
 
   context('PluginSetup Publication', async () => {
     it('registers the setup', async () => {
-      await expect(
-        pluginRepo['getVersion((uint8,uint16))']({
-          release: 1,
-          build: 1,
-        })
-      ).to.not.be.reverted;
+      await pluginRepo['getVersion((uint8,uint16))']({
+        release: 1,
+        build: 1,
+      });
 
       const results = await pluginRepo['getVersion((uint8,uint16))']({
         release: 1,
