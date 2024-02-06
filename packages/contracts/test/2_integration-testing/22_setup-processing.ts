@@ -6,22 +6,22 @@ import {
   MyPluginSetup__factory,
   MyPlugin__factory,
 } from '../../typechain';
-import {PluginSetupRefStruct} from '../../typechain/@aragon/osx/framework/dao/DAOFactory';
 import {
   getProductionNetworkName,
   getAragonDeploymentsInfo,
 } from '../../utils/helpers';
-import {installPLugin, uninstallPLugin} from '../helpers/setup';
+import {installPLugin, uninstallPLugin} from './test-helpers';
 import {
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
 } from '@aragon/osx-commons-configs';
 import {getNamedTypesFromMetadata} from '@aragon/osx-commons-sdk';
 import {
-  PluginRepo,
-  PluginRepo__factory,
   PluginSetupProcessor,
+  PluginRepo,
+  PluginSetupProcessorStructs,
   PluginSetupProcessor__factory,
+  PluginRepo__factory,
 } from '@aragon/osx-ethers';
 import {loadFixture} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
@@ -92,7 +92,7 @@ type FixtureResult = {
   psp: PluginSetupProcessor;
   pluginRepo: PluginRepo;
   pluginSetup: MyPluginSetup;
-  pluginSetupRef: PluginSetupRefStruct;
+  pluginSetupRef: PluginSetupProcessorStructs.PluginSetupRefStruct;
 };
 
 async function fixture(): Promise<FixtureResult> {

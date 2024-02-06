@@ -1,6 +1,4 @@
 import {PLUGIN_REPO_ENS_NAME} from '../../plugin-settings';
-import {ENS__factory} from '../../typechain';
-import {PluginRepoRegisteredEvent} from '../../typechain/@aragon/osx/framework/plugin/repo/PluginRepoRegistry';
 import {addDeployedRepo, getProductionNetworkName} from '../../utils/helpers';
 import {
   getLatestNetworkDeployment,
@@ -8,6 +6,8 @@ import {
 } from '@aragon/osx-commons-configs';
 import {findEventTopicLog} from '@aragon/osx-commons-sdk';
 import {
+  ENS__factory,
+  PluginRepoRegistryEvents,
   PluginRepoRegistry__factory,
   PluginRepo__factory,
   ENSSubdomainRegistrar__factory,
@@ -42,11 +42,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Get the PluginRepo address and deployment block number from the txn and event therein
   const iface = PluginRepoRegistry__factory.createInterface();
-  const eventLog = await findEventTopicLog<PluginRepoRegisteredEvent>(
-    tx,
-    PluginRepoRegistry__factory.createInterface(),
-    iface.events['PluginRepoRegistered(string,address)'].name
-  );
+  const eventLog =
+    await findEventTopicLog<PluginRepoRegistryEvents.PluginRepoRegisteredEvent>(
+      tx,
+      PluginRepoRegistry__factory.createInterface(),
+      iface.events['PluginRepoRegistered(string,address)'].name
+    );
   const pluginRepo = PluginRepo__factory.connect(
     eventLog.args.pluginRepo,
     deployer

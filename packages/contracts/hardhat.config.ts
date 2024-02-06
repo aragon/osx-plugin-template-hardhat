@@ -154,21 +154,6 @@ const config: HardhatUserConfig = {
     ],
   },
 
-  namedAccounts: {
-    deployer: 0,
-    alice: 1,
-    bob: 2,
-    carol: 3,
-    dave: 4,
-    eve: 5,
-    frank: 6,
-    grace: 7,
-    harold: 8,
-    ivan: 9,
-    judy: 10,
-    mallory: 11,
-  },
-
   gasReporter: {
     currency: 'USD',
     enabled: process.env.REPORT_GAS === 'true' ? true : false,

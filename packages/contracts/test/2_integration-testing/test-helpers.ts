@@ -1,38 +1,35 @@
-import {DAOMock, IPlugin, PluginSetupProcessor} from '../../typechain';
-import {
-  InstallationPreparedEvent,
-  UninstallationPreparedEvent,
-  UpdateAppliedEvent,
-  UpdatePreparedEvent,
-  PluginSetupRefStruct,
-  UninstallationAppliedEvent,
-  InstallationAppliedEvent,
-} from '../../typechain/@aragon/osx/framework/plugin/setup/PluginSetupProcessor';
+import {DAOMock, IPlugin} from '../../typechain';
 import {hashHelpers} from '../../utils/helpers';
 import {findEvent} from '@aragon/osx-commons-sdk';
+import {
+  PluginSetupProcessorEvents,
+  PluginSetupProcessorStructs,
+  PluginSetupProcessor,
+} from '@aragon/osx-ethers';
 import {expect} from 'chai';
 import {ContractTransaction} from 'ethers';
 
 export async function installPLugin(
   psp: PluginSetupProcessor,
   dao: DAOMock,
-  pluginSetupRef: PluginSetupRefStruct,
+  pluginSetupRef: PluginSetupProcessorStructs.PluginSetupRefStruct,
   data: string
 ): Promise<{
   prepareTx: ContractTransaction;
   applyTx: ContractTransaction;
-  preparedEvent: InstallationPreparedEvent;
-  appliedEvent: InstallationAppliedEvent;
+  preparedEvent: PluginSetupProcessorEvents.InstallationPreparedEvent;
+  appliedEvent: PluginSetupProcessorEvents.InstallationAppliedEvent;
 }> {
   const prepareTx = await psp.prepareInstallation(dao.address, {
     pluginSetupRef: pluginSetupRef,
     data: data,
   });
 
-  const preparedEvent = await findEvent<InstallationPreparedEvent>(
-    prepareTx,
-    psp.interface.getEvent('InstallationPrepared').name
-  );
+  const preparedEvent =
+    await findEvent<PluginSetupProcessorEvents.InstallationPreparedEvent>(
+      prepareTx,
+      psp.interface.getEvent('InstallationPrepared').name
+    );
 
   const plugin = preparedEvent.args.plugin;
 
@@ -43,10 +40,11 @@ export async function installPLugin(
     helpersHash: hashHelpers(preparedEvent.args.preparedSetupData.helpers),
   });
 
-  const appliedEvent = await findEvent<InstallationAppliedEvent>(
-    applyTx,
-    psp.interface.getEvent('InstallationApplied').name
-  );
+  const appliedEvent =
+    await findEvent<PluginSetupProcessorEvents.InstallationAppliedEvent>(
+      applyTx,
+      psp.interface.getEvent('InstallationApplied').name
+    );
 
   return {prepareTx, applyTx, preparedEvent, appliedEvent};
 }
@@ -55,14 +53,14 @@ export async function uninstallPLugin(
   psp: PluginSetupProcessor,
   dao: DAOMock,
   plugin: IPlugin,
-  pluginSetupRef: PluginSetupRefStruct,
+  pluginSetupRef: PluginSetupProcessorStructs.PluginSetupRefStruct,
   data: string,
   currentHelpers: string[]
 ): Promise<{
   prepareTx: ContractTransaction;
   applyTx: ContractTransaction;
-  preparedEvent: UninstallationPreparedEvent;
-  appliedEvent: UninstallationAppliedEvent;
+  preparedEvent: PluginSetupProcessorEvents.UninstallationPreparedEvent;
+  appliedEvent: PluginSetupProcessorEvents.UninstallationAppliedEvent;
 }> {
   const prepareTx = await psp.prepareUninstallation(dao.address, {
     pluginSetupRef: pluginSetupRef,
@@ -73,10 +71,11 @@ export async function uninstallPLugin(
     },
   });
 
-  const preparedEvent = await findEvent<UninstallationPreparedEvent>(
-    prepareTx,
-    psp.interface.getEvent('UninstallationPrepared').name
-  );
+  const preparedEvent =
+    await findEvent<PluginSetupProcessorEvents.UninstallationPreparedEvent>(
+      prepareTx,
+      psp.interface.getEvent('UninstallationPrepared').name
+    );
 
   const preparedPermissions = preparedEvent.args.permissions;
 
@@ -86,10 +85,11 @@ export async function uninstallPLugin(
     permissions: preparedPermissions,
   });
 
-  const appliedEvent = await findEvent<UninstallationAppliedEvent>(
-    applyTx,
-    psp.interface.getEvent('UninstallationApplied').name
-  );
+  const appliedEvent =
+    await findEvent<PluginSetupProcessorEvents.UninstallationAppliedEvent>(
+      applyTx,
+      psp.interface.getEvent('UninstallationApplied').name
+    );
 
   return {prepareTx, applyTx, preparedEvent, appliedEvent};
 }
@@ -99,14 +99,14 @@ export async function updatePlugin(
   dao: DAOMock,
   plugin: IPlugin,
   currentHelpers: string[],
-  pluginSetupRefCurrent: PluginSetupRefStruct,
-  pluginSetupRefUpdate: PluginSetupRefStruct,
+  pluginSetupRefCurrent: PluginSetupProcessorStructs.PluginSetupRefStruct,
+  pluginSetupRefUpdate: PluginSetupProcessorStructs.PluginSetupRefStruct,
   data: string
 ): Promise<{
   prepareTx: ContractTransaction;
   applyTx: ContractTransaction;
-  preparedEvent: UpdatePreparedEvent;
-  appliedEvent: UpdateAppliedEvent;
+  preparedEvent: PluginSetupProcessorEvents.UpdatePreparedEvent;
+  appliedEvent: PluginSetupProcessorEvents.UpdateAppliedEvent;
 }> {
   expect(pluginSetupRefCurrent.pluginSetupRepo).to.equal(
     pluginSetupRefUpdate.pluginSetupRepo
@@ -122,10 +122,11 @@ export async function updatePlugin(
       data: data,
     },
   });
-  const preparedEvent = await findEvent<UpdatePreparedEvent>(
-    prepareTx,
-    psp.interface.getEvent('UpdatePrepared').name
-  );
+  const preparedEvent =
+    await findEvent<PluginSetupProcessorEvents.UpdatePreparedEvent>(
+      prepareTx,
+      psp.interface.getEvent('UpdatePrepared').name
+    );
 
   const applyTx = await psp.applyUpdate(dao.address, {
     plugin: plugin.address,
@@ -134,10 +135,11 @@ export async function updatePlugin(
     permissions: preparedEvent.args.preparedSetupData.permissions,
     helpersHash: hashHelpers(preparedEvent.args.preparedSetupData.helpers),
   });
-  const appliedEvent = await findEvent<UpdateAppliedEvent>(
-    applyTx,
-    psp.interface.getEvent('UpdateApplied').name
-  );
+  const appliedEvent =
+    await findEvent<PluginSetupProcessorEvents.UpdateAppliedEvent>(
+      applyTx,
+      psp.interface.getEvent('UpdateApplied').name
+    );
 
   return {prepareTx, applyTx, preparedEvent, appliedEvent};
 }
