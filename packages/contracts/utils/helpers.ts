@@ -99,7 +99,7 @@ export function addDeployedRepo(
   networkName: string,
   repoName: string,
   contractAddr: string,
-  args: any[],
+  args: unknown[],
   blockNumber: number
 ) {
   const aragonDeploymentsInfo = getAragonDeploymentsInfo(networkName);

@@ -9,7 +9,7 @@ export function delay(ms: number) {
 
 export const verifyContract = async (
   address: string,
-  constructorArguments: any[]
+  constructorArguments: unknown[]
 ) => {
   try {
     const msDelay = 500; // minimum delay between tasks

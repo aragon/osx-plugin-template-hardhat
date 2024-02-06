@@ -52,9 +52,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // Prepare optional initialization data
 
   // TODO Add `initializeFrom` function to `PluginRepo`.
-  const initializeFromCalldata: any[] = [];
+  const initializeFromCalldata: unknown[] = [];
   /*
-  const initData: any[] = [];
+  const initData: unknown[] = [];
   const initializeFromCalldata =
     newPluginRepoImplementation.interface.encodeFunctionData('initializeFrom', [
       current,

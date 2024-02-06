@@ -1,6 +1,6 @@
 export type VerifyEntry = {
   address: string;
-  args?: any[];
+  args?: unknown[];
 };
 
 declare module 'hardhat/types' {
