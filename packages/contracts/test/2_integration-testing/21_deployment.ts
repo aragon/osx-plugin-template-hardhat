@@ -1,5 +1,4 @@
 import {METADATA} from '../../plugin-settings';
-import {PluginRepo} from '../../typechain';
 import {
   getProductionNetworkName,
   getAragonDeploymentsInfo,
@@ -16,6 +15,7 @@ import {
   uploadToIPFS,
 } from '@aragon/osx-commons-sdk';
 import {
+  PluginRepo,
   PluginRepoRegistry,
   PluginRepoRegistry__factory,
   PluginRepo__factory,
