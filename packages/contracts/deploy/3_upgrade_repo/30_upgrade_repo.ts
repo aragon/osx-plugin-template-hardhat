@@ -1,5 +1,4 @@
 import {PLUGIN_REPO_ENS_NAME} from '../../plugin-settings';
-import {PluginRepo__factory} from '../../typechain';
 import {
   getProductionNetworkName,
   getAragonDeploymentsInfo,
@@ -9,6 +8,7 @@ import {
   getNetworkNameByAlias,
 } from '@aragon/osx-commons-configs';
 import {PLUGIN_REPO_PERMISSIONS} from '@aragon/osx-commons-sdk';
+import {PluginRepo__factory} from '@aragon/osx-ethers';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';

@@ -5,13 +5,14 @@ import {
   PLUGIN_SETUP_CONTRACT_NAME,
   VERSION,
 } from '../../plugin-settings';
+import {IPluginSetup__factory} from '../../typechain';
 import {addCreatedVersion, getAragonDeploymentsInfo} from '../../utils/helpers';
 import {
   PLUGIN_REPO_PERMISSIONS,
   toHex,
   uploadToIPFS,
 } from '@aragon/osx-commons-sdk';
-import {PluginRepo__factory, PluginSetup__factory} from '@aragon/osx-ethers';
+import {PluginRepo__factory} from '@aragon/osx-ethers';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
@@ -101,7 +102,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       throw Error('something went wrong');
     }
 
-    const implementationAddress = await PluginSetup__factory.connect(
+    const implementationAddress = await IPluginSetup__factory.connect(
       setup.address,
       deployer
     ).implementation();
