@@ -7,10 +7,8 @@ import {IPermissionCondition} from "@aragon/osx-commons-contracts/src/permission
 import {PermissionLib} from "@aragon/osx-commons-contracts/src/permission/PermissionLib.sol";
 
 contract DAOMock is IDAO {
-    // TODO Move constants into `PermissionLib`
     address internal constant NO_CONDITION = address(0);
 
-    // TODO create `IPermissionManager` interface
     event Granted(
         bytes32 indexed permissionId,
         address indexed here,
