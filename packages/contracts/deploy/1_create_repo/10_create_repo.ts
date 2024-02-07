@@ -8,7 +8,10 @@ import {
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
 } from '@aragon/osx-commons-configs';
-import {findEventTopicLog} from '@aragon/osx-commons-sdk';
+import {
+  UnsupportedNetworkError,
+  findEventTopicLog,
+} from '@aragon/osx-commons-sdk';
 import {
   PluginRepoRegistryEvents,
   PluginRepoRegistry__factory,
@@ -31,12 +34,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   );
 
   const [deployer] = await hre.ethers.getSigners();
-  const productionNetworkName = getProductionNetworkName(hre);
 
-  // Get the Aragon `PluginRepoFactory` address from the `osx-commons-configs`
+  // Get the Aragon `PluginRepoFactory` from the `osx-commons-configs`
+  const productionNetworkName = getProductionNetworkName(hre);
+  const network = getNetworkNameByAlias(productionNetworkName);
+  if (network === null) {
+    throw new UnsupportedNetworkError(productionNetworkName);
+  }
+  const networkDeployments = getLatestNetworkDeployment(network);
+  if (networkDeployments === null) {
+    throw `Deployments are not available on network ${network}.`;
+  }
   const pluginRepoFactory = PluginRepoFactory__factory.connect(
-    getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
-      .PluginRepoFactory.address,
+    networkDeployments.PluginRepoFactory.address,
     deployer
   );
 
