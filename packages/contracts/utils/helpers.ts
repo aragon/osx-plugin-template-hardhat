@@ -18,7 +18,7 @@ import {
   PluginRepo__factory,
 } from '@aragon/osx-ethers';
 import {ContractTransaction} from 'ethers';
-import {LogDescription} from 'ethers/lib/utils';
+import {LogDescription, defaultAbiCoder, keccak256} from 'ethers/lib/utils';
 import {ethers} from 'hardhat';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
@@ -123,6 +123,10 @@ export async function getPastVersionCreatedEvents(
       blockNumber: logs[index].blockNumber,
     };
   });
+}
+
+export function hashHelpers(helpers: string[]) {
+  return keccak256(defaultAbiCoder.encode(['address[]'], [helpers]));
 }
 
 export type LatestVersion = {
