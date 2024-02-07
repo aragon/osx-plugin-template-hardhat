@@ -26,13 +26,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     `Upgrading plugin repo '${ensDomain}' (${pluginRepo.address})...`
   );
 
-  const newPluginRepoImplementation = PluginRepo__factory.connect(
+  // Get the latest `PluginRepo` implementation as the upgrade target
+  const latestPluginRepoImplementation = PluginRepo__factory.connect(
     getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
       .PluginRepoBase.address,
     deployer
   );
 
-  // TODO Use the `getProtocolVersion` function from osx-commons-sdk
+  // Get the current OSX protocol version from the current plugin repo implementation
   let current: SemVer;
   try {
     current = await pluginRepo.protocolVersion();
@@ -40,24 +41,28 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     current = [1, 0, 0];
   }
 
-  const latest: SemVer = await newPluginRepoImplementation.protocolVersion();
+  // Get the OSX protocol version from the latest plugin repo implementation
+  const latest: SemVer = await latestPluginRepoImplementation.protocolVersion();
 
   console.log(
-    `Upgrading from current protocol version v${current[0]}.${current[1]}.${current[2]} to the new version v${latest[0]}.${latest[1]}.${latest[2]}.`
+    `Upgrading from current protocol version v${current[0]}.${current[1]}.${current[2]} to the latest version v${latest[0]}.${latest[1]}.${latest[2]}.`
   );
 
-  // Prepare optional initialization data
-
-  // TODO Add `initializeFrom` function to `PluginRepo`.
-  const initializeFromCalldata: BytesLike = [];
+  // NOTE: The following code can be uncommented and `initData` can be filled
+  // with arguments in case re-initialization of the `PluginRepo` should become necessary.
+  // Re-initialization will happen through a call to `function initializeFrom(uint8[3] calldata _previousProtocolVersion, bytes calldata _initData)`
+  // that Aragon might add to the `PluginRepo` contract once it's required.
   /*
-  const initData: unknown[] = [];
+  // Define the `initData` arguments that 
+  const initData: BytesLike[] = [];
+  // Encode the call to `function initializeFrom(uint8[3] calldata _previousProtocolVersion, bytes calldata _initData)` with `initData`
   const initializeFromCalldata =
     newPluginRepoImplementation.interface.encodeFunctionData('initializeFrom', [
       current,
       initData,
     ]);
   */
+  const initializeFromCalldata: BytesLike = [];
 
   // Check if deployer has the permission to upgrade the plugin repo
   if (
@@ -68,17 +73,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       []
     )
   ) {
-    // Use `upgradeToAndCall` if the new implementation must be initialized by calling
-    // function initializeFrom(uint8[3] calldata _previousProtocolVersion, bytes calldata _initData) external reinitializer(x)
-    // on the `PluginRepo` prox.
-    // Else, we use `upgradeTo`.
+    // Use `upgradeToAndCall` if the new implementation must be re-initialized by calling
+    // on the `PluginRepo` proxy. If not, we use `upgradeTo`.
     if (initializeFromCalldata.length > 0) {
       await pluginRepo.upgradeToAndCall(
-        newPluginRepoImplementation.address,
+        latestPluginRepoImplementation.address,
         initializeFromCalldata
       );
     } else {
-      await pluginRepo.upgradeTo(newPluginRepoImplementation.address);
+      await pluginRepo.upgradeTo(latestPluginRepoImplementation.address);
     }
   } else {
     throw Error(
@@ -89,13 +92,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 export default func;
 func.tags = ['UpgradeRepo'];
+
+/**
+ * Skips the plugin repo upgrade if exists in the plugin repo.
+ * @param {HardhatRuntimeEnvironment} hre
+ */
 func.skip = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`\n🏗️  ${path.basename(__filename)}:`);
 
   const [deployer] = await hre.ethers.getSigners();
   const productionNetworkName: string = getProductionNetworkName(hre);
 
-  const newPluginRepoImplementation = PluginRepo__factory.connect(
+  // Get the latest `PluginRepo` implementation as the upgrade target
+  const latestPluginRepoImplementation = PluginRepo__factory.connect(
     getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
       .PluginRepoBase.address,
     deployer
@@ -107,20 +116,28 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
   }
 
   // Compare the current protocol version of the `PluginRepo`
-  // TODO Use the `getProtocolVersion` function from osx-commons-sdk
   let current: SemVer;
   try {
     current = await pluginRepo.protocolVersion();
   } catch {
     current = [1, 0, 0];
   }
-  const latest: SemVer = await newPluginRepoImplementation.protocolVersion();
+  const target: SemVer = await latestPluginRepoImplementation.protocolVersion();
 
-  // Compare versions
-  if (JSON.stringify(current) == JSON.stringify(latest)) {
+  // Throw an error if attempting to upgrade to an earlier version
+  if (
+    current[0] > target[0] ||
+    current[1] > target[1] ||
+    current[2] > target[2]
+  ) {
+    throw `The plugin repo, currently at 'v${current[0]}.${current[1]}.${current[2]}' cannot be upgraded to the earlier version v${target[0]}.${target[1]}.${target[2]}.`;
+  }
+
+  // Skip if versions are equal
+  if (JSON.stringify(current) == JSON.stringify(target)) {
     console.log(
       `PluginRepo '${ensDomain}' (${pluginRepo.address}) has already been upgraded to 
-      the current protocol version v${latest[0]}.${latest[1]}.${latest[2]}. Skipping upgrade...`
+      the current protocol version v${target[0]}.${target[1]}.${target[2]}. Skipping upgrade...`
     );
     return true;
   }

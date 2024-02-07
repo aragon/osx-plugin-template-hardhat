@@ -2,6 +2,10 @@ import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
 
+/**
+ * Prints the final deployer wallet balance.
+ * @param {HardhatRuntimeEnvironment} hre
+ */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`\n✅ ${path.basename(__filename)}:`);
 

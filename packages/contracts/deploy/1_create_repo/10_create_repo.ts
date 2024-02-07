@@ -19,9 +19,15 @@ import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
 
+/**
+ * Creates a plugin repo under Aragon's ENS base domain with subdomain requested in the `./plugin-settings.ts` file.
+ * @param {HardhatRuntimeEnvironment} hre
+ */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(
-    `Creating the '${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.dao.eth' plugin repo through Aragon's 'PluginRepoFactory'...`
+    `Creating the '${pluginEnsDomain(
+      hre
+    )}' plugin repo through Aragon's 'PluginRepoFactory'...`
   );
 
   const [deployer] = await hre.ethers.getSigners();
@@ -65,16 +71,20 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 export default func;
 func.tags = ['CreateRepo'];
+
+/**
+ * Skips `PluginRepo` creation if the ENS name is claimed already
+ * @param {HardhatRuntimeEnvironment} hre
+ */
 func.skip = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`\n🏗️  ${path.basename(__filename)}:`);
 
   // Check if the ens record exists already
   const {pluginRepo, ensDomain} = await findPluginRepo(hre);
 
-  const skip = pluginRepo !== null;
-  if (skip) {
+  if (pluginRepo !== null) {
     console.log(
-      `ENS name '${ensDomain}' exists already at '${
+      `ENS name '${ensDomain}' was claimed already at '${
         pluginRepo.address
       }' on network '${getProductionNetworkName(hre)}'. Skipping deployment...`
     );
@@ -83,9 +93,11 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
       address: pluginRepo.address,
       args: [],
     });
-  } else {
-    console.log(`ENS name '${ensDomain}' does not exist. Deploying...`);
-  }
 
-  return skip;
+    return true;
+  } else {
+    console.log(`ENS name '${ensDomain}' is unclaimed. Deploying...`);
+
+    return false;
+  }
 };

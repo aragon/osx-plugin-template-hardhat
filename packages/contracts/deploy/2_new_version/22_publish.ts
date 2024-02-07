@@ -18,6 +18,10 @@ import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
 
+/**
+ * Publishes the plugin setup in the plugin repo as a new version as specified in the `./plugin-settings.ts` file.
+ * @param {HardhatRuntimeEnvironment} hre
+ */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(
     `Publishing ${PLUGIN_SETUP_CONTRACT_NAME} as v${VERSION.release}.${VERSION.build} in the "${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}" plugin repo`
@@ -114,6 +118,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 export default func;
 func.tags = [PLUGIN_SETUP_CONTRACT_NAME, 'NewVersion', 'Publication'];
+
+/**
+ * Skips the publication of the specified version if it already exists in the plugin repo.
+ * @param {HardhatRuntimeEnvironment} hre
+ */
 func.skip = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`\n📢 ${path.basename(__filename)}:`);
 

@@ -4,6 +4,10 @@ import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
 
+/**
+ * Verifies the deployed contracts on the network's block explorer.
+ * @param {HardhatRuntimeEnvironment} hre
+ */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   hre.aragonToVerifyContracts.forEach(async contract => {
     console.log(
@@ -26,6 +30,11 @@ export default func;
 
 func.tags = ['Verification'];
 func.runAtTheEnd = true;
+
+/**
+ * Skips verification for local networks.
+ * @param {HardhatRuntimeEnvironment} hre
+ */
 func.skip = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`\n📋 ${path.basename(__filename)}:`);
 

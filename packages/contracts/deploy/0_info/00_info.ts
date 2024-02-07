@@ -9,7 +9,7 @@ import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
 
 /**
- * Prints information about the used/forked network and deployer wallet.
+ * Prints information about the used/forked network and initial deployer wallet balance.
  * @param {HardhatRuntimeEnvironment} hre
  */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {

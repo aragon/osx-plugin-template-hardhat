@@ -11,8 +11,8 @@ import path from 'path';
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`\n🔎 ${path.basename(__filename)}:`);
   console.log(`Concluding '${PLUGIN_SETUP_CONTRACT_NAME}' deployment.`);
-  const [deployer] = await hre.ethers.getSigners();
 
+  const [deployer] = await hre.ethers.getSigners();
   const {deployments} = hre;
 
   // Get the plugin setup address

@@ -16,6 +16,7 @@ import {
   PluginRepoRegistry,
   PluginRepoRegistry__factory,
 } from '@aragon/osx-ethers';
+import {loadFixture} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import env, {deployments, ethers} from 'hardhat';
@@ -23,35 +24,15 @@ import env, {deployments, ethers} from 'hardhat';
 const productionNetworkName = getProductionNetworkName(env);
 
 describe(`Deployment on network '${productionNetworkName}'`, function () {
-  let deployer: SignerWithAddress;
-  let pluginRepoRegistry: PluginRepoRegistry;
-  let pluginRepo: PluginRepo;
-
-  before(async () => {
-    // Deploy all
-    const tags = ['CreateRepo', 'NewVersion'];
-    await deployments.fixture(tags);
-
-    [deployer] = await ethers.getSigners();
-
-    // Plugin repo registry
-    pluginRepoRegistry = PluginRepoRegistry__factory.connect(
-      getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
-        .PluginRepoRegistryProxy.address,
-      deployer
-    );
-
-    const {pluginRepo, ensDomain} = await findPluginRepo(env);
-    if (pluginRepo === null) {
-      throw `PluginRepo '${ensDomain}' does not exist yet.`;
-    }
-  });
-
   it('creates the repo', async () => {
+    const {pluginRepo, pluginRepoRegistry} = await loadFixture(fixture);
+
     expect(await pluginRepoRegistry.entries(pluginRepo.address)).to.be.true;
   });
 
   it('makes the deployer the repo maintainer', async () => {
+    const {deployer, pluginRepo} = await loadFixture(fixture);
+
     expect(
       await pluginRepo.isGranted(
         pluginRepo.address,
@@ -82,6 +63,8 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
 
   context('PluginSetup Publication', async () => {
     it('registers the setup', async () => {
+      const {pluginRepo} = await loadFixture(fixture);
+
       await pluginRepo['getVersion((uint8,uint16))']({
         release: 1,
         build: 1,
@@ -100,3 +83,31 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
     });
   });
 });
+
+type FixtureResult = {
+  deployer: SignerWithAddress;
+  pluginRepo: PluginRepo;
+  pluginRepoRegistry: PluginRepoRegistry;
+};
+
+async function fixture(): Promise<FixtureResult> {
+  // Deploy all
+  const tags = ['CreateRepo', 'NewVersion'];
+  await deployments.fixture(tags);
+
+  const [deployer] = await ethers.getSigners();
+
+  // Plugin repo registry
+  const pluginRepoRegistry = PluginRepoRegistry__factory.connect(
+    getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
+      .PluginRepoRegistryProxy.address,
+    deployer
+  );
+
+  const {pluginRepo, ensDomain} = await findPluginRepo(env);
+  if (pluginRepo === null) {
+    throw `PluginRepo '${ensDomain}' does not exist yet.`;
+  }
+
+  return {deployer, pluginRepo, pluginRepoRegistry};
+}

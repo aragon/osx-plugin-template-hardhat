@@ -4,7 +4,7 @@ import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
 
 /**
- * Deploys the pluginSetup contract with the `Plugin` implementation inside
+ * Deploys the plugin setup contract with the plugin implementation inside.
  * @param {HardhatRuntimeEnvironment} hre
  */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -22,5 +22,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 
 export default func;
-
 func.tags = [PLUGIN_SETUP_CONTRACT_NAME, 'NewVersion', 'Deployment'];
