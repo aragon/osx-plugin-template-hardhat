@@ -18,7 +18,7 @@ import {
   PluginRepo__factory,
 } from '@aragon/osx-ethers';
 import {ContractTransaction} from 'ethers';
-import {LogDescription, defaultAbiCoder, keccak256} from 'ethers/lib/utils';
+import {LogDescription} from 'ethers/lib/utils';
 import {ethers} from 'hardhat';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
