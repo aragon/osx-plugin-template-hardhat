@@ -1,9 +1,14 @@
 import {PLUGIN_REPO_ENS_SUBDOMAIN_NAME} from '../plugin-settings';
 import {
+  SupportedNetworks,
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
 } from '@aragon/osx-commons-configs';
-import {SupportedNetwork, VersionTag, findEvent} from '@aragon/osx-commons-sdk';
+import {
+  UnsupportedNetworkError,
+  VersionTag,
+  findEvent,
+} from '@aragon/osx-commons-sdk';
 import {
   ENSSubdomainRegistrar__factory,
   ENS__factory,
@@ -25,26 +30,33 @@ export function isLocal(hre: HardhatRuntimeEnvironment): boolean {
   );
 }
 
-// TODO Create task to add the base domain to the network settings.
-
 export function getProductionNetworkName(
   hre: HardhatRuntimeEnvironment
 ): string {
   let productionNetworkName: string;
   if (isLocal(hre)) {
-    productionNetworkName = process.env.NETWORK_NAME
-      ? process.env.NETWORK_NAME
-      : 'sepolia';
+    if (process.env.NETWORK_NAME) {
+      productionNetworkName = process.env.NETWORK_NAME;
+    } else {
+      console.log(
+        `No network has been provided in the '.env' file. Defaulting to '${SupportedNetworks.SEPOLIA}' as the production network.`
+      );
+      productionNetworkName = SupportedNetworks.SEPOLIA;
+    }
   } else {
     productionNetworkName = hre.network.name;
   }
+
+  if (getNetworkNameByAlias(productionNetworkName) === null) {
+    throw new UnsupportedNetworkError(productionNetworkName);
+  }
+
   return productionNetworkName;
 }
 
-// TODO This should be part of the osx-commons-configs
 export function pluginEnsDomain(hre: HardhatRuntimeEnvironment): string {
   const network = getProductionNetworkName(hre);
-  if (network === SupportedNetwork.SEPOLIA) {
+  if (network === SupportedNetworks.SEPOLIA) {
     return `${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.aragon-dao.eth`;
   } else {
     return `${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.dao.eth`;
@@ -111,14 +123,6 @@ export async function getPastVersionCreatedEvents(
       blockNumber: logs[index].blockNumber,
     };
   });
-}
-
-export function toBytes(string: string) {
-  return ethers.utils.formatBytes32String(string);
-}
-
-export function hashHelpers(helpers: string[]) {
-  return keccak256(defaultAbiCoder.encode(['address[]'], [helpers]));
 }
 
 export type LatestVersion = {
