@@ -16,4 +16,3 @@ export const METADATA = {
   build: buildMetadata,
   release: releaseMetadata,
 };
-export const PLUGIN_REPO_ENS_DOMAIN = `${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.dao.eth`;

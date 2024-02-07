@@ -1,7 +1,3 @@
-import {
-  PLUGIN_REPO_ENS_DOMAIN,
-  PLUGIN_REPO_ENS_SUBDOMAIN_NAME,
-} from '../../plugin-settings';
 import {findPluginRepo, getProductionNetworkName} from '../../utils/helpers';
 import {
   getLatestNetworkDeployment,
@@ -21,13 +17,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const productionNetworkName: string = getProductionNetworkName(hre);
 
   // Get PluginRepo
-  const pluginRepo = await findPluginRepo(hre, PLUGIN_REPO_ENS_DOMAIN);
+  const {pluginRepo, ensDomain} = await findPluginRepo(hre);
   if (pluginRepo === null) {
-    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+    throw `PluginRepo '${ensDomain}' does not exist yet.`;
   }
 
   console.log(
-    `Upgrading plugin repo '${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.dao.eth' (${pluginRepo.address})...`
+    `Upgrading plugin repo '${ensDomain}' (${pluginRepo.address})...`
   );
 
   const newPluginRepoImplementation = PluginRepo__factory.connect(
@@ -105,9 +101,9 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
     deployer
   );
 
-  const pluginRepo = await findPluginRepo(hre, PLUGIN_REPO_ENS_DOMAIN);
+  const {pluginRepo, ensDomain} = await findPluginRepo(hre);
   if (pluginRepo === null) {
-    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+    throw `PluginRepo '${ensDomain}' does not exist yet.`;
   }
 
   // Compare the current protocol version of the `PluginRepo`
@@ -118,14 +114,12 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
   } catch {
     current = [1, 0, 0];
   }
-  current = [1, 0, 0];
   const latest: SemVer = await newPluginRepoImplementation.protocolVersion();
 
-  console.log(current, latest);
   // Compare versions
   if (JSON.stringify(current) == JSON.stringify(latest)) {
     console.log(
-      `PluginRepo '${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.dao.eth' (${pluginRepo.address}) has already been upgraded to 
+      `PluginRepo '${ensDomain}' (${pluginRepo.address}) has already been upgraded to 
       the current protocol version v${latest[0]}.${latest[1]}.${latest[2]}. Skipping upgrade...`
     );
     return true;

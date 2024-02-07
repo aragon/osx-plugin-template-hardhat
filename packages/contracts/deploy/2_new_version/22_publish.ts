@@ -1,11 +1,14 @@
 import {
-  PLUGIN_REPO_ENS_DOMAIN,
   METADATA,
   PLUGIN_REPO_ENS_SUBDOMAIN_NAME,
   PLUGIN_SETUP_CONTRACT_NAME,
   VERSION,
 } from '../../plugin-settings';
-import {findPluginRepo, getPastVersionCreatedEvents} from '../../utils/helpers';
+import {
+  findPluginRepo,
+  getPastVersionCreatedEvents,
+  pluginEnsDomain,
+} from '../../utils/helpers';
 import {
   PLUGIN_REPO_PERMISSIONS,
   toHex,
@@ -38,9 +41,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const setup = await deployments.get(PLUGIN_SETUP_CONTRACT_NAME);
 
   // Get PluginRepo
-  const pluginRepo = await findPluginRepo(hre, PLUGIN_REPO_ENS_DOMAIN);
+  const {pluginRepo, ensDomain} = await findPluginRepo(hre);
   if (pluginRepo === null) {
-    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+    throw `PluginRepo '${ensDomain}' does not exist yet.`;
   }
 
   // Check release number
@@ -115,10 +118,9 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`\n📢 ${path.basename(__filename)}:`);
 
   // Get PluginRepo
-
-  const pluginRepo = await findPluginRepo(hre, PLUGIN_REPO_ENS_DOMAIN);
+  const {pluginRepo} = await findPluginRepo(hre);
   if (pluginRepo === null) {
-    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+    throw `PluginRepo '${pluginEnsDomain(hre)}' does not exist yet.`;
   }
 
   const pastVersions = await getPastVersionCreatedEvents(pluginRepo);

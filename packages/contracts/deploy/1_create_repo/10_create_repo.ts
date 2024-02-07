@@ -1,8 +1,9 @@
+import {PLUGIN_REPO_ENS_SUBDOMAIN_NAME} from '../../plugin-settings';
 import {
-  PLUGIN_REPO_ENS_DOMAIN,
-  PLUGIN_REPO_ENS_SUBDOMAIN_NAME,
-} from '../../plugin-settings';
-import {findPluginRepo, getProductionNetworkName} from '../../utils/helpers';
+  findPluginRepo,
+  getProductionNetworkName,
+  pluginEnsDomain,
+} from '../../utils/helpers';
 import {
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
@@ -24,7 +25,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   );
 
   const [deployer] = await hre.ethers.getSigners();
-  const productionNetworkName: string = getProductionNetworkName(hre);
+  const productionNetworkName = getProductionNetworkName(hre);
 
   // Get the Aragon `PluginRepoFactory` address from the `osx-commons-configs`
   const pluginRepoFactory = PluginRepoFactory__factory.connect(
@@ -40,21 +41,20 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   );
 
   // Get the PluginRepo address and deployment block number from the txn and event therein
-  const iface = PluginRepoRegistry__factory.createInterface();
   const eventLog =
     await findEventTopicLog<PluginRepoRegistryEvents.PluginRepoRegisteredEvent>(
       tx,
       PluginRepoRegistry__factory.createInterface(),
-      iface.events['PluginRepoRegistered(string,address)'].name
+      'PluginRepoRegistered'
     );
+
   const pluginRepo = PluginRepo__factory.connect(
     eventLog.args.pluginRepo,
     deployer
   );
-  const blockNumberOfDeployment = (await tx.wait()).blockNumber;
 
   console.log(
-    `"${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}" PluginRepo deployed at: ${pluginRepo.address} at block ${blockNumberOfDeployment}.`
+    `'${pluginEnsDomain(hre)}' PluginRepo deployed at: ${pluginRepo.address}.`
   );
 
   hre.aragonToVerifyContracts.push({
@@ -69,13 +69,12 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`\n🏗️  ${path.basename(__filename)}:`);
 
   // Check if the ens record exists already
-  const pluginRepo = await findPluginRepo(hre, PLUGIN_REPO_ENS_DOMAIN);
+  const {pluginRepo, ensDomain} = await findPluginRepo(hre);
 
   const skip = pluginRepo !== null;
-
   if (skip) {
     console.log(
-      `ENS name '${PLUGIN_REPO_ENS_DOMAIN}' exists already at '${
+      `ENS name '${ensDomain}' exists already at '${
         pluginRepo.address
       }' on network '${getProductionNetworkName(hre)}'. Skipping deployment...`
     );
@@ -85,9 +84,7 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
       args: [],
     });
   } else {
-    console.log(
-      `ENS name '${PLUGIN_REPO_ENS_DOMAIN}' does not exist. Deploying...`
-    );
+    console.log(`ENS name '${ensDomain}' does not exist. Deploying...`);
   }
 
   return skip;

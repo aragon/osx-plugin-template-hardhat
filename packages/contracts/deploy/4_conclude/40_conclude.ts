@@ -8,9 +8,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const [deployer] = await hre.ethers.getSigners();
 
   console.log(
-    `The balance of account "${
+    `The balance of account '${
       deployer.address
-    }" is now ${hre.ethers.utils.formatEther(await deployer.getBalance())}.`
+    }' is now ${hre.ethers.utils.formatEther(await deployer.getBalance())}.`
   );
 
   console.log(`\nDone! 🎉 \n`);

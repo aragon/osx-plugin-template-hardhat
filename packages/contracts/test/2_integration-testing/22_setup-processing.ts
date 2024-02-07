@@ -18,7 +18,6 @@ import {
   PluginRepo,
   PluginSetupProcessorStructs,
   PluginSetupProcessor__factory,
-  PluginRepo__factory,
 } from '@aragon/osx-ethers';
 import {loadFixture} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
@@ -111,7 +110,7 @@ async function fixture(): Promise<FixtureResult> {
   let pluginRepo;
   const res = await findPluginRepo(env, PLUGIN_REPO_ENS_DOMAIN);
   if (res === null) {
-    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
+    throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist yet.`;
   } else {
     pluginRepo = res as PluginRepo;
   }

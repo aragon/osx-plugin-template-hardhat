@@ -1,4 +1,4 @@
-import {PLUGIN_REPO_ENS_DOMAIN, METADATA} from '../../plugin-settings';
+import {METADATA} from '../../plugin-settings';
 import {getProductionNetworkName, findPluginRepo} from '../../utils/helpers';
 import {
   getLatestNetworkDeployment,
@@ -41,11 +41,9 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
       deployer
     );
 
-    const res = await findPluginRepo(env, PLUGIN_REPO_ENS_DOMAIN);
-    if (res === null) {
-      throw `PluginRepo '${PLUGIN_REPO_ENS_DOMAIN}' does not exist  yet.`;
-    } else {
-      pluginRepo = res as PluginRepo;
+    const {pluginRepo, ensDomain} = await findPluginRepo(env);
+    if (pluginRepo === null) {
+      throw `PluginRepo '${ensDomain}' does not exist yet.`;
     }
   });
 

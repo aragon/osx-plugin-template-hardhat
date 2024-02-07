@@ -1,8 +1,9 @@
+import {PLUGIN_REPO_ENS_SUBDOMAIN_NAME} from '../plugin-settings';
 import {
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
 } from '@aragon/osx-commons-configs';
-import {VersionTag, findEvent} from '@aragon/osx-commons-sdk';
+import {SupportedNetwork, VersionTag, findEvent} from '@aragon/osx-commons-sdk';
 import {
   ENSSubdomainRegistrar__factory,
   ENS__factory,
@@ -24,7 +25,11 @@ export function isLocal(hre: HardhatRuntimeEnvironment): boolean {
   );
 }
 
-export function getProductionNetworkName(hre: HardhatRuntimeEnvironment) {
+// TODO Create task to add the base domain to the network settings.
+
+export function getProductionNetworkName(
+  hre: HardhatRuntimeEnvironment
+): string {
   let productionNetworkName: string;
   if (isLocal(hre)) {
     productionNetworkName = process.env.NETWORK_NAME
@@ -36,10 +41,19 @@ export function getProductionNetworkName(hre: HardhatRuntimeEnvironment) {
   return productionNetworkName;
 }
 
+// TODO This should be part of the osx-commons-configs
+export function pluginEnsDomain(hre: HardhatRuntimeEnvironment): string {
+  const network = getProductionNetworkName(hre);
+  if (network === SupportedNetwork.SEPOLIA) {
+    return `${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.aragon-dao.eth`;
+  } else {
+    return `${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}.plugin.dao.eth`;
+  }
+}
+
 export async function findPluginRepo(
-  hre: HardhatRuntimeEnvironment,
-  domain: string
-): Promise<PluginRepo | null> {
+  hre: HardhatRuntimeEnvironment
+): Promise<{pluginRepo: PluginRepo | null; ensDomain: string}> {
   const [deployer] = await hre.ethers.getSigners();
   const productionNetworkName: string = getProductionNetworkName(hre);
 
@@ -51,18 +65,26 @@ export async function findPluginRepo(
 
   // Check if the ens record exists already
   const ens = ENS__factory.connect(await registrar.ens(), deployer);
-  const node = ethers.utils.namehash(domain);
+  const ensDomain = pluginEnsDomain(hre);
+  const node = ethers.utils.namehash(ensDomain);
   const recordExists = await ens.recordExists(node);
 
   if (!recordExists) {
-    return null;
+    return {pluginRepo: null, ensDomain};
   } else {
     const resolver = IAddrResolver__factory.connect(
       await ens.resolver(node),
       deployer
     );
 
-    return PluginRepo__factory.connect(await resolver.addr(node), deployer);
+    const pluginRepo = PluginRepo__factory.connect(
+      await resolver.addr(node),
+      deployer
+    );
+    return {
+      pluginRepo,
+      ensDomain,
+    };
   }
 }
 

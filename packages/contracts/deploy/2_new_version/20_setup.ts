@@ -9,7 +9,6 @@ import path from 'path';
  */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`\n🏗️  ${path.basename(__filename)}:`);
-  console.log(`Deploying '${PLUGIN_SETUP_CONTRACT_NAME}'...`);
 
   const {deployments, getNamedAccounts} = hre;
   const {deploy} = deployments;

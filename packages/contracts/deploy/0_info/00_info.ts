@@ -9,7 +9,7 @@ import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
 
 /**
- * Prints the plugin setup and implementation contract deployment by queuing the addresses in the verification array.
+ * Prints information about the used/forked network and deployer wallet.
  * @param {HardhatRuntimeEnvironment} hre
  */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -18,7 +18,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`\n✨ ${path.basename(__filename)}:`);
 
   const [deployer] = await hre.ethers.getSigners();
-
   if (isLocal(hre)) {
     const productionNetworkName: string = getProductionNetworkName(hre);
 
@@ -43,9 +42,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
 
   console.log(
-    `Using account "${
+    `Using account '${
       deployer.address
-    }" with a balance of ${hre.ethers.utils.formatEther(
+    }' with a balance of ${hre.ethers.utils.formatEther(
       await deployer.getBalance()
     )} native tokens.`
   );
