@@ -7,7 +7,7 @@ import {
   MyPluginSetup__factory,
   MyPlugin__factory,
 } from '../../typechain';
-import {STORE_PERMISSION_ID, defaultInitData} from './plugin';
+import {STORE_PERMISSION_ID, defaultInitData} from './11_plugin';
 import {
   ADDRESS,
   Operation,
