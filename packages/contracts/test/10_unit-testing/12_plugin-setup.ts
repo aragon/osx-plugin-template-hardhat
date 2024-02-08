@@ -1,38 +1,41 @@
 import {PLUGIN_SETUP_CONTRACT_NAME} from '../../plugin-settings';
 import buildMetadata from '../../src/build-metadata.json';
 import {
-  DAO,
+  DAOMock,
+  DAOMock__factory,
   MyPluginSetup,
   MyPluginSetup__factory,
   MyPlugin__factory,
 } from '../../typechain';
+import {STORE_PERMISSION_ID, defaultInitData} from './11_plugin';
 import {
-  ADDRESS_ZERO,
-  EMPTY_DATA,
-  NO_CONDITION,
-  STORE_PERMISSION_ID,
-} from '../helpers/constants';
-import {deployTestDao} from '../helpers/test-dao';
-import {Operation, getNamedTypesFromMetadata} from '../helpers/types';
-import {defaultInitData} from './plugin';
+  ADDRESS,
+  Operation,
+  PERMISSION_MANAGER_FLAGS,
+  getNamedTypesFromMetadata,
+} from '@aragon/osx-commons-sdk';
+import {loadFixture} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {ethers} from 'hardhat';
 
+type FixtureResult = {
+  deployer: SignerWithAddress;
+  alice: SignerWithAddress;
+  bob: SignerWithAddress;
+  pluginSetup: MyPluginSetup;
+  daoMock: DAOMock;
+};
+
+async function fixture(): Promise<FixtureResult> {
+  const [deployer, alice, bob] = await ethers.getSigners();
+  const daoMock = await new DAOMock__factory(deployer).deploy();
+  const pluginSetup = await new MyPluginSetup__factory(deployer).deploy();
+
+  return {deployer, alice, bob, pluginSetup, daoMock};
+}
+
 describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
-  let alice: SignerWithAddress;
-  let myPluginSetup: MyPluginSetup;
-  let MyPluginSetup: MyPluginSetup__factory;
-  let dao: DAO;
-
-  before(async () => {
-    [alice] = await ethers.getSigners();
-    dao = await deployTestDao(alice);
-
-    MyPluginSetup = new MyPluginSetup__factory(alice);
-    myPluginSetup = await MyPluginSetup.deploy();
-  });
-
   describe('prepareInstallation', async () => {
     let initData: string;
 
@@ -46,19 +49,21 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
     });
 
     it('returns the plugin, helpers, and permissions', async () => {
+      const {deployer, pluginSetup, daoMock} = await loadFixture(fixture);
+
       const nonce = await ethers.provider.getTransactionCount(
-        myPluginSetup.address
+        pluginSetup.address
       );
       const anticipatedPluginAddress = ethers.utils.getContractAddress({
-        from: myPluginSetup.address,
+        from: pluginSetup.address,
         nonce,
       });
 
       const {
         plugin,
         preparedSetupData: {helpers, permissions},
-      } = await myPluginSetup.callStatic.prepareInstallation(
-        dao.address,
+      } = await pluginSetup.callStatic.prepareInstallation(
+        daoMock.address,
         initData
       );
 
@@ -69,31 +74,34 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
         [
           Operation.Grant,
           plugin,
-          dao.address,
-          NO_CONDITION,
+          daoMock.address,
+          PERMISSION_MANAGER_FLAGS.NO_CONDITION,
           STORE_PERMISSION_ID,
         ],
       ]);
 
-      await myPluginSetup.prepareInstallation(dao.address, initData);
-      const myPlugin = new MyPlugin__factory(alice).attach(plugin);
+      await pluginSetup.prepareInstallation(daoMock.address, initData);
+      const myPlugin = new MyPlugin__factory(deployer).attach(plugin);
 
       // initialization is correct
-      expect(await myPlugin.dao()).to.eq(dao.address);
+      expect(await myPlugin.dao()).to.eq(daoMock.address);
       expect(await myPlugin.number()).to.be.eq(defaultInitData.number);
     });
   });
 
   describe('prepareUninstallation', async () => {
     it('returns the permissions', async () => {
-      const dummyAddr = ADDRESS_ZERO;
+      const {pluginSetup, daoMock} = await loadFixture(fixture);
 
-      const permissions = await myPluginSetup.callStatic.prepareUninstallation(
-        dao.address,
+      const dummyAddr = ADDRESS.ZERO;
+      const emptyData = '0x';
+
+      const permissions = await pluginSetup.callStatic.prepareUninstallation(
+        daoMock.address,
         {
           plugin: dummyAddr,
           currentHelpers: [],
-          data: EMPTY_DATA,
+          data: emptyData,
         }
       );
 
@@ -102,8 +110,8 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
         [
           Operation.Revoke,
           dummyAddr,
-          dao.address,
-          NO_CONDITION,
+          daoMock.address,
+          PERMISSION_MANAGER_FLAGS.NO_CONDITION,
           STORE_PERMISSION_ID,
         ],
       ]);
