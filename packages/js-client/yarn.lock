@@ -29,7 +29,14 @@
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/osx-ethers@1.3.0-rc0.3", "@aragon/osx-ethers@^1.3.0-rc0", "@aragon/osx-ethers@^1.3.0-rc0.3":
+"@aragon/osx-ethers@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.1.tgz#d72decea14cc5c11c55ad6654e97b3380429c1c9"
+  integrity sha512-6APDAasHrIVmJ0SxUSmWCxusVe46OF3eGZGp8MVD3j4BDJjJ+FIrrjN9ePkTpPja3X8GL6PD00l1WIzW2GZQMQ==
+  dependencies:
+    ethers "^5.6.2"
+
+"@aragon/osx-ethers@^1.3.0-rc0", "@aragon/osx-ethers@^1.3.0-rc0.3":
   version "1.3.0-rc0.3"
   resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0-rc0.3.tgz#53c7ee2888e25704932e4450c1518014cb383093"
   integrity sha512-8hjNtAni7rGygtZDScJuCUh0QnA5q6gF8zhQycyhCvvjwakxWouLFEySpBPIYoFsMziqFa4E2uu/XyNHQb+YiQ==
@@ -10446,10 +10453,15 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@5.2.2, typescript@^5.0.2:
+typescript@^5.0.2:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.2.2.tgz#5ebb5e5a5b75f085f22bc3f8460fba308310fa78"
   integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
+
+typescript@^5.2.2:
+  version "5.3.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.3.3.tgz#b3ce6ba258e72e6305ba66f5c9b452aaee3ffe37"
+  integrity sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==
 
 typical@^4.0.0:
   version "4.0.0"
