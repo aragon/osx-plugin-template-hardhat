@@ -1,77 +1,101 @@
 import {PLUGIN_CONTRACT_NAME} from '../../plugin-settings';
-import {DAO, MyPlugin, MyPlugin__factory} from '../../typechain';
+import {
+  DAOMock,
+  DAOMock__factory,
+  MyPlugin,
+  MyPlugin__factory,
+} from '../../typechain';
 import '../../typechain/src/MyPlugin';
-import {deployWithProxy} from '../../utils/helpers';
-import {STORE_PERMISSION_ID} from '../helpers/constants';
-import {deployTestDao} from '../helpers/test-dao';
+import {loadFixture} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {BigNumber} from 'ethers';
-import {ethers} from 'hardhat';
+import {ethers, upgrades} from 'hardhat';
 
 export type InitData = {number: BigNumber};
 export const defaultInitData: InitData = {
   number: BigNumber.from(123),
 };
 
+export const STORE_PERMISSION_ID = ethers.utils.id('STORE_PERMISSION');
+
+type FixtureResult = {
+  deployer: SignerWithAddress;
+  alice: SignerWithAddress;
+  bob: SignerWithAddress;
+  plugin: MyPlugin;
+  daoMock: DAOMock;
+};
+
+async function fixture(): Promise<FixtureResult> {
+  const [deployer, alice, bob] = await ethers.getSigners();
+  const daoMock = await new DAOMock__factory(deployer).deploy();
+  const plugin = (await upgrades.deployProxy(
+    new MyPlugin__factory(deployer),
+    [daoMock.address, defaultInitData.number],
+    {
+      kind: 'uups',
+      initializer: 'initialize',
+      unsafeAllow: ['constructor'],
+      constructorArgs: [],
+    }
+  )) as unknown as MyPlugin;
+
+  return {deployer, alice, bob, plugin, daoMock};
+}
+
 describe(PLUGIN_CONTRACT_NAME, function () {
-  let alice: SignerWithAddress;
-  let bob: SignerWithAddress;
-  let dao: DAO;
-  let myPlugin: MyPlugin;
-  let defaultInput: InitData;
-
-  before(async () => {
-    [alice, bob] = await ethers.getSigners();
-    dao = await deployTestDao(alice);
-
-    defaultInput = {number: BigNumber.from(123)};
-  });
-
-  beforeEach(async () => {
-    myPlugin = await deployWithProxy<MyPlugin>(new MyPlugin__factory(alice));
-
-    await myPlugin.initialize(dao.address, defaultInput.number);
-  });
-
   describe('initialize', async () => {
     it('reverts if trying to re-initialize', async () => {
+      const {plugin, daoMock} = await loadFixture(fixture);
       await expect(
-        myPlugin.initialize(dao.address, defaultInput.number)
+        plugin.initialize(daoMock.address, defaultInitData.number)
       ).to.be.revertedWith('Initializable: contract is already initialized');
     });
 
     it('stores the number', async () => {
-      expect(await myPlugin.number()).to.equal(defaultInput.number);
+      const {plugin} = await loadFixture(fixture);
+
+      expect(await plugin.number()).to.equal(defaultInitData.number);
     });
   });
 
   describe('storeNumber', async () => {
-    const newNumber = BigNumber.from(456);
-
-    beforeEach(async () => {
-      await dao.grant(myPlugin.address, alice.address, STORE_PERMISSION_ID);
-    });
-
     it('reverts if sender lacks permission', async () => {
-      await expect(myPlugin.connect(bob).storeNumber(newNumber))
-        .to.be.revertedWithCustomError(myPlugin, 'DaoUnauthorized')
+      const newNumber = BigNumber.from(456);
+
+      const {bob, plugin, daoMock} = await loadFixture(fixture);
+
+      expect(await daoMock.hasPermissionReturnValueMock()).to.equal(false);
+
+      await expect(plugin.connect(bob).storeNumber(newNumber))
+        .to.be.revertedWithCustomError(plugin, 'DaoUnauthorized')
         .withArgs(
-          dao.address,
-          myPlugin.address,
+          daoMock.address,
+          plugin.address,
           bob.address,
           STORE_PERMISSION_ID
         );
     });
 
     it('stores the number', async () => {
-      await expect(myPlugin.storeNumber(newNumber)).to.not.be.reverted;
-      expect(await myPlugin.number()).to.equal(newNumber);
+      const newNumber = BigNumber.from(456);
+
+      const {plugin, daoMock} = await loadFixture(fixture);
+      await daoMock.setHasPermissionReturnValueMock(true);
+
+      await expect(plugin.storeNumber(newNumber)).to.not.be.reverted;
+      expect(await plugin.number()).to.equal(newNumber);
     });
 
     it('emits the NumberStored event', async () => {
-      await expect(myPlugin.storeNumber(newNumber))
-        .to.emit(myPlugin, 'NumberStored')
+      const newNumber = BigNumber.from(456);
+
+      const {plugin, daoMock} = await loadFixture(fixture);
+      await daoMock.setHasPermissionReturnValueMock(true);
+
+      await expect(plugin.storeNumber(newNumber))
+        .to.emit(plugin, 'NumberStored')
         .withArgs(newNumber);
     });
   });

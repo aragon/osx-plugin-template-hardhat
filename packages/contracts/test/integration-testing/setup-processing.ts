@@ -1,110 +1,45 @@
 import {METADATA} from '../../plugin-settings';
 import {
-  PluginRepo,
-  MyPlugin,
+  DAOMock,
+  DAOMock__factory,
   MyPluginSetup,
   MyPluginSetup__factory,
   MyPlugin__factory,
 } from '../../typechain';
-import {PluginSetupRefStruct} from '../../typechain/@aragon/osx/framework/dao/DAOFactory';
-import {getPluginInfo, osxContracts} from '../../utils/helpers';
-import {initializeFork} from '../helpers/fixture';
-import {installPLugin, uninstallPLugin} from '../helpers/setup';
-import {deployTestDao} from '../helpers/test-dao';
-import {getNamedTypesFromMetadata} from '../helpers/types';
+import {getProductionNetworkName, findPluginRepo} from '../../utils/helpers';
+import {installPLugin, uninstallPLugin} from './test-helpers';
 import {
-  DAO,
-  PluginRepo__factory,
+  getLatestNetworkDeployment,
+  getNetworkNameByAlias,
+} from '@aragon/osx-commons-configs';
+import {getNamedTypesFromMetadata} from '@aragon/osx-commons-sdk';
+import {
   PluginSetupProcessor,
+  PluginRepo,
+  PluginSetupProcessorStructs,
   PluginSetupProcessor__factory,
 } from '@aragon/osx-ethers';
+import {loadFixture} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {BigNumber} from 'ethers';
-import {ethers} from 'hardhat';
+import env, {deployments, ethers} from 'hardhat';
 
-describe('PluginSetup Processing', function () {
-  let alice: SignerWithAddress;
+const productionNetworkName = getProductionNetworkName(env);
 
-  let psp: PluginSetupProcessor;
-  let dao: DAO;
-  let pluginRepo: PluginRepo;
-
-  before(async () => {
-    [alice] = await ethers.getSigners();
-
-    const hardhatForkNetwork = 'goerli';
-
-    await initializeFork(
-      hardhatForkNetwork,
-      getPluginInfo(hardhatForkNetwork)[hardhatForkNetwork]['releases']['1'][
-        'builds'
-      ]['1']['blockNumberOfPublication']
-    );
-
-    // PSP
-    psp = PluginSetupProcessor__factory.connect(
-      osxContracts[hardhatForkNetwork]['PluginSetupProcessor'],
-      alice
-    );
-
-    // Deploy DAO.
-    dao = await deployTestDao(alice);
-
-    await dao.grant(
-      dao.address,
-      psp.address,
-      ethers.utils.id('ROOT_PERMISSION')
-    );
-    await dao.grant(
-      psp.address,
-      alice.address,
-      ethers.utils.id('APPLY_INSTALLATION_PERMISSION')
-    );
-    await dao.grant(
-      psp.address,
-      alice.address,
-      ethers.utils.id('APPLY_UNINSTALLATION_PERMISSION')
-    );
-    await dao.grant(
-      psp.address,
-      alice.address,
-      ethers.utils.id('APPLY_UPDATE_PERMISSION')
-    );
-
-    pluginRepo = PluginRepo__factory.connect(
-      getPluginInfo(hardhatForkNetwork)[hardhatForkNetwork].address,
-      alice
-    );
-  });
-
+describe(`PluginSetup processing on network '${productionNetworkName}'`, function () {
   context('Build 1', async () => {
-    let setup: MyPluginSetup;
-    let pluginSetupRef: PluginSetupRefStruct;
-    let plugin: MyPlugin;
+    it('installs & uninstalls', async () => {
+      const {deployer, psp, daoMock, pluginSetup, pluginSetupRef} =
+        await loadFixture(fixture);
 
-    before(async () => {
-      // Deploy setups.
-      setup = MyPluginSetup__factory.connect(
-        (await pluginRepo['getLatestVersion(uint8)'](1)).pluginSetup,
-        alice
-      );
+      // Allow all authorized calls to happen
+      await daoMock.setHasPermissionReturnValueMock(true);
 
-      pluginSetupRef = {
-        versionTag: {
-          release: BigNumber.from(1),
-          build: BigNumber.from(1),
-        },
-        pluginSetupRepo: pluginRepo.address,
-      };
-    });
-
-    beforeEach(async () => {
       // Install build 1.
-
       const results = await installPLugin(
         psp,
-        dao,
+        daoMock,
         pluginSetupRef,
         ethers.utils.defaultAbiCoder.encode(
           getNamedTypesFromMetadata(
@@ -114,16 +49,14 @@ describe('PluginSetup Processing', function () {
         )
       );
 
-      plugin = MyPlugin__factory.connect(
+      const plugin = MyPlugin__factory.connect(
         results.preparedEvent.args.plugin,
-        alice
+        deployer
       );
-    });
 
-    it('installs & uninstalls', async () => {
       // Check implementation.
       expect(await plugin.implementation()).to.be.eq(
-        await setup.implementation()
+        await pluginSetup.implementation()
       );
 
       // Check state.
@@ -132,7 +65,7 @@ describe('PluginSetup Processing', function () {
       // Uninstall build 1.
       await uninstallPLugin(
         psp,
-        dao,
+        daoMock,
         plugin,
         pluginSetupRef,
         ethers.utils.defaultAbiCoder.encode(
@@ -146,3 +79,61 @@ describe('PluginSetup Processing', function () {
     });
   });
 });
+
+type FixtureResult = {
+  deployer: SignerWithAddress;
+  alice: SignerWithAddress;
+  bob: SignerWithAddress;
+  daoMock: DAOMock;
+  psp: PluginSetupProcessor;
+  pluginRepo: PluginRepo;
+  pluginSetup: MyPluginSetup;
+  pluginSetupRef: PluginSetupProcessorStructs.PluginSetupRefStruct;
+};
+
+async function fixture(): Promise<FixtureResult> {
+  // Deploy all contracts
+  const tags = ['CreateRepo', 'NewVersion'];
+  await deployments.fixture(tags);
+
+  const [deployer, alice, bob] = await ethers.getSigners();
+  const daoMock = await new DAOMock__factory(deployer).deploy();
+
+  // Get the `PluginSetupProcessor` from the network
+  const psp = PluginSetupProcessor__factory.connect(
+    getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
+      .PluginSetupProcessor.address,
+    deployer
+  );
+
+  // Get the deployed `PluginRepo`
+  const {pluginRepo, ensDomain} = await findPluginRepo(env);
+  if (pluginRepo === null) {
+    throw `PluginRepo '${ensDomain}' does not exist yet.`;
+  }
+
+  const release = 1;
+  const pluginSetup = MyPluginSetup__factory.connect(
+    (await pluginRepo['getLatestVersion(uint8)'](release)).pluginSetup,
+    deployer
+  );
+
+  const pluginSetupRef = {
+    versionTag: {
+      release: BigNumber.from(1),
+      build: BigNumber.from(1),
+    },
+    pluginSetupRepo: pluginRepo.address,
+  };
+
+  return {
+    deployer,
+    alice,
+    bob,
+    psp,
+    daoMock,
+    pluginRepo,
+    pluginSetup,
+    pluginSetupRef,
+  };
+}
