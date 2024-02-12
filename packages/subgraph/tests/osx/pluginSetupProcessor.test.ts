@@ -95,8 +95,8 @@ describe('OSx', () => {
 
         handleInstallationPrepared(event2);
 
-        assert.fieldEquals('DaoPlugin', installationId, 'id', installationId);
         assert.entityCount('DaoPlugin', 1);
+        assert.fieldEquals('DaoPlugin', installationId!, 'id', installationId!);
       });
     });
   });

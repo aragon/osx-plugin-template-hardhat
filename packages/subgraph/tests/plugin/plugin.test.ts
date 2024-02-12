@@ -52,8 +52,8 @@ describe('Plugin', () => {
 
       handleNumberStored(event);
 
-      assert.fieldEquals('DaoPlugin', installationId, 'id', installationId);
-      assert.fieldEquals('DaoPlugin', installationId, 'number', number);
+      assert.fieldEquals('DaoPlugin', installationId!, 'id', installationId!);
+      assert.fieldEquals('DaoPlugin', installationId!, 'number', number);
       assert.entityCount('DaoPlugin', 1);
     });
   });
