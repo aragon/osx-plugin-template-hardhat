@@ -27,14 +27,13 @@ describe('OSx', () => {
         // Create event
         const daoAddress = DAO_ADDRESS;
         const pluginAddress = CONTRACT_ADDRESS;
-        let installationId = generatePluginInstallationEntityId(
+        const installationId = generatePluginInstallationEntityId(
           Address.fromString(daoAddress),
           Address.fromString(pluginAddress)
         );
         if (!installationId) {
           throw new Error('Failed to get installationId');
         }
-        installationId = installationId as string;
         const setupId = PLUGIN_SETUP_ID;
         const versionTuple = new ethereum.Tuple();
         versionTuple.push(
@@ -77,7 +76,7 @@ describe('OSx', () => {
 
         handleInstallationPrepared(event1);
 
-        assert.notInStore('DaoPlugin', installationId);
+        assert.notInStore('DaoPlugin', installationId!);
         assert.entityCount('DaoPlugin', 0);
 
         const thisPluginRepoAddress = PLUGIN_REPO_ADDRESS;

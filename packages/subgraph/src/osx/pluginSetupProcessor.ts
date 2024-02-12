@@ -20,7 +20,7 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
   const plugin = event.params.plugin;
 
   // Generate a unique ID for the plugin installation.
-  let installationId = generatePluginInstallationEntityId(dao, plugin);
+  const installationId = generatePluginInstallationEntityId(dao, plugin);
   // Log an error and exit if unable to generate the installation ID.
   if (!installationId) {
     log.error('Failed to generate installationId', [
@@ -29,11 +29,10 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
     ]);
     return;
   }
-  installationId = installationId as string;
   // Load or create a new entry for the this plugin using the generated installation ID.
-  let pluginEntity = DaoPlugin.load(installationId);
+  let pluginEntity = DaoPlugin.load(installationId!);
   if (!pluginEntity) {
-    pluginEntity = new DaoPlugin(installationId);
+    pluginEntity = new DaoPlugin(installationId!);
   }
 
   // Set the DAO and plugin address for the plugin entity.

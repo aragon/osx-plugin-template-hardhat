@@ -30,16 +30,15 @@ describe('Plugin', () => {
       const daoAddress = Address.fromString(DAO_ADDRESS);
       const pluginAddress = Address.fromString(CONTRACT_ADDRESS);
 
-      let installationId = generatePluginInstallationEntityId(
+      const installationId = generatePluginInstallationEntityId(
         daoAddress,
         pluginAddress
       );
       if (!installationId) {
         throw new Error('Failed to get installationId');
       }
-      installationId = installationId as string;
       // Create state
-      let daoPlugin = new DaoPlugin(installationId);
+      let daoPlugin = new DaoPlugin(installationId!);
       daoPlugin.dao = daoAddress;
       daoPlugin.pluginAddress = pluginAddress;
       daoPlugin.save();
