@@ -25,15 +25,15 @@ jobs:
           node-version: 18
 
       - name: 'Install root dependencies'
-        run: yarn install
+        run: 'yarn install --frozen-lockfile'
         working-directory: .
 
       - name: 'Install dependencies for contracts'
-        run: yarn install
+        run: 'yarn install --frozen-lockfile'
         working-directory: packages/contracts
 
       - name: 'Install the dependencies for subgraph'
-        run: yarn install
+        run: 'yarn install --frozen-lockfile'
         working-directory: packages/subgraph
 
       - name: 'Build the subgraph'
@@ -46,5 +46,3 @@ jobs:
       - name: 'Test the subgraph'
         run: yarn test
         working-directory: packages/subgraph
-        env:
-          GITHUB_STEP_SUMMARY: ${{ secrets.GITHUB_STEP_SUMMARY }}
