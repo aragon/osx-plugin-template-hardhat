@@ -67,40 +67,44 @@ The `packages/contracts/test` folder contains pre-written unit and integration t
 
 #### Unit Testing
 
-The `packages/contracts/test/integration-testing` folder contains
+The `packages/contracts/test/10_unit-testing` folder contains
 
-- plugin implementation contract unit tests in the `plugin.ts` file
-- containing plugin setup contract unit tests in the `plugin-setup.ts` file
+- plugin implementation contract unit tests in the `11_plugin.ts` file
+- containing plugin setup contract unit tests in the `12_plugin-setup.ts` file
 
 Adapt and extend the tests according to your changes and plugin features.
 
 #### Integration Testing
 
-The `packages/contracts/test/integration-testing` folder contains
+The `packages/contracts/test/20_integration-testing` folder contains
 
-- deployment tests in the `deployment.ts` file
+- deployment tests in the `21_deployment.ts` file
   - testing that the deploy scripts publishes the plugin and sets the maintainer permissions correctly
-- setup processing tests in the `setup-processing.ts` file
+- setup processing tests in the `22_setup-processing.ts` file
   - testing that Aragon OSx `PluginSetupProcessor` can [apply a plugin setup](https://devs.aragon.org/docs/osx/how-it-works/framework/plugin-management/plugin-setup/#what-happens-during-the-preparation-application) correctly
 
 The prior tests if your plugin can be deployed
 
 ### Deployment Scripts
 
-The standard deploy scripts in the `packages/contracts/deploy` should already be sufficient to deploy the first and upcoming versions of your plugin. If your deployment has special requirements, adapt the files.
+The standard deploy scripts in the `packages/contracts/deploy` should already be sufficient to deploy the first and upcoming versions of your plugin as well as upgrade your plugin repo. If your deployment has special requirements, adapt the files.
 
 - `00_info/01_account_info.ts`
-  - prints information on the used account and its balance
-- `01_repo/10_create_repo.ts`
-  - creates a plugin repo with an ENS subdomain name under the `plugin.dao.eth` parent domain if the ENS name is not taken already.
-- `02_setup/10_setup.ts`
-  - deploys the plugin setup contract
-- `02_setup/10_setup_conclude.ts`
-  - fetches the plugin setup contract and included implementation contract for Etherscan verifcation
-- `02_setup/12_publish.ts`
-  - publishes the plugin setup contract on the plugin repo created in `01_repo/10_create_repo.ts`
-- `99_verification/10_verify-contracts.ts`
-  - verifies all deployed contracts
+  - Prints information on the used networks and used account.
+- `10_create_repo/11_create_repo.ts`
+  - Creates a plugin repo with an ENS subdomain name under the `plugin.dao.eth` parent domain if the ENS name is not taken already.
+- `20_new_version/21_setup.ts`
+  - Deploys the plugin setup contract
+- `20_new_version/22_setup_conclude.ts`
+  - Fetches the plugin setup and implementation contract and queues it for block explorer verification.
+- `20_new_version/23_publish.ts`
+  - Publishes the plugin setup contract on the plugin repo created in `10_repo/11_create_repo.ts`
+- `30_upgrade_repo/31_upgrade_repo.ts`
+  - Upgrades the plugin repo to the latest Aragon OSx protocol version.
+- `40_conclude/41_conclude.ts`
+  - Prints information on the used account's balance after deployment.
+- `50_verification/51_verify_contracts.ts`
+  - Verifies all deployed contracts.
 
 # Subgraph
 

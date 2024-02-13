@@ -184,27 +184,7 @@ you can permanently enable the gas reporting by putting the `REPORT_GAS=true` in
 
 ### Deployment
 
-The deploy scripts provided inside `./packages/contracts/deploy`
-
-```markdown
-.
-├── 00_info
-│ └── 01_info.ts
-├── 10_create_repo
-│ └── 11_create_repo.ts
-├── 20_new_version
-│ ├── 21_setup.ts
-│ ├── 22_setup_conclude.ts
-│ └── 23_publish.ts
-├── 30_upgrade_repo
-│ └── 31_upgrade_repo.ts
-├── 40_conclude
-│ └── 41_conclude.ts
-└── 50_verification
-└── 51_verify-contracts.ts
-```
-
-take care of
+The deploy scripts provided inside `./packages/contracts/deploy` take care of
 
 1. Creating an on-chain [Plugin Repository](https://devs.aragon.org/docs/osx/how-it-works/framework/plugin-management/plugin-repo/) for you through Aragon's factories with an [unique ENS name](https://devs.aragon.org/docs/osx/how-it-works/framework/ens-names).
 2. Publishing the first version of your `Plugin` and associated `PluginSetup` contract in your repo from step 1.
@@ -213,21 +193,9 @@ take care of
 Finally, it verifies all contracts on the block explorer of the chosen network.
 
 **You don't need to make changes to the deploy script.** You only have to update the entries in `packages/contracts/plugin-settings.ts`
+For more details, see the template [usage guide](./USAGE_GUIDE.md#contracts).
 
-```
-export const PLUGIN_CONTRACT_NAME = 'MyPlugin'; // This must match the filename `packages/contracts/src/MyPlugin.sol` and the contract name `MyPlugin` within.
-export const PLUGIN_SETUP_CONTRACT_NAME = 'MyPluginSetup'; // This must match the filename `packages/contracts/src/MyPluginSetup.sol` and the contract name `MyPluginSetup` within.
-export const PLUGIN_REPO_ENS_SUBDOMAIN_NAME = 'my'; // This will result in the ENS domain name 'my.plugin.dao.eth'
-
-export const VERSION: VersionTag = {
-  release: 1, // Increment this number ONLY if breaking/incompatible changes were made. Updates between releases are NOT possible.
-  build: 1, // Increment this number if non-breaking/compatible changes were made. Updates to newer builds are possible.
-};
-```
-
-and adapt the `build-metadata.json` and `release-metadata.json` in the `packages/contracts/src` directory [according to our guidelines](https://devs.aragon.org/docs/osx/how-to-guides/plugin-development/publication/metadata).
-
-#### Creating a Plugin Repository & Publishing your Plugin
+#### Creating a Plugin Repository & Publishing Your Plugin
 
 Deploy the contracts to the local Hardhat Network (being forked from the network specified in `NETWORK_NAME` in your `.env` file ) with
 
@@ -253,7 +221,7 @@ yarn deploy --network sepolia --tags NewVersion,Verification
 
 Note, that if you include the `CreateRepo` tag after you've created your plugin repo already, this part of the script will be skipped.
 
-#### Upgrading your Plugin Repository
+#### Upgrading Your Plugin Repository
 
 Upgrade your plugin repo on the local Hardhat Network (being forked from the network specified in `NETWORK_NAME` in your `.env` file ) with
 
