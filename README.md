@@ -59,12 +59,6 @@ The root folder of the repo includes three subfolders:
 │ ├── ...
 │ └── package.json
 │
-├── packages/js-client
-│ ├── src
-│ ├── test
-│ ├── ...
-│ └── package.json
-│
 ├── ...
 └── package.json
 ```
@@ -359,10 +353,6 @@ yarn deploy
 ```
 
 to deploy the subgraph and check your [Alchemy subgraph dashboard](https://subgraphs.alchemy.com/onboarding) for completion and possible errors.
-
-## JS Client
-
-TODO
 
 ## License
 
