@@ -192,8 +192,7 @@ The deploy scripts provided inside `./packages/contracts/deploy` take care of
 
 Finally, it verifies all contracts on the block explorer of the chosen network.
 
-**You don't need to make changes to the deploy script.** You only have to update the entries in `packages/contracts/plugin-settings.ts`
-For more details, see the template [usage guide](./USAGE_GUIDE.md#contracts).
+**You don't need to make changes to the deploy script.** You only have to update the entries in `packages/contracts/plugin-settings.ts` as explained in the template [usage guide](./USAGE_GUIDE.md#contracts).
 
 #### Creating a Plugin Repository & Publishing Your Plugin
 
