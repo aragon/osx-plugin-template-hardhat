@@ -19,8 +19,7 @@
     "prettier:write": "prettier --write \"**/*.{js,json,md,sol,ts,yml}\"",
     "lint:contracts:sol": "solhint --max-warnings 0 \"packages/contracts/src/**/*.sol\"",
     "lint:contracts:ts": "eslint --ext .js,.ts ./packages/contracts/",
-    "lint:js-client:ts": "eslint --ext .js,.ts ./packages/js-client/",
     "lint:subgraph:ts": "eslint --ext .js,.ts ./packages/subgraph/",
-    "lint": "yarn run lint:contracts:sol; yarn run lint:contracts:ts; yarn run lint:js-client:ts; yarn run lint:subgraph:ts"
+    "lint": "yarn run lint:contracts:sol; yarn run lint:contracts:ts; yarn run lint:subgraph:ts"
   }
 }
