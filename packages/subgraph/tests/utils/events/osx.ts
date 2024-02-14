@@ -1,9 +1,7 @@
-// TODO: Remove this file and import from OSx-commons-subgraph,
-// once the OSx-commons-subgraph npm package is published
 import {
   InstallationPrepared,
   InstallationPreparedPreparedSetupDataStruct,
-} from '../generated/PluginSetupProcessor/PluginSetupProcessor';
+} from '../../../generated/PluginSetupProcessor/PluginSetupProcessor';
 import {Address, Bytes, ethereum} from '@graphprotocol/graph-ts';
 import {newMockEvent} from 'matchstick-as';
 

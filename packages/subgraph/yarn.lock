@@ -9,6 +9,13 @@
   dependencies:
     tslib "^2.6.2"
 
+"@aragon/osx-commons-subgraph@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-commons-subgraph/-/osx-commons-subgraph-0.0.4.tgz#2aa52f3089d21189c9152d2f3d14c0d7c66d129f"
+  integrity sha512-cqhusJ3HNvMx+t9lXfN+Hy/5ipefNs1Tdxe+y0GvD4qgBMVU4tCbsxOpB9U2JEJNBCzFQj4E/872FFLpIErB4w==
+  dependencies:
+    "@graphprotocol/graph-ts" "0.31.0"
+
 "@aragon/osx-ethers@1.4.0-alpha.0":
   version "1.4.0-alpha.0"
   resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.4.0-alpha.0.tgz#329f1ac27660b486fa0b296dddeb004ce352001c"
@@ -444,7 +451,7 @@
     which "2.0.2"
     yaml "1.10.2"
 
-"@graphprotocol/graph-ts@^0.31.0":
+"@graphprotocol/graph-ts@0.31.0", "@graphprotocol/graph-ts@^0.31.0":
   version "0.31.0"
   resolved "https://registry.yarnpkg.com/@graphprotocol/graph-ts/-/graph-ts-0.31.0.tgz#730668c0369828b31bef81e8d9bc66b9b48e3480"
   integrity sha512-xreRVM6ho2BtolyOh2flDkNoGZximybnzUnF53zJVp0+Ed0KnAlO1/KOCUYw06euVI9tk0c9nA2Z/D5SIQV2Rg==

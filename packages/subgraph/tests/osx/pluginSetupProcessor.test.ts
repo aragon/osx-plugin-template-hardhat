@@ -1,5 +1,3 @@
-import {generatePluginInstallationEntityId} from '../../commons/ids';
-import {createInstallationPreparedEvent} from '../../commons/test';
 import {PLUGIN_REPO_ADDRESS} from '../../imported/repo-address';
 import {handleInstallationPrepared} from '../../src/osx/pluginSetupProcessor';
 import {
@@ -13,6 +11,8 @@ import {
   DAO_ADDRESS,
   PLUGIN_SETUP_ID,
 } from '../utils/constants';
+import {createInstallationPreparedEvent} from '../utils/events';
+import {generatePluginInstallationEntityId} from '@aragon/osx-commons-subgraph';
 import {Address, BigInt, Bytes, ethereum} from '@graphprotocol/graph-ts';
 import {assert, afterEach, clearStore, test, describe} from 'matchstick-as';
 
@@ -60,8 +60,6 @@ describe('OSx', () => {
           ],
         ];
 
-        let installationIdString = installationId.toHexString();
-
         const otherPluginSetupRepo = ADDRESS_TWO;
 
         const event1 = createInstallationPreparedEvent(
@@ -78,7 +76,7 @@ describe('OSx', () => {
 
         handleInstallationPrepared(event1);
 
-        assert.notInStore('DaoPlugin', installationIdString);
+        assert.notInStore('DaoPlugin', installationId!);
         assert.entityCount('DaoPlugin', 0);
 
         const thisPluginRepoAddress = PLUGIN_REPO_ADDRESS;
@@ -97,13 +95,8 @@ describe('OSx', () => {
 
         handleInstallationPrepared(event2);
 
-        assert.fieldEquals(
-          'DaoPlugin',
-          installationIdString,
-          'id',
-          installationIdString
-        );
         assert.entityCount('DaoPlugin', 1);
+        assert.fieldEquals('DaoPlugin', installationId!, 'id', installationId!);
       });
     });
   });

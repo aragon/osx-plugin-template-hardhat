@@ -1,4 +1,4 @@
-import {NumberStored} from '../../generated/templates/Plugin/Plugin';
+import {NumberStored} from '../../../generated/templates/Plugin/Plugin';
 import {Address, BigInt, ethereum} from '@graphprotocol/graph-ts';
 import {newMockEvent} from 'matchstick-as';
 
