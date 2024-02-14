@@ -1,0 +1,10 @@
+# These labels (common, client, ipfs and client-common) are only informative.
+# While the labels <pkg-name>-release are for triggering the release process.
+
+contracts:
+  - ./packages/contracts/**/*
+  - ./packages/contracts/*
+
+subgraph:
+  - ./packages/subgraph/**/*
+  - ./packages/subgraph/*

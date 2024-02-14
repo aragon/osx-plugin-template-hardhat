@@ -1,0 +1,10 @@
+# Types
+type DaoPlugin @entity {
+  "OSX related data"
+  id: ID! # psp installationId
+  dao: Bytes!
+  pluginAddress: Bytes!
+
+  "Set plugin specific related data below:"
+  number: BigInt
+}

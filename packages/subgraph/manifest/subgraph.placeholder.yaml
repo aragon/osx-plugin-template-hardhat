@@ -1,0 +1,54 @@
+{{info}}
+specVersion: 0.0.2
+description: A template for Plugin subgraphs
+repository: https://github.com/aragon/osx-plugin-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  {{#dataSources.PluginSetupProcessors}}
+  # PluginSetupProcessor
+  - kind: ethereum/contract
+    name: {{name}}
+    network: {{network}}
+    source:
+      abi: PluginSetupProcessor
+      address: '{{address}}'
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - PluginInstallation
+        - PluginPreparation
+        - PluginPermission
+      abis:        
+        - name: PluginSetupProcessor
+          file: ./imported/PluginSetupProcessor.json
+      eventHandlers:
+        - event: InstallationPrepared(indexed address,indexed address,bytes32,indexed address,(uint8,uint16),bytes,address,(address[],(uint8,address,address,address,bytes32)[]))
+          handler: handleInstallationPrepared
+      file: ./src/osx/pluginSetupProcessor.ts
+  {{/dataSources.PluginSetupProcessors}}
+# templates
+templates:
+  # Plugin (package)
+  - name: Plugin
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: Plugin
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Dao
+      abis:
+        - name: Plugin
+          file: $PLUGIN_MODULE/contracts/artifacts/src/MyPlugin.sol/MyPlugin.json
+      eventHandlers:
+        - event: NumberStored(uint256)
+          handler: handleNumberStored
+      file: ./src/plugin/plugin.ts
+
