@@ -2,17 +2,17 @@
 # yarn lockfile v1
 
 
-"@aragon/osx-commons-subgraph@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@aragon/osx-commons-subgraph/-/osx-commons-subgraph-0.0.4.tgz#2aa52f3089d21189c9152d2f3d14c0d7c66d129f"
-  integrity sha512-cqhusJ3HNvMx+t9lXfN+Hy/5ipefNs1Tdxe+y0GvD4qgBMVU4tCbsxOpB9U2JEJNBCzFQj4E/872FFLpIErB4w==
+"@aragon/osx-commons-configs@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-commons-configs/-/osx-commons-configs-0.2.0.tgz#32f83596f4a2e9e48aef61cf560c1c5b4d32a049"
+  integrity sha512-wCFtgmuGCzs8L5mCxVCYQ6uEu69IrofS7q2w7E1Fjk7/nWuSmRUpgmif3ki9BQq1qpOvDu2P+u3UNLnIz8J82g==
   dependencies:
-    "@graphprotocol/graph-ts" "0.31.0"
+    tslib "^2.6.2"
 
-"@aragon/osx-ethers@1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.3.0.tgz#85ddd93f4448789e94154b313f9ddd8069dff568"
-  integrity sha512-zfLAYdgZ3SSifHiyJLkBKmoDw/IEX/yzvw6liUAa/gz7HZOsrwp3JsBJaIwB2epOnGa6vhXyWTKKZ15aJvoMaA==
+"@aragon/osx-ethers@1.4.0-alpha.0":
+  version "1.4.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-ethers/-/osx-ethers-1.4.0-alpha.0.tgz#329f1ac27660b486fa0b296dddeb004ce352001c"
+  integrity sha512-fFsrG/XMIjZe3MxVQdf87gqAC4q0Z/eBp72QUuzXJQ0gMSTSj/4TvveFn1N8toLN6KsJolMEkaTamyCGYR+5iA==
   dependencies:
     ethers "^5.6.2"
 
@@ -3719,9 +3719,9 @@ typedarray@^0.0.6:
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
 typescript@^5.2.2:
-  version "5.2.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.2.2.tgz#5ebb5e5a5b75f085f22bc3f8460fba308310fa78"
-  integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
+  version "5.3.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.3.3.tgz#b3ce6ba258e72e6305ba66f5c9b452aaee3ffe37"
+  integrity sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==
 
 uint8arrays@^3.0.0:
   version "3.1.1"

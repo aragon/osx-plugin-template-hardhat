@@ -59,12 +59,6 @@ The root folder of the repo includes three subfolders:
 │ ├── ...
 │ └── package.json
 │
-├── packages/js-client
-│ ├── src
-│ ├── test
-│ ├── ...
-│ └── package.json
-│
 ├── ...
 └── package.json
 ```
@@ -190,23 +184,58 @@ you can permanently enable the gas reporting by putting the `REPORT_GAS=true` in
 
 ### Deployment
 
-The deploy scripts provided in this repo should already be sufficient to deploy the first and upcoming versions of your plugin.
+The deploy scripts provided inside `./packages/contracts/deploy` take care of
 
-Deploy the contracts to the local Hardhat Network with
+1. Creating an on-chain [Plugin Repository](https://devs.aragon.org/docs/osx/how-it-works/framework/plugin-management/plugin-repo/) for you through Aragon's factories with an [unique ENS name](https://devs.aragon.org/docs/osx/how-it-works/framework/ens-names).
+2. Publishing the first version of your `Plugin` and associated `PluginSetup` contract in your repo from step 1.
+3. Upgrade your plugin repository to the latest Aragon OSx protocol version.
+
+Finally, it verifies all contracts on the block explorer of the chosen network.
+
+**You don't need to make changes to the deploy script.** You only have to update the entries in `packages/contracts/plugin-settings.ts` as explained in the template [usage guide](./USAGE_GUIDE.md#contracts).
+
+#### Creating a Plugin Repository & Publishing Your Plugin
+
+Deploy the contracts to the local Hardhat Network (being forked from the network specified in `NETWORK_NAME` in your `.env` file ) with
 
 ```sh
-yarn deploy
+yarn deploy --tags CreateRepo,NewVersion
 ```
+
+This will create a plugin repo and publish the the first version (`v1.1`) of your plugin.
 
 Deploy the contracts to sepolia with
 
 ```sh
-yarn deploy --network sepolia
+yarn deploy --network sepolia --tags CreateRepo,NewVersion,Verification
 ```
 
-This will also create a plugin repo for the first version (`v1.1`) of your plugin.
+This will create a plugin repo, publish the the first version (`v1.1`) of your plugin, and verfiy the contracts on sepolia.
 
-If you want to deploy a new version of your plugin afterwards (e.g., `1.2`), simply change the `VERSION` entry in the `packages/contracts/plugin-settings.ts` file.
+If you want to deploy a new version of your plugin afterwards (e.g., `1.2`), simply change the `VERSION` entry in the `packages/contracts/plugin-settings.ts` file and use
+
+```sh
+yarn deploy --network sepolia --tags NewVersion,Verification
+```
+
+Note, that if you include the `CreateRepo` tag after you've created your plugin repo already, this part of the script will be skipped.
+
+#### Upgrading Your Plugin Repository
+
+Upgrade your plugin repo on the local Hardhat Network (being forked from the network specified in `NETWORK_NAME` in your `.env` file ) with
+
+```sh
+yarn deploy --tags UpgradeRepo
+```
+
+Upgrade your plugin repo on sepolia with
+
+```sh
+yarn deploy --network sepolia --tags UpgradeRepo
+```
+
+This will upgrade your plugin repo to the latest Aragon OSx protocol version implementation, which might include new features and security updates.
+**For this to work, make sure that you are using the latest version of [this repository](https://github.com/aragon/osx-plugin-template-hardhat) in your fork.**
 
 ## Subgraph
 
@@ -291,10 +320,6 @@ yarn deploy
 ```
 
 to deploy the subgraph and check your [Alchemy subgraph dashboard](https://subgraphs.alchemy.com/onboarding) for completion and possible errors.
-
-## JS Client
-
-TODO
 
 ## License
 

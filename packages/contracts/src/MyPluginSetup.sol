@@ -2,18 +2,26 @@
 
 pragma solidity ^0.8.8;
 
-import {PermissionLib} from "@aragon/osx/core/permission/PermissionLib.sol";
-import {PluginSetup, IPluginSetup} from "@aragon/osx/framework/plugin/setup/PluginSetup.sol";
+import {PermissionLib} from "@aragon/osx-commons-contracts/src/permission/PermissionLib.sol";
+import {ProxyLib} from "@aragon/osx-commons-contracts/src/utils/deployment/ProxyLib.sol";
+import {PluginUpgradeableSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/PluginUpgradeableSetup.sol";
+import {IPluginSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/IPluginSetup.sol";
+import {IDAO} from "@aragon/osx-commons-contracts/src/dao/IDAO.sol";
+
 import {MyPlugin} from "./MyPlugin.sol";
 
 /// @title MyPluginSetup
 /// @dev Release 1, Build 1
-contract MyPluginSetup is PluginSetup {
-    address private immutable MY_PLUGIN_IMPLEMENTATION;
+contract MyPluginSetup is PluginUpgradeableSetup {
+    using ProxyLib for address;
 
-    constructor() {
-        MY_PLUGIN_IMPLEMENTATION = address(new MyPlugin());
-    }
+    /// @notice Constructs the `PluginUpgradeableSetup` by storing the `MyPlugin` implementation address.
+    /// @dev The implementation address is used to deploy UUPS proxies referencing it and
+    /// to verify the plugin on the respective block explorers.
+    constructor() PluginUpgradeableSetup(address(new MyPlugin())) {}
+
+    /// @notice The ID of the permission required to call the `storeNumber` function.
+    bytes32 internal constant STORE_PERMISSION_ID = keccak256("STORE_PERMISSION");
 
     /// @inheritdoc IPluginSetup
     function prepareInstallation(
@@ -22,9 +30,8 @@ contract MyPluginSetup is PluginSetup {
     ) external returns (address plugin, PreparedSetupData memory preparedSetupData) {
         uint256 number = abi.decode(_data, (uint256));
 
-        plugin = createERC1967Proxy(
-            MY_PLUGIN_IMPLEMENTATION,
-            abi.encodeWithSelector(MyPlugin.initialize.selector, _dao, number)
+        plugin = IMPLEMENTATION.deployUUPSProxy(
+            abi.encodeCall(MyPlugin.initialize, (IDAO(_dao), number))
         );
 
         PermissionLib.MultiTargetPermission[]
@@ -35,10 +42,21 @@ contract MyPluginSetup is PluginSetup {
             where: plugin,
             who: _dao,
             condition: PermissionLib.NO_CONDITION,
-            permissionId: keccak256("STORE_PERMISSION")
+            permissionId: STORE_PERMISSION_ID
         });
 
         preparedSetupData.permissions = permissions;
+    }
+
+    /// @inheritdoc IPluginSetup
+    /// @dev The default implementation for the initial build 1 that reverts because no earlier build exists.
+    function prepareUpdate(
+        address _dao,
+        uint16 _fromBuild,
+        SetupPayload calldata _payload
+    ) external pure virtual returns (bytes memory, PreparedSetupData memory) {
+        (_dao, _fromBuild, _payload);
+        revert InvalidUpdatePath({fromBuild: 0, thisBuild: 1});
     }
 
     /// @inheritdoc IPluginSetup
@@ -53,12 +71,7 @@ contract MyPluginSetup is PluginSetup {
             where: _payload.plugin,
             who: _dao,
             condition: PermissionLib.NO_CONDITION,
-            permissionId: keccak256("STORE_PERMISSION")
+            permissionId: STORE_PERMISSION_ID
         });
-    }
-
-    /// @inheritdoc IPluginSetup
-    function implementation() external view returns (address) {
-        return MY_PLUGIN_IMPLEMENTATION;
     }
 }

@@ -6,22 +6,24 @@ import path from 'path';
 const rootDir = path.join(__dirname, '../../../'); // Adjust the path as necessary
 dotenv.config({path: path.join(rootDir, '.env')});
 
-// Extract Repo address from the plugin-info.json
+// Extract Repo address from the production-network-deployments.json
 function extractAndWriteAddressToTS(jsonPath: string): void {
-  // Read the plugin-info.json file
-  const pluginInfo = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+  // Read the production-network-deployments.json file
+  const aragonDeploymentsInfo = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 
   // Get the network from environment variables
   const network = process.env.SUBGRAPH_NETWORK_NAME;
 
-  // Check if the network is defined in pluginInfo
-  if (!network || !pluginInfo[network]) {
-    throw new Error(`Network '${network}' not found in plugin-info.json`);
+  // Check if the network is defined in aragonDeploymentsInfo
+  if (!network || !aragonDeploymentsInfo[network]) {
+    throw new Error(
+      `Network '${network}' not found in production-network-deployments.json`
+    );
   }
 
   // Start the Map creation code with the specific network address
   const tsContent: string[] = [
-    `export const PLUGIN_REPO_ADDRESS = '${pluginInfo[network].address}';`,
+    `export const PLUGIN_REPO_ADDRESS = '${aragonDeploymentsInfo[network].address}';`,
   ];
 
   const outputDir = path.join(__dirname, '../imported');
@@ -40,5 +42,8 @@ function extractAndWriteAddressToTS(jsonPath: string): void {
   );
 }
 
-const pluginInfoPath = path.join(rootDir, 'plugin-info.json');
-extractAndWriteAddressToTS(pluginInfoPath);
+const aragonDeploymentsInfoPath = path.join(
+  rootDir,
+  'production-network-deployments.json'
+);
+extractAndWriteAddressToTS(aragonDeploymentsInfoPath);

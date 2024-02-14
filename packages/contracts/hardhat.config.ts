@@ -1,101 +1,81 @@
-import {NetworkNameMapping} from './utils/helpers';
+import {
+  NetworkConfigs,
+  NetworkConfig,
+  networks,
+  SupportedNetworks,
+} from '@aragon/osx-commons-configs';
 import '@nomicfoundation/hardhat-chai-matchers';
 import '@nomicfoundation/hardhat-toolbox';
 import '@nomiclabs/hardhat-etherscan';
 import '@openzeppelin/hardhat-upgrades';
 import '@typechain/hardhat';
 import {config as dotenvConfig} from 'dotenv';
-import {ethers} from 'ethers';
+import {BigNumber, ethers} from 'ethers';
 import 'hardhat-deploy';
 import 'hardhat-gas-reporter';
 import {extendEnvironment, HardhatUserConfig} from 'hardhat/config';
-import {HardhatRuntimeEnvironment} from 'hardhat/types';
-import type {NetworkUserConfig} from 'hardhat/types';
+import {
+  HardhatNetworkAccountsUserConfig,
+  HardhatRuntimeEnvironment,
+} from 'hardhat/types';
 import {resolve} from 'path';
 import 'solidity-coverage';
 
 const dotenvConfigPath: string = process.env.DOTENV_CONFIG_PATH || '../../.env';
-dotenvConfig({path: resolve(__dirname, dotenvConfigPath)});
+dotenvConfig({path: resolve(__dirname, dotenvConfigPath), override: true});
 
 if (!process.env.INFURA_API_KEY) {
   throw new Error('INFURA_API_KEY in .env not set');
 }
 
-const apiUrls: NetworkNameMapping = {
-  mainnet: 'https://mainnet.infura.io/v3/',
-  goerli: 'https://goerli.infura.io/v3/',
-  sepolia: 'https://sepolia.infura.io/v3/',
-  polygon: 'https://polygon-mainnet.infura.io/v3/',
-  polygonMumbai: 'https://polygon-mumbai.infura.io/v3/',
-  base: 'https://mainnet.base.org',
-  baseGoerli: 'https://goerli.base.org',
-  arbitrum: 'https://arbitrum-mainnet.infura.io/v3/',
-  arbitrumGoerli: 'https://arbitrum-goerli.infura.io/v3/',
+// Fetch the accounts specified in the .env file
+function specifiedAccounts(): string[] {
+  return process.env.PRIVATE_KEY ? process.env.PRIVATE_KEY.split(',') : [];
+}
+
+function getHardhatNetworkAccountsConfig(
+  numAccounts: number
+): HardhatNetworkAccountsUserConfig {
+  const hardhatDefaultMnemonic =
+    'test test test test test test test test test test test junk';
+
+  const hardhatDefaultAccounts = Array(numAccounts)
+    .fill(0)
+    .map(
+      (_, i) =>
+        ethers.Wallet.fromMnemonic(
+          hardhatDefaultMnemonic,
+          `m/44'/60'/0'/0/${i}`
+        ).privateKey
+    );
+
+  const specAccounts = specifiedAccounts();
+  const accounts = specAccounts.concat(
+    hardhatDefaultAccounts.slice(specAccounts.length)
+  );
+
+  const accountsConfig: HardhatNetworkAccountsUserConfig = accounts.map(
+    privateKey => {
+      const oneEther = BigNumber.from(10).pow(18);
+      return {
+        privateKey,
+        balance: oneEther.mul(100).toString(), // 100 ether
+      };
+    }
+  );
+
+  return accountsConfig;
+}
+
+type HardhatNetworksExtension = NetworkConfig & {
+  accounts?: string[];
 };
 
-export const networks: {[index: string]: NetworkUserConfig} = {
-  hardhat: {
-    chainId: 31337,
-    forking: {
-      url: `${
-        apiUrls[process.env.NETWORK_NAME ? process.env.NETWORK_NAME : 'mainnet']
-      }${process.env.INFURA_API_KEY}`,
-    },
-  },
-  mainnet: {
-    chainId: 1,
-    url: `${apiUrls.mainnet}${process.env.INFURA_API_KEY}`,
-  },
-  goerli: {
-    chainId: 5,
-    url: `${apiUrls.goerli}${process.env.INFURA_API_KEY}`,
-  },
-  sepolia: {
-    chainId: 11155111,
-    url: `${apiUrls.sepolia}${process.env.INFURA_API_KEY}`,
-  },
-  polygon: {
-    chainId: 137,
-    url: `${apiUrls.polygon}${process.env.INFURA_API_KEY}`,
-  },
-  polygonMumbai: {
-    chainId: 80001,
-    url: `${apiUrls.polygonMumbai}${process.env.INFURA_API_KEY}`,
-  },
-  base: {
-    chainId: 8453,
-    url: `${apiUrls.base}`,
-    gasPrice: ethers.utils.parseUnits('0.001', 'gwei').toNumber(),
-  },
-  baseGoerli: {
-    chainId: 84531,
-    url: `${apiUrls.baseGoerli}`,
-    gasPrice: ethers.utils.parseUnits('0.0000001', 'gwei').toNumber(),
-  },
-  abitrum: {
-    chainId: 42161,
-    url: `${apiUrls.abitrum}${process.env.INFURA_API_KEY}`,
-  },
-  arbitrumGoerli: {
-    chainId: 421613,
-    url: `${apiUrls.arbitrumGoerli}${process.env.INFURA_API_KEY}`,
-  },
-};
-
-// Uses hardhats private key if none is set. DON'T USE THIS ACCOUNT FOR DEPLOYMENTS
-const accounts = process.env.PRIVATE_KEY
-  ? process.env.PRIVATE_KEY.split(',')
-  : ['0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'];
-
-for (const network in networks) {
-  // special treatement for hardhat
-  if (network.startsWith('hardhat')) {
-    networks[network].accounts = {
-      mnemonic: 'test test test test test test test test test test test junk',
-    };
-    continue;
-  }
-  networks[network].accounts = accounts;
+// Add the accounts specified in the `.env` file to the networks from osx-commons-configs
+const osxCommonsConfigNetworks: NetworkConfigs<HardhatNetworksExtension> =
+  networks;
+for (const network of Object.keys(networks) as SupportedNetworks[]) {
+  osxCommonsConfigNetworks[network].accounts = specifiedAccounts();
 }
 
 // Extend HardhatRuntimeEnvironment
@@ -103,7 +83,36 @@ extendEnvironment((hre: HardhatRuntimeEnvironment) => {
   hre.aragonToVerifyContracts = [];
 });
 
+const namedAccounts = {
+  deployer: 0,
+  alice: 1,
+  bob: 2,
+  carol: 3,
+  dave: 4,
+  eve: 5,
+  frank: 6,
+  grace: 7,
+  harold: 8,
+  ivan: 9,
+  judy: 10,
+  mallory: 11,
+};
+
 const config: HardhatUserConfig = {
+  namedAccounts,
+  networks: {
+    hardhat: {
+      throwOnTransactionFailures: true,
+      throwOnCallFailures: true,
+      blockGasLimit: BigNumber.from(10).pow(6).mul(30).toNumber(), // 30 million, really high to test some things that are only possible with a higher block gas limit
+      gasPrice: BigNumber.from(10).pow(9).mul(150).toNumber(), // 150 gwei
+      accounts: getHardhatNetworkAccountsConfig(
+        Object.keys(namedAccounts).length
+      ),
+    },
+    ...osxCommonsConfigNetworks,
+  },
+
   defaultNetwork: 'hardhat',
   etherscan: {
     apiKey: {
@@ -145,21 +154,6 @@ const config: HardhatUserConfig = {
     ],
   },
 
-  namedAccounts: {
-    deployer: 0,
-    alice: 0,
-    bob: 1,
-    carol: 2,
-    dave: 3,
-    eve: 4,
-    frank: 5,
-    grace: 6,
-    harold: 7,
-    ivan: 8,
-    judy: 9,
-    mallory: 10,
-  },
-
   gasReporter: {
     currency: 'USD',
     enabled: process.env.REPORT_GAS === 'true' ? true : false,
@@ -167,7 +161,6 @@ const config: HardhatUserConfig = {
     src: './contracts',
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
   },
-  networks,
   paths: {
     artifacts: './artifacts',
     cache: './cache',
