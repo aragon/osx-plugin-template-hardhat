@@ -28,55 +28,55 @@ import env, {deployments, ethers} from 'hardhat';
 const productionNetworkName = getProductionNetworkName(env);
 
 describe(`PluginSetup processing on network '${productionNetworkName}'`, function () {
-  context('Build 1', async () => {
-    it('installs & uninstalls', async () => {
-      const {deployer, psp, daoMock, pluginSetup, pluginSetupRef} =
-        await loadFixture(fixture);
+  it('installs & uninstalls the current build', async () => {
+    const {deployer, psp, daoMock, pluginSetup, pluginSetupRef} =
+      await loadFixture(fixture);
 
-      // Allow all authorized calls to happen
-      await daoMock.setHasPermissionReturnValueMock(true);
+    // Allow all authorized calls to happen
+    await daoMock.setHasPermissionReturnValueMock(true);
 
-      // Install build 1.
-      const results = await installPLugin(
-        psp,
-        daoMock,
-        pluginSetupRef,
-        ethers.utils.defaultAbiCoder.encode(
-          getNamedTypesFromMetadata(
-            METADATA.build.pluginSetup.prepareInstallation.inputs
-          ),
-          [123]
-        )
-      );
+    // Install the current build.
+    const results = await installPLugin(
+      deployer,
+      psp,
+      daoMock,
+      pluginSetupRef,
+      ethers.utils.defaultAbiCoder.encode(
+        getNamedTypesFromMetadata(
+          METADATA.build.pluginSetup.prepareInstallation.inputs
+        ),
+        [123]
+      )
+    );
 
-      const plugin = MyPlugin__factory.connect(
-        results.preparedEvent.args.plugin,
-        deployer
-      );
+    const plugin = MyPlugin__factory.connect(
+      results.preparedEvent.args.plugin,
+      deployer
+    );
 
-      // Check implementation.
-      expect(await plugin.implementation()).to.be.eq(
-        await pluginSetup.implementation()
-      );
+    // Check implementation.
+    expect(await plugin.implementation()).to.be.eq(
+      await pluginSetup.implementation()
+    );
 
-      // Check state.
-      expect(await plugin.number()).to.eq(123);
+    // Check state.
+    expect(await plugin.number()).to.eq(123);
 
-      // Uninstall build 1.
-      await uninstallPLugin(
-        psp,
-        daoMock,
-        plugin,
-        pluginSetupRef,
-        ethers.utils.defaultAbiCoder.encode(
-          getNamedTypesFromMetadata(
-            METADATA.build.pluginSetup.prepareUninstallation.inputs
-          ),
-          []
+    // Uninstall the current build.
+    await uninstallPLugin(
+      deployer,
+      psp,
+      daoMock,
+      plugin,
+      pluginSetupRef,
+      ethers.utils.defaultAbiCoder.encode(
+        getNamedTypesFromMetadata(
+          METADATA.build.pluginSetup.prepareUninstallation.inputs
         ),
         []
-      );
-    });
+      ),
+      []
+    );
   });
 });
 

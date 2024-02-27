@@ -1,4 +1,4 @@
-import {METADATA} from '../../plugin-settings';
+import {METADATA, VERSION} from '../../plugin-settings';
 import {getProductionNetworkName, findPluginRepo} from '../../utils/helpers';
 import {
   getLatestNetworkDeployment,
@@ -66,13 +66,13 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
       const {pluginRepo} = await loadFixture(fixture);
 
       await pluginRepo['getVersion((uint8,uint16))']({
-        release: 1,
-        build: 1,
+        release: VERSION.release,
+        build: VERSION.build,
       });
 
       const results = await pluginRepo['getVersion((uint8,uint16))']({
-        release: 1,
-        build: 1,
+        release: VERSION.release,
+        build: VERSION.build,
       });
 
       const buildMetadataURI = `ipfs://${await uploadToIPFS(
