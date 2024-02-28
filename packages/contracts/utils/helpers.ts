@@ -10,6 +10,8 @@ import {
   findEvent,
 } from '@aragon/osx-commons-sdk';
 import {
+  DAO,
+  DAO__factory,
   ENSSubdomainRegistrar__factory,
   ENS__factory,
   IAddrResolver__factory,
@@ -17,7 +19,9 @@ import {
   PluginRepoEvents,
   PluginRepo__factory,
 } from '@aragon/osx-ethers';
-import {ContractTransaction} from 'ethers';
+import {setBalance} from '@nomicfoundation/hardhat-network-helpers';
+import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
+import {BigNumber, ContractTransaction} from 'ethers';
 import {LogDescription, defaultAbiCoder, keccak256} from 'ethers/lib/utils';
 import {ethers} from 'hardhat';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
@@ -68,6 +72,7 @@ export async function findPluginRepo(
 ): Promise<{pluginRepo: PluginRepo | null; ensDomain: string}> {
   const [deployer] = await hre.ethers.getSigners();
   const productionNetworkName: string = getProductionNetworkName(hre);
+
   const network = getNetworkNameByAlias(productionNetworkName);
   if (network === null) {
     throw new UnsupportedNetworkError(productionNetworkName);
@@ -105,6 +110,61 @@ export async function findPluginRepo(
       ensDomain,
     };
   }
+}
+
+export async function getManagementDao(
+  hre: HardhatRuntimeEnvironment
+): Promise<DAO> {
+  const [deployer] = await hre.ethers.getSigners();
+  const productionNetworkName = getProductionNetworkName(hre);
+  const network = getNetworkNameByAlias(productionNetworkName);
+  if (network === null) {
+    throw new UnsupportedNetworkError(productionNetworkName);
+  }
+  const networkDeployments = getLatestNetworkDeployment(network);
+  if (networkDeployments === null) {
+    throw `Deployments are not available on network ${network}.`;
+  }
+
+  return DAO__factory.connect(
+    networkDeployments.ManagementDAOProxy.address,
+    deployer
+  );
+}
+
+export async function getManagementDaoMultisig(
+  hre: HardhatRuntimeEnvironment
+): Promise<DAO> {
+  const [deployer] = await hre.ethers.getSigners();
+  const productionNetworkName = getProductionNetworkName(hre);
+  const network = getNetworkNameByAlias(productionNetworkName);
+  if (network === null) {
+    throw new UnsupportedNetworkError(productionNetworkName);
+  }
+  const networkDeployments = getLatestNetworkDeployment(network);
+  if (networkDeployments === null) {
+    throw `Deployments are not available on network ${network}.`;
+  }
+
+  return DAO__factory.connect(
+    networkDeployments.ManagementDAOProxy.address,
+    deployer
+  );
+}
+
+export async function impersonatedManagementDaoSigner(
+  hre: HardhatRuntimeEnvironment
+): Promise<SignerWithAddress> {
+  return await (async () => {
+    const managementDaoProxy = getManagementDao(hre);
+    const signer = await hre.ethers.getImpersonatedSigner(
+      (
+        await managementDaoProxy
+      ).address
+    );
+    await setBalance(signer.address, BigNumber.from(10).pow(18));
+    return signer;
+  })();
 }
 
 export type EventWithBlockNumber = {
