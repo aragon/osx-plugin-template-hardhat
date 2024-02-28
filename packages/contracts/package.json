@@ -10,6 +10,8 @@
     "lint:sol": "cd ../../ && yarn run lint:contracts:sol",
     "lint:ts": "cd ../../ && yarn run lint:contracts:ts",
     "test": "hardhat test",
+    "typechain:osx": "ts-node scripts/generate-typechain-osx.ts",
+    "typechain:osx-versions": "ts-node scripts/generate-typechain-osx-versions.ts",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "clean": "rimraf ./artifacts ./cache ./coverage ./typechain ./types ./coverage.json && yarn typechain"
   },
