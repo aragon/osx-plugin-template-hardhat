@@ -1,4 +1,4 @@
-# Aragon OSX Plugin Template [![Hardhat][hardhat-badge]][hardhat] [![License: AGPL v3][license-badge]][license]
+# Multisig Plugin [![Hardhat][hardhat-badge]][hardhat] [![License: AGPL v3][license-badge]][license]
 
 [hardhat]: https://hardhat.org/
 [hardhat-badge]: https://img.shields.io/badge/Built%20with-Hardhat-FFDB1C.svg
