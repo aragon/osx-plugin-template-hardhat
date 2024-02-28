@@ -70,7 +70,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   );
 
   console.log(
-    `'${pluginEnsDomain(hre)}' PluginRepo deployed at: ${pluginRepo.address}.`
+    `PluginRepo '${pluginEnsDomain(hre)}' deployed at '${pluginRepo.address}'.`
   );
 
   hre.aragonToVerifyContracts.push({

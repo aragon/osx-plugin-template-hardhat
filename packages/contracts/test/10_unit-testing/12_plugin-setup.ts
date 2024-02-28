@@ -24,6 +24,8 @@ type FixtureResult = {
   alice: SignerWithAddress;
   bob: SignerWithAddress;
   pluginSetup: MyPluginSetup;
+  prepareInstallationInputs: string;
+  prepareUninstallationInputs: string;
   daoMock: DAOMock;
 };
 
@@ -32,24 +34,36 @@ async function fixture(): Promise<FixtureResult> {
   const daoMock = await new DAOMock__factory(deployer).deploy();
   const pluginSetup = await new MyPluginSetup__factory(deployer).deploy();
 
-  return {deployer, alice, bob, pluginSetup, daoMock};
+  const prepareInstallationInputs = ethers.utils.defaultAbiCoder.encode(
+    getNamedTypesFromMetadata(
+      buildMetadata.pluginSetup.prepareInstallation.inputs
+    ),
+    [defaultInitData.number]
+  );
+
+  const prepareUninstallationInputs = ethers.utils.defaultAbiCoder.encode(
+    getNamedTypesFromMetadata(
+      buildMetadata.pluginSetup.prepareUninstallation.inputs
+    ),
+    []
+  );
+
+  return {
+    deployer,
+    alice,
+    bob,
+    pluginSetup,
+    prepareInstallationInputs,
+    prepareUninstallationInputs,
+    daoMock,
+  };
 }
 
 describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
   describe('prepareInstallation', async () => {
-    let initData: string;
-
-    before(async () => {
-      initData = ethers.utils.defaultAbiCoder.encode(
-        getNamedTypesFromMetadata(
-          buildMetadata.pluginSetup.prepareInstallation.inputs
-        ),
-        [defaultInitData.number]
-      );
-    });
-
     it('returns the plugin, helpers, and permissions', async () => {
-      const {deployer, pluginSetup, daoMock} = await loadFixture(fixture);
+      const {deployer, pluginSetup, prepareInstallationInputs, daoMock} =
+        await loadFixture(fixture);
 
       const nonce = await ethers.provider.getTransactionCount(
         pluginSetup.address
@@ -64,7 +78,7 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
         preparedSetupData: {helpers, permissions},
       } = await pluginSetup.callStatic.prepareInstallation(
         daoMock.address,
-        initData
+        prepareInstallationInputs
       );
 
       expect(plugin).to.be.equal(anticipatedPluginAddress);
@@ -80,7 +94,10 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
         ],
       ]);
 
-      await pluginSetup.prepareInstallation(daoMock.address, initData);
+      await pluginSetup.prepareInstallation(
+        daoMock.address,
+        prepareInstallationInputs
+      );
       const myPlugin = new MyPlugin__factory(deployer).attach(plugin);
 
       // initialization is correct
@@ -91,17 +108,17 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
 
   describe('prepareUninstallation', async () => {
     it('returns the permissions', async () => {
-      const {pluginSetup, daoMock} = await loadFixture(fixture);
+      const {pluginSetup, daoMock, prepareUninstallationInputs} =
+        await loadFixture(fixture);
 
       const dummyAddr = ADDRESS.ZERO;
-      const emptyData = '0x';
 
       const permissions = await pluginSetup.callStatic.prepareUninstallation(
         daoMock.address,
         {
           plugin: dummyAddr,
           currentHelpers: [],
-          data: emptyData,
+          data: prepareUninstallationInputs,
         }
       );
 
