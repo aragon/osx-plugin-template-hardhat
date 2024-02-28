@@ -1,4 +1,4 @@
-import {METADATA} from '../../plugin-settings';
+import {METADATA, VERSION} from '../../plugin-settings';
 import {getProductionNetworkName, findPluginRepo} from '../../utils/helpers';
 import {
   getLatestNetworkDeployment,
@@ -8,6 +8,7 @@ import {
   DAO_PERMISSIONS,
   PERMISSION_MANAGER_FLAGS,
   PLUGIN_REPO_PERMISSIONS,
+  UnsupportedNetworkError,
   toHex,
   uploadToIPFS,
 } from '@aragon/osx-commons-sdk';
@@ -66,13 +67,13 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
       const {pluginRepo} = await loadFixture(fixture);
 
       await pluginRepo['getVersion((uint8,uint16))']({
-        release: 1,
-        build: 1,
+        release: VERSION.release,
+        build: VERSION.build,
       });
 
       const results = await pluginRepo['getVersion((uint8,uint16))']({
-        release: 1,
-        build: 1,
+        release: VERSION.release,
+        build: VERSION.build,
       });
 
       const buildMetadataURI = `ipfs://${await uploadToIPFS(
@@ -97,17 +98,26 @@ async function fixture(): Promise<FixtureResult> {
 
   const [deployer] = await ethers.getSigners();
 
-  // Plugin repo registry
-  const pluginRepoRegistry = PluginRepoRegistry__factory.connect(
-    getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
-      .PluginRepoRegistryProxy.address,
-    deployer
-  );
-
+  // Plugin Repo
   const {pluginRepo, ensDomain} = await findPluginRepo(env);
   if (pluginRepo === null) {
     throw `PluginRepo '${ensDomain}' does not exist yet.`;
   }
+
+  const network = getNetworkNameByAlias(productionNetworkName);
+  if (network === null) {
+    throw new UnsupportedNetworkError(productionNetworkName);
+  }
+  const networkDeployments = getLatestNetworkDeployment(network);
+  if (networkDeployments === null) {
+    throw `Deployments are not available on network ${network}.`;
+  }
+
+  // Plugin repo registry
+  const pluginRepoRegistry = PluginRepoRegistry__factory.connect(
+    networkDeployments.PluginRepoRegistryProxy.address,
+    deployer
+  );
 
   return {deployer, pluginRepo, pluginRepoRegistry};
 }

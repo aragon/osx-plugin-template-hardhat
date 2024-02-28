@@ -14,11 +14,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deploy} = deployments;
   const {deployer} = await getNamedAccounts();
 
-  await deploy(PLUGIN_SETUP_CONTRACT_NAME, {
+  const res = await deploy(PLUGIN_SETUP_CONTRACT_NAME, {
     from: deployer,
     args: [],
     log: true,
   });
+
+  console.log(
+    `Deployed '${PLUGIN_SETUP_CONTRACT_NAME}' contract at '${res.address}'`
+  );
 };
 
 export default func;

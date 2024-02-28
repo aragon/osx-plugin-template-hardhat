@@ -36,4 +36,5 @@ jobs:
       - name: 'Test the contracts and generate the coverage report'
         run: 'yarn coverage'
         env:
+          NETWORK_NAME: ${{ vars.NETWORK_NAME }}
           INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
