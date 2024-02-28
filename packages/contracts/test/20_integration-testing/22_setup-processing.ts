@@ -1,11 +1,6 @@
-import {METADATA} from '../../plugin-settings';
-import {
-  DAOMock,
-  DAOMock__factory,
-  MyPluginSetup,
-  MyPluginSetup__factory,
-  MyPlugin__factory,
-} from '../../typechain';
+import {createDaoProxy} from '../10_unit-testing/11_plugin';
+import {METADATA, VERSION} from '../../plugin-settings';
+import {AdminSetup, AdminSetup__factory, Admin__factory} from '../../typechain';
 import {getProductionNetworkName, findPluginRepo} from '../../utils/helpers';
 import {installPLugin, uninstallPLugin} from './test-helpers';
 import {
@@ -13,6 +8,8 @@ import {
   getNetworkNameByAlias,
 } from '@aragon/osx-commons-configs';
 import {
+  DAO_PERMISSIONS,
+  PLUGIN_SETUP_PROCESSOR_PERMISSIONS,
   UnsupportedNetworkError,
   getNamedTypesFromMetadata,
 } from '@aragon/osx-commons-sdk';
@@ -21,55 +18,67 @@ import {
   PluginRepo,
   PluginSetupProcessorStructs,
   PluginSetupProcessor__factory,
+  DAO,
 } from '@aragon/osx-ethers';
 import {loadFixture} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
-import {BigNumber} from 'ethers';
 import env, {deployments, ethers} from 'hardhat';
 
 const productionNetworkName = getProductionNetworkName(env);
 
 describe(`PluginSetup processing on network '${productionNetworkName}'`, function () {
   it('installs & uninstalls the current build', async () => {
-    const {deployer, psp, daoMock, pluginSetup, pluginSetupRef} =
-      await loadFixture(fixture);
+    const {alice, deployer, psp, dao, pluginSetupRef} = await loadFixture(
+      fixture
+    );
 
-    // Allow all authorized calls to happen
-    await daoMock.setHasPermissionReturnValueMock(true);
+    // Grant deployer all required permissions
+    await dao
+      .connect(deployer)
+      .grant(
+        psp.address,
+        deployer.address,
+        PLUGIN_SETUP_PROCESSOR_PERMISSIONS.APPLY_INSTALLATION_PERMISSION_ID
+      );
+    await dao
+      .connect(deployer)
+      .grant(
+        psp.address,
+        deployer.address,
+        PLUGIN_SETUP_PROCESSOR_PERMISSIONS.APPLY_UNINSTALLATION_PERMISSION_ID
+      );
+    await dao
+      .connect(deployer)
+      .grant(dao.address, psp.address, DAO_PERMISSIONS.ROOT_PERMISSION_ID);
 
     // Install the current build.
     const results = await installPLugin(
       deployer,
       psp,
-      daoMock,
+      dao,
       pluginSetupRef,
       ethers.utils.defaultAbiCoder.encode(
         getNamedTypesFromMetadata(
           METADATA.build.pluginSetup.prepareInstallation.inputs
         ),
-        [123]
+        [alice.address]
       )
     );
 
-    const plugin = MyPlugin__factory.connect(
+    const plugin = Admin__factory.connect(
       results.preparedEvent.args.plugin,
       deployer
     );
 
-    // Check implementation.
-    expect(await plugin.implementation()).to.be.eq(
-      await pluginSetup.implementation()
-    );
-
-    // Check state.
-    expect(await plugin.number()).to.eq(123);
+    // Check that the setup worked
+    expect(await plugin.isMember(alice.address)).to.be.true;
 
     // Uninstall the current build.
     await uninstallPLugin(
       deployer,
       psp,
-      daoMock,
+      dao,
       plugin,
       pluginSetupRef,
       ethers.utils.defaultAbiCoder.encode(
@@ -87,10 +96,10 @@ type FixtureResult = {
   deployer: SignerWithAddress;
   alice: SignerWithAddress;
   bob: SignerWithAddress;
-  daoMock: DAOMock;
+  dao: DAO;
   psp: PluginSetupProcessor;
   pluginRepo: PluginRepo;
-  pluginSetup: MyPluginSetup;
+  pluginSetup: AdminSetup;
   pluginSetupRef: PluginSetupProcessorStructs.PluginSetupRefStruct;
 };
 
@@ -100,7 +109,10 @@ async function fixture(): Promise<FixtureResult> {
   await deployments.fixture(tags);
 
   const [deployer, alice, bob] = await ethers.getSigners();
-  const daoMock = await new DAOMock__factory(deployer).deploy();
+  const dummyMetadata = ethers.utils.hexlify(
+    ethers.utils.toUtf8Bytes('0x123456789')
+  );
+  const dao = await createDaoProxy(deployer, dummyMetadata);
 
   const network = getNetworkNameByAlias(productionNetworkName);
   if (network === null) {
@@ -124,15 +136,15 @@ async function fixture(): Promise<FixtureResult> {
   }
 
   const release = 1;
-  const pluginSetup = MyPluginSetup__factory.connect(
+  const pluginSetup = AdminSetup__factory.connect(
     (await pluginRepo['getLatestVersion(uint8)'](release)).pluginSetup,
     deployer
   );
 
   const pluginSetupRef = {
     versionTag: {
-      release: BigNumber.from(1),
-      build: BigNumber.from(1),
+      release: VERSION.release,
+      build: VERSION.build,
     },
     pluginSetupRepo: pluginRepo.address,
   };
@@ -142,7 +154,7 @@ async function fixture(): Promise<FixtureResult> {
     alice,
     bob,
     psp,
-    daoMock,
+    dao,
     pluginRepo,
     pluginSetup,
     pluginSetupRef,

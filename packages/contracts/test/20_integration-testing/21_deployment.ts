@@ -13,6 +13,8 @@ import {
   uploadToIPFS,
 } from '@aragon/osx-commons-sdk';
 import {
+  DAO,
+  DAO__factory,
   PluginRepo,
   PluginRepoRegistry,
   PluginRepoRegistry__factory,
@@ -31,13 +33,13 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
     expect(await pluginRepoRegistry.entries(pluginRepo.address)).to.be.true;
   });
 
-  it('makes the deployer the repo maintainer', async () => {
-    const {deployer, pluginRepo} = await loadFixture(fixture);
+  it('gives the management DAO permissions over the repo', async () => {
+    const {pluginRepo, managementDaoProxy} = await loadFixture(fixture);
 
     expect(
       await pluginRepo.isGranted(
         pluginRepo.address,
-        deployer.address,
+        managementDaoProxy.address,
         DAO_PERMISSIONS.ROOT_PERMISSION_ID,
         PERMISSION_MANAGER_FLAGS.NO_CONDITION
       )
@@ -46,7 +48,7 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
     expect(
       await pluginRepo.isGranted(
         pluginRepo.address,
-        deployer.address,
+        managementDaoProxy.address,
         PLUGIN_REPO_PERMISSIONS.UPGRADE_REPO_PERMISSION_ID,
         PERMISSION_MANAGER_FLAGS.NO_CONDITION
       )
@@ -55,7 +57,7 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
     expect(
       await pluginRepo.isGranted(
         pluginRepo.address,
-        deployer.address,
+        managementDaoProxy.address,
         PLUGIN_REPO_PERMISSIONS.MAINTAINER_PERMISSION_ID,
         PERMISSION_MANAGER_FLAGS.NO_CONDITION
       )
@@ -89,16 +91,17 @@ type FixtureResult = {
   deployer: SignerWithAddress;
   pluginRepo: PluginRepo;
   pluginRepoRegistry: PluginRepoRegistry;
+  managementDaoProxy: DAO;
 };
 
 async function fixture(): Promise<FixtureResult> {
   // Deploy all
-  const tags = ['CreateRepo', 'NewVersion'];
-  await deployments.fixture(tags);
+  const tags = ['CreateRepo', 'NewVersion', 'TransferOwnershipToManagmentDao'];
 
+  await deployments.fixture(tags);
   const [deployer] = await ethers.getSigners();
 
-  // Plugin Repo
+  // Plugin repo
   const {pluginRepo, ensDomain} = await findPluginRepo(env);
   if (pluginRepo === null) {
     throw `PluginRepo '${ensDomain}' does not exist yet.`;
@@ -119,5 +122,11 @@ async function fixture(): Promise<FixtureResult> {
     deployer
   );
 
-  return {deployer, pluginRepo, pluginRepoRegistry};
+  // Management DAO proxy
+  const managementDaoProxy = DAO__factory.connect(
+    networkDeployments.ManagementDAOProxy.address,
+    deployer
+  );
+
+  return {deployer, pluginRepo, pluginRepoRegistry, managementDaoProxy};
 }

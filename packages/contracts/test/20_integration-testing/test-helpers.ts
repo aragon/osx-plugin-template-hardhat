@@ -1,4 +1,4 @@
-import {DAOMock, IPlugin} from '../../typechain';
+import {IPlugin} from '../../typechain';
 import {hashHelpers} from '../../utils/helpers';
 import {
   DAO_PERMISSIONS,
@@ -10,6 +10,7 @@ import {
   PluginSetupProcessorStructs,
   PluginSetupProcessor,
   DAOStructs,
+  DAO,
 } from '@aragon/osx-ethers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
@@ -18,7 +19,7 @@ import {ContractTransaction} from 'ethers';
 export async function installPLugin(
   signer: SignerWithAddress,
   psp: PluginSetupProcessor,
-  dao: DAOMock,
+  dao: DAO,
   pluginSetupRef: PluginSetupProcessorStructs.PluginSetupRefStruct,
   data: string
 ): Promise<{
@@ -68,7 +69,7 @@ export async function installPLugin(
 export async function uninstallPLugin(
   signer: SignerWithAddress,
   psp: PluginSetupProcessor,
-  dao: DAOMock,
+  dao: DAO,
   plugin: IPlugin,
   pluginSetupRef: PluginSetupProcessorStructs.PluginSetupRefStruct,
   data: string,
@@ -123,7 +124,7 @@ export async function uninstallPLugin(
 export async function updatePlugin(
   signer: SignerWithAddress,
   psp: PluginSetupProcessor,
-  dao: DAOMock,
+  dao: DAO,
   plugin: IPlugin,
   currentHelpers: string[],
   pluginSetupRefCurrent: PluginSetupProcessorStructs.PluginSetupRefStruct,
@@ -183,7 +184,7 @@ export async function updatePlugin(
 
 async function checkPermissions(
   preparedPermissions: DAOStructs.MultiTargetPermissionStruct[],
-  dao: DAOMock,
+  dao: DAO,
   psp: PluginSetupProcessor,
   signer: SignerWithAddress,
   applyPermissionId: string
