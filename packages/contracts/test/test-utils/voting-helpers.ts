@@ -50,4 +50,5 @@ export async function voteWithSigners(
   );
 
   await Promise.all(promises);
+  1;
 }
