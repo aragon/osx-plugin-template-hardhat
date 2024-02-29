@@ -1,13 +1,15 @@
 import {
-  GovernanceERC20,
-  GovernanceERC20__factory,
   IERC165Upgradeable__factory,
   IERC20MintableUpgradeable__factory,
   IERC20PermitUpgradeable__factory,
   IERC20Upgradeable__factory,
   IVotesUpgradeable__factory,
-} from '../../../../typechain';
-import {deployNewDAO} from '../../../test-utils/dao';
+} from '../../../typechain';
+import {deployNewDAO} from '../../test-utils/dao';
+import {
+  GovernanceERC20__factory,
+  GovernanceERC20,
+} from '../../test-utils/typechain-versions';
 import {getInterfaceId} from '@aragon/osx-commons-sdk';
 import {DAO} from '@aragon/osx-ethers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';

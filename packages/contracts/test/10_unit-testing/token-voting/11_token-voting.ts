@@ -7,39 +7,41 @@ import {
   IPlugin__factory,
   IProposal__factory,
   IProtocolVersion__factory,
-  TokenVoting,
-  TokenVoting__factory,
 } from '../../../typechain';
-// these both can be in the plugin repo
-import {TokenVoting__factory as TokenVoting_V1_0_0__factory} from '../../../typechain/factories/@aragon/osx-v1.0.1/plugins/governance/majority-voting/token/TokenVoting__factory';
-import {TokenVoting__factory as TokenVoting_V1_3_0__factory} from '../../../typechain/factories/@aragon/osx-v1.3.0/plugins/governance/majority-voting/token/TokenVoting__factory';
 import {
   ProposalCreatedEvent,
   ProposalExecutedEvent,
 } from '../../../typechain/src/TokenVoting';
 import {ExecutedEvent} from '../../../typechain/src/mocks/DAOMock';
+import {VITALIK} from '../../test-utils/address';
 import {deployNewDAO} from '../../test-utils/dao';
+import {
+  MAJORITY_VOTING_BASE_INTERFACE,
+  VOTING_EVENTS,
+} from '../../test-utils/majority-voting-constants';
 import {osxContractsVersion} from '../../test-utils/protocol-version';
 import {deployWithProxy} from '../../test-utils/proxy';
+import {
+  TOKEN_VOTING_INTERFACE,
+  TOKEN_VOTING_INTERFACE_ID,
+} from '../../test-utils/token-voting-constants';
+import {
+  TokenVoting_V1_0_0__factory,
+  TokenVoting_V1_3_0__factory,
+  TokenVoting__factory,
+  TokenVoting,
+} from '../../test-utils/typechain-versions';
 import {
   getProtocolVersion,
   deployAndUpgradeFromToCheck,
   deployAndUpgradeSelfCheck,
 } from '../../test-utils/uups-upgradeable';
 import {
-  MAJORITY_VOTING_BASE_INTERFACE,
-  VOTING_EVENTS,
-} from './majority-voting-constants';
-import {
-  TOKEN_VOTING_INTERFACE,
-  TOKEN_VOTING_INTERFACE_ID,
-} from './token-voting-constants';
-import {
   VoteOption,
   VotingMode,
   VotingSettings,
   voteWithSigners,
-} from './voting-helpers';
+} from '../../test-utils/voting-helpers';
 import {
   IDAO_EVENTS,
   IMEMBERSHIP_EVENTS,
@@ -226,11 +228,10 @@ describe('TokenVoting', function () {
     it('upgrades from v1.0.0', async () => {
       legacyContractFactory = new TokenVoting_V1_0_0__factory(signers[0]);
 
-      const {fromImplementation, toImplementation} =
+      const {proxy, fromImplementation, toImplementation} =
         await deployAndUpgradeFromToCheck(
           signers[0],
           signers[1],
-
           initArgs,
           'initialize',
           legacyContractFactory,
@@ -238,6 +239,7 @@ describe('TokenVoting', function () {
           PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS.UPGRADE_PLUGIN_PERMISSION_ID,
           dao
         );
+
       expect(toImplementation).to.not.equal(fromImplementation); // The build did change
 
       const fromProtocolVersion = await getProtocolVersion(
@@ -1314,11 +1316,16 @@ describe('TokenVoting', function () {
       it('should not be able to vote if user has 0 token', async () => {
         await time.increaseTo(startDate);
 
-        await expect(
-          voting.connect(signers[19]).vote(id, VoteOption.Yes, false)
-        )
+        const vitalik = await ethers.getSigner(VITALIK);
+        // check the signer has 0 token
+        expect(await governanceErc20Mock.balanceOf(vitalik.address)).to.equal(
+          0
+        );
+
+        console.log(signers.length);
+        await expect(voting.connect(vitalik).vote(id, VoteOption.Yes, false))
           .to.be.revertedWithCustomError(voting, 'VoteCastForbidden')
-          .withArgs(id, signers[19].address, VoteOption.Yes);
+          .withArgs(id, vitalik.address, VoteOption.Yes);
       });
 
       it('increases the yes, no, and abstain count and emits correct events', async () => {

@@ -1,14 +1,16 @@
 import {
   ERC20Mock,
   ERC20Mock__factory,
-  GovernanceWrappedERC20,
-  GovernanceWrappedERC20__factory,
   IERC165Upgradeable__factory,
   IGovernanceWrappedERC20__factory,
   IERC20Upgradeable__factory,
   IERC20PermitUpgradeable__factory,
   IVotesUpgradeable__factory,
-} from '../../../../typechain';
+} from '../../../typechain';
+import {
+  GovernanceWrappedERC20,
+  GovernanceWrappedERC20__factory,
+} from '../../test-utils/typechain-versions';
 import {getInterfaceId} from '@aragon/osx-commons-sdk';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';

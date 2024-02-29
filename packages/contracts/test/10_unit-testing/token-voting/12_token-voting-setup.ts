@@ -11,8 +11,8 @@ import {
   TokenVoting__factory,
 } from '../../../typechain';
 import {deployNewDAO} from '../../test-utils/dao';
-import {TOKEN_VOTING_INTERFACE} from './token-voting-constants';
-import {VotingMode, VotingSettings} from './voting-helpers';
+import {TOKEN_VOTING_INTERFACE} from '../../test-utils/token-voting-constants';
+import {VotingMode, VotingSettings} from '../../test-utils/voting-helpers';
 import {Operation} from '@aragon/osx-commons-sdk';
 import {getNamedTypesFromMetadata} from '@aragon/osx-commons-sdk';
 import {TIME} from '@aragon/osx-commons-sdk';

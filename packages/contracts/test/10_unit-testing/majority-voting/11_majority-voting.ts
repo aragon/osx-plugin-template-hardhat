@@ -7,13 +7,14 @@ import {
   MajorityVotingMock__factory,
   IProtocolVersion__factory,
 } from '../../../typechain';
+import {deployNewDAO} from '../../test-utils/dao';
+import {MAJORITY_VOTING_BASE_INTERFACE} from '../../test-utils/majority-voting-constants';
 import {deployWithProxy} from '../../test-utils/proxy';
-import {MAJORITY_VOTING_BASE_INTERFACE} from './majority-voting-constants';
-import {VotingSettings, VotingMode} from './voting-helpers';
+import {VotingSettings, VotingMode} from '../../test-utils/voting-helpers';
 import {TIME} from '@aragon/osx-commons-sdk';
 import {getInterfaceId} from '@aragon/osx-commons-sdk';
 import {pctToRatio} from '@aragon/osx-commons-sdk';
-import {DAO, DAO__factory} from '@aragon/osx-ethers';
+import {DAO} from '@aragon/osx-ethers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {ethers} from 'hardhat';
@@ -29,13 +30,7 @@ describe('MajorityVotingMock', function () {
     signers = await ethers.getSigners();
     ownerAddress = await signers[0].getAddress();
 
-    dao = await deployWithProxy<DAO>(new DAO__factory(signers[0]));
-    await dao.initialize(
-      [],
-      ownerAddress,
-      ethers.constants.AddressZero,
-      'exampleURI'
-    );
+    dao = await deployNewDAO(signers[0]);
   });
 
   beforeEach(async () => {
