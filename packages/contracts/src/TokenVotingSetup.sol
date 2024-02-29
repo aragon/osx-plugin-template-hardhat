@@ -38,12 +38,15 @@ contract TokenVotingSetup is PluginSetup {
     bytes32 public constant EXECUTE_PERMISSION_ID = keccak256("EXECUTE_PERMISSION");
 
     /// @notice The address of the `TokenVoting` base contract.
+    // solhint-disable-next-line immutable-vars-naming
     TokenVoting private immutable tokenVotingBase;
 
     /// @notice The address of the `GovernanceERC20` base contract.
+    // solhint-disable-next-line immutable-vars-naming
     address public immutable governanceERC20Base;
 
     /// @notice The address of the `GovernanceWrappedERC20` base contract.
+    // solhint-disable-next-line immutable-vars-naming
     address public immutable governanceWrappedERC20Base;
 
     /// @notice The token settings struct.

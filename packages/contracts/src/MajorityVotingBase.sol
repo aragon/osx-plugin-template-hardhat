@@ -218,6 +218,7 @@ abstract contract MajorityVotingBase is
         keccak256("UPDATE_VOTING_SETTINGS_PERMISSION");
 
     /// @notice A mapping between proposal IDs and proposal information.
+    // solhint-disable-next-line named-parameters-mapping
     mapping(uint256 => Proposal) internal proposals;
 
     /// @notice The struct storing the voting settings.
@@ -269,6 +270,7 @@ abstract contract MajorityVotingBase is
     /// @dev This method is required to support [ERC-1822](https://eips.ethereum.org/EIPS/eip-1822).
     /// @param _dao The IDAO interface of the associated DAO.
     /// @param _votingSettings The voting settings.
+    // solhint-disable-next-line func-name-mixedcase
     function __MajorityVotingBase_init(
         IDAO _dao,
         VotingSettings calldata _votingSettings

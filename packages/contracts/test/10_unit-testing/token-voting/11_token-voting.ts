@@ -121,7 +121,7 @@ describe('TokenVoting', function () {
     startDate = (await time.latest()) + 20;
     endDate = startDate + votingSettings.minDuration;
 
-    dao.grant(
+    await dao.grant(
       dao.address,
       voting.address,
       ethers.utils.id('EXECUTE_PERMISSION')
@@ -139,7 +139,7 @@ describe('TokenVoting', function () {
 
   async function setTotalSupply(totalSupply: number) {
     await ethers.provider.send('evm_mine', []);
-    let block = await ethers.provider.getBlock('latest');
+    const block = await ethers.provider.getBlock('latest');
 
     const currentTotalSupply: BigNumber =
       await governanceErc20Mock.getPastTotalSupply(block.number - 1);
@@ -228,7 +228,7 @@ describe('TokenVoting', function () {
     it('upgrades from v1.0.0', async () => {
       legacyContractFactory = new TokenVoting_V1_0_0__factory(signers[0]);
 
-      const {proxy, fromImplementation, toImplementation} =
+      const {fromImplementation, toImplementation} =
         await deployAndUpgradeFromToCheck(
           signers[0],
           signers[1],
@@ -968,7 +968,7 @@ describe('TokenVoting', function () {
 
       await setBalances([{receiver: signers[0].address, amount: 10}]);
 
-      let tx = await voting.createProposal(
+      const tx = await voting.createProposal(
         dummyMetadata,
         dummyActions,
         allowFailureMap,
@@ -1041,7 +1041,7 @@ describe('TokenVoting', function () {
 
       await setBalances([{receiver: signers[0].address, amount: 10}]);
 
-      let tx = await voting.createProposal(
+      const tx = await voting.createProposal(
         dummyMetadata,
         dummyActions,
         0,
@@ -1470,7 +1470,7 @@ describe('TokenVoting', function () {
         expect(await voting.canExecute(id)).to.equal(true);
 
         // `tryEarlyExecution` is turned on and the vote is decided
-        let tx = await voting
+        const tx = await voting
           .connect(signers[6])
           .vote(id, VoteOption.Yes, true);
         {
@@ -2004,7 +2004,7 @@ describe('TokenVoting', function () {
           governanceErc20Mock.address
         );
 
-        let magnitude = BigNumber.from(10).pow(power);
+        const magnitude = BigNumber.from(10).pow(power);
 
         const oneToken = magnitude;
         const balances = [
