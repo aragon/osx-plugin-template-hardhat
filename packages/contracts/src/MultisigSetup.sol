@@ -4,25 +4,26 @@ pragma solidity ^0.8.8;
 
 import {PermissionLib} from "@aragon/osx-commons-contracts/src/permission/PermissionLib.sol";
 import {IPluginSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/IPluginSetup.sol";
-import {PluginSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/PluginSetup.sol";
+import {PluginUpgradeableSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/PluginUpgradeableSetup.sol";
+import {ProxyLib} from "@aragon/osx-commons-contracts/src/utils/deployment/ProxyLib.sol";
 import {IDAO} from "@aragon/osx-commons-contracts/src/dao/IDAO.sol";
 
-import {DAO} from "../../../core/dao/DAO.sol";
 import {Multisig} from "./Multisig.sol";
 
 /// @title MultisigSetup
 /// @author Aragon Association - 2022-2023
 /// @notice The setup contract of the `Multisig` plugin.
-/// @dev v1.3 (Release 1, Build 3)
+/// @dev v1.2 (Release 1, Build 2)
 /// @custom:security-contact sirt@aragon.org
-contract MultisigSetup is PluginSetup {
-    /// @notice The address of `Multisig` plugin logic contract to be used in creating proxy contracts.
-    Multisig private immutable multisigBase;
+contract MultisigSetup is PluginUpgradeableSetup {
+    using ProxyLib for address;
+
+    // TODO This permission identifier has to be moved inside `PermissionLib` as per task OS-954.
+    /// @notice The ID of the permission required to call the `execute` function.
+    bytes32 internal constant EXECUTE_PERMISSION_ID = keccak256("EXECUTE_PERMISSION");
 
     /// @notice The contract constructor, that deploys the `Multisig` plugin logic contract.
-    constructor() {
-        multisigBase = new Multisig();
-    }
+    constructor() PluginUpgradeableSetup(address(new Multisig())) {}
 
     /// @inheritdoc IPluginSetup
     function prepareInstallation(
@@ -35,9 +36,8 @@ contract MultisigSetup is PluginSetup {
             (address[], Multisig.MultisigSettings)
         );
 
-        // Prepare and Deploy the plugin proxy.
-        plugin = createERC1967Proxy(
-            address(multisigBase),
+        // Deploy and initialize the plugin UUPS proxy.
+        plugin = IMPLEMENTATION.deployUUPSProxy(
             abi.encodeCall(Multisig.initialize, (IDAO(_dao), members, multisigSettings))
         );
 
@@ -52,7 +52,7 @@ contract MultisigSetup is PluginSetup {
             where: plugin,
             who: _dao,
             condition: PermissionLib.NO_CONDITION,
-            permissionId: multisigBase.UPDATE_MULTISIG_SETTINGS_PERMISSION_ID()
+            permissionId: Multisig(IMPLEMENTATION).UPDATE_MULTISIG_SETTINGS_PERMISSION_ID()
         });
 
         permissions[1] = PermissionLib.MultiTargetPermission({
@@ -60,7 +60,7 @@ contract MultisigSetup is PluginSetup {
             where: plugin,
             who: _dao,
             condition: PermissionLib.NO_CONDITION,
-            permissionId: multisigBase.UPGRADE_PLUGIN_PERMISSION_ID()
+            permissionId: Multisig(IMPLEMENTATION).UPGRADE_PLUGIN_PERMISSION_ID()
         });
 
         // Grant `EXECUTE_PERMISSION` of the DAO to the plugin.
@@ -69,13 +69,14 @@ contract MultisigSetup is PluginSetup {
             where: _dao,
             who: plugin,
             condition: PermissionLib.NO_CONDITION,
-            permissionId: DAO(payable(_dao)).EXECUTE_PERMISSION_ID()
+            permissionId: EXECUTE_PERMISSION_ID
         });
 
         preparedSetupData.permissions = permissions;
     }
 
     /// @inheritdoc IPluginSetup
+    /// @dev Nothing needs to happen for the update.
     function prepareUpdate(
         address _dao,
         uint16 _currentBuild,
@@ -85,7 +86,10 @@ contract MultisigSetup is PluginSetup {
         pure
         override
         returns (bytes memory initData, PreparedSetupData memory preparedSetupData)
-    {}
+    // solhint-disable-next-line no-empty-blocks
+    {
+
+    }
 
     /// @inheritdoc IPluginSetup
     function prepareUninstallation(
@@ -101,7 +105,7 @@ contract MultisigSetup is PluginSetup {
             where: _payload.plugin,
             who: _dao,
             condition: PermissionLib.NO_CONDITION,
-            permissionId: multisigBase.UPDATE_MULTISIG_SETTINGS_PERMISSION_ID()
+            permissionId: Multisig(IMPLEMENTATION).UPDATE_MULTISIG_SETTINGS_PERMISSION_ID()
         });
 
         permissions[1] = PermissionLib.MultiTargetPermission({
@@ -109,7 +113,7 @@ contract MultisigSetup is PluginSetup {
             where: _payload.plugin,
             who: _dao,
             condition: PermissionLib.NO_CONDITION,
-            permissionId: multisigBase.UPGRADE_PLUGIN_PERMISSION_ID()
+            permissionId: Multisig(IMPLEMENTATION).UPGRADE_PLUGIN_PERMISSION_ID()
         });
 
         permissions[2] = PermissionLib.MultiTargetPermission({
@@ -117,12 +121,7 @@ contract MultisigSetup is PluginSetup {
             where: _dao,
             who: _payload.plugin,
             condition: PermissionLib.NO_CONDITION,
-            permissionId: DAO(payable(_dao)).EXECUTE_PERMISSION_ID()
+            permissionId: EXECUTE_PERMISSION_ID
         });
-    }
-
-    /// @inheritdoc IPluginSetup
-    function implementation() external view returns (address) {
-        return address(multisigBase);
     }
 }
