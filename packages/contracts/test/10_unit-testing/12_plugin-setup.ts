@@ -1,30 +1,18 @@
-import metadata from '../../../../src/plugins/governance/multisig/build-metadata.json';
+import {createDaoProxy} from '../20_integration-testing/test-helpers';
+import metadata from '../../src/build-metadata.json';
 import {
-  DAO,
-  InterfaceBasedRegistryMock,
-  InterfaceBasedRegistryMock__factory,
-  IPluginRepo__factory,
-  Multisig,
   MultisigSetup,
   MultisigSetup__factory,
-  Multisig__factory,
-  PluginRepo,
-  PluginRepo__factory,
-  PluginSetupProcessor,
-  PluginSetupProcessor__factory,
-} from '../../../../typechain';
-import {
-  InstallationPreparedEvent,
-  UpdatePreparedEvent,
-} from '../../../../typechain/PluginSetupProcessor';
-import {hashHelpers} from '../../../../utils/psp';
-import {deployNewDAO} from '../../../test-utils/dao';
-import {deployWithProxy} from '../../../test-utils/proxy';
+  ProxyFactory__factory,
+} from '../../typechain';
+import {ProxyCreatedEvent} from '../../typechain/@aragon/osx-commons-contracts/src/utils/deployment/ProxyFactory';
+import {hashHelpers} from '../../utils/helpers';
 import {
   MULTISIG_INTERFACE,
   MultisigSettings,
   UPDATE_MULTISIG_SETTINGS_PERMISSION_ID,
-} from './multisig-constants';
+} from '../multisig-constants';
+import {Multisig__factory, Multisig} from '../test-utils/typechain-versions';
 import {
   getInterfaceId,
   findEvent,
@@ -33,6 +21,17 @@ import {
   PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS,
   getNamedTypesFromMetadata,
 } from '@aragon/osx-commons-sdk';
+import {
+  DAO,
+  IPluginRepo__factory,
+  InterfaceBasedRegistryMock,
+  InterfaceBasedRegistryMock__factory,
+  PluginRepo,
+  PluginRepo__factory,
+  PluginSetupProcessor,
+  PluginSetupProcessorEvents,
+  PluginSetupProcessor__factory,
+} from '@aragon/osx-ethers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {ethers} from 'hardhat';
@@ -53,7 +52,7 @@ describe('MultisigSetup', function () {
 
   before(async () => {
     signers = await ethers.getSigners();
-    targetDao = await deployNewDAO(signers[0]);
+    targetDao = await createDaoProxy(signers[0], EMPTY_DATA);
 
     defaultMultisigSettings = {
       onlyListed: true,
@@ -348,11 +347,22 @@ describe('MultisigSetup', function () {
 
     before(async () => {
       [owner] = await ethers.getSigners();
-      managingDAO = await deployNewDAO(owner);
+      managingDAO = await createDaoProxy(owner, EMPTY_DATA);
 
       // Create the PluginRepo
-      const pluginRepoFactory = new PluginRepo__factory(owner);
-      pluginRepo = await deployWithProxy<PluginRepo>(pluginRepoFactory);
+      const pluginRepoImplementation = await new PluginRepo__factory(
+        signers[0]
+      ).deploy();
+      const pluginRepoProxyFactory = await new ProxyFactory__factory(
+        signers[0]
+      ).deploy(pluginRepoImplementation.address);
+      const tx = await pluginRepoProxyFactory.deployUUPSProxy([]);
+      const event = await findEvent<ProxyCreatedEvent>(
+        tx,
+        pluginRepoProxyFactory.interface.getEvent('ProxyCreated').name
+      );
+      pluginRepo = PluginRepo__factory.connect(event.args.proxy, signers[0]);
+
       await pluginRepo.initialize(owner.address);
 
       // Create the PluginRepoRegistry
@@ -398,7 +408,7 @@ describe('MultisigSetup', function () {
       let helpers: string[];
 
       before(async () => {
-        dao = await deployNewDAO(owner);
+        dao = await createDaoProxy(owner, EMPTY_DATA);
         // grant the owner full permission for plugins
         await dao.applySingleTargetPermissions(psp.address, [
           {
@@ -439,10 +449,11 @@ describe('MultisigSetup', function () {
             [[owner.address], [true, 1]]
           ),
         });
-        const preparedEvent = await findEvent<InstallationPreparedEvent>(
-          tx,
-          'InstallationPrepared'
-        );
+        const preparedEvent =
+          await findEvent<PluginSetupProcessorEvents.InstallationPreparedEvent>(
+            tx,
+            'InstallationPrepared'
+          );
 
         await expect(
           psp.applyInstallation(dao.address, {
@@ -493,10 +504,11 @@ describe('MultisigSetup', function () {
             data: '0x00',
           },
         });
-        const preparedEvent = await findEvent<UpdatePreparedEvent>(
-          tx,
-          'UpdatePrepared'
-        );
+        const preparedEvent =
+          await findEvent<PluginSetupProcessorEvents.UpdatePreparedEvent>(
+            tx,
+            'UpdatePrepared'
+          );
 
         await expect(
           psp.applyUpdate(dao.address, {
@@ -524,7 +536,7 @@ describe('MultisigSetup', function () {
 
     describe('Release 1 Build 2', () => {
       before(async () => {
-        dao = await deployNewDAO(owner);
+        dao = await createDaoProxy(owner, EMPTY_DATA);
         // grant the owner full permission for plugins
         await dao.applySingleTargetPermissions(psp.address, [
           {
@@ -565,10 +577,11 @@ describe('MultisigSetup', function () {
             [[owner.address], [true, 1]]
           ),
         });
-        const preparedEvent = await findEvent<InstallationPreparedEvent>(
-          tx,
-          'InstallationPrepared'
-        );
+        const preparedEvent =
+          await findEvent<PluginSetupProcessorEvents.InstallationPreparedEvent>(
+            tx,
+            'InstallationPrepared'
+          );
 
         await expect(
           psp.applyInstallation(dao.address, {

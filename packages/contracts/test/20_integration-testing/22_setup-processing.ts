@@ -1,8 +1,8 @@
-import {createDaoProxy} from '../10_unit-testing/11_plugin';
 import {METADATA, VERSION} from '../../plugin-settings';
-import {AdminSetup, AdminSetup__factory, Admin__factory} from '../../typechain';
+import {MultisigSetup, Multisig__factory} from '../../typechain';
 import {getProductionNetworkName, findPluginRepo} from '../../utils/helpers';
-import {installPLugin, uninstallPLugin} from './test-helpers';
+import {MultisigSettings} from '../multisig-constants';
+import {createDaoProxy, installPLugin, uninstallPLugin} from './test-helpers';
 import {
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
@@ -19,6 +19,7 @@ import {
   PluginSetupProcessorStructs,
   PluginSetupProcessor__factory,
   DAO,
+  MultisigSetup__factory,
 } from '@aragon/osx-ethers';
 import {loadFixture} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
@@ -29,7 +30,7 @@ const productionNetworkName = getProductionNetworkName(env);
 
 describe(`PluginSetup processing on network '${productionNetworkName}'`, function () {
   it('installs & uninstalls the current build', async () => {
-    const {alice, deployer, psp, dao, pluginSetupRef} = await loadFixture(
+    const {alice, bob, deployer, psp, dao, pluginSetupRef} = await loadFixture(
       fixture
     );
 
@@ -53,6 +54,13 @@ describe(`PluginSetup processing on network '${productionNetworkName}'`, functio
       .grant(dao.address, psp.address, DAO_PERMISSIONS.ROOT_PERMISSION_ID);
 
     // Install the current build.
+
+    const initialMembers = [alice.address, bob.address];
+    const multisigSettings: MultisigSettings = {
+      onlyListed: true,
+      minApprovals: 2,
+    };
+
     const results = await installPLugin(
       deployer,
       psp,
@@ -62,11 +70,11 @@ describe(`PluginSetup processing on network '${productionNetworkName}'`, functio
         getNamedTypesFromMetadata(
           METADATA.build.pluginSetup.prepareInstallation.inputs
         ),
-        [alice.address]
+        [initialMembers, multisigSettings]
       )
     );
 
-    const plugin = Admin__factory.connect(
+    const plugin = Multisig__factory.connect(
       results.preparedEvent.args.plugin,
       deployer
     );
@@ -90,6 +98,9 @@ describe(`PluginSetup processing on network '${productionNetworkName}'`, functio
       []
     );
   });
+  it.skip('updates to the current build', async () => {
+    expect(false).to.be.true;
+  });
 });
 
 type FixtureResult = {
@@ -99,7 +110,7 @@ type FixtureResult = {
   dao: DAO;
   psp: PluginSetupProcessor;
   pluginRepo: PluginRepo;
-  pluginSetup: AdminSetup;
+  pluginSetup: MultisigSetup;
   pluginSetupRef: PluginSetupProcessorStructs.PluginSetupRefStruct;
 };
 
@@ -136,7 +147,7 @@ async function fixture(): Promise<FixtureResult> {
   }
 
   const release = 1;
-  const pluginSetup = AdminSetup__factory.connect(
+  const pluginSetup = MultisigSetup__factory.connect(
     (await pluginRepo['getLatestVersion(uint8)'](release)).pluginSetup,
     deployer
   );
