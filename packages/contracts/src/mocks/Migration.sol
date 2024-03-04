@@ -22,10 +22,10 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {TokenVoting as TokenVoting_v1_0_0} from "@aragon/osx-v1.0.0/plugins/governance/majority-voting/token/TokenVoting.sol";
 import {TokenVoting as TokenVoting_v1_3_0} from "@aragon/osx-v1.3.0/plugins/governance/majority-voting/token/TokenVoting.sol";
 
-import {GovernanceERC20 as GovernanceERC20_v1_0_0} from "@aragon/osx-v1.0.1/token/ERC20/governance/GovernanceERC20.sol";
+import {GovernanceERC20 as GovernanceERC20_v1_0_0} from "@aragon/osx-v1.0.0/token/ERC20/governance/GovernanceERC20.sol";
 import {GovernanceERC20 as GovernanceERC20_v1_3_0} from "@aragon/osx-v1.3.0/token/ERC20/governance/GovernanceERC20.sol";
 
-import {GovernanceWrappedERC20 as GovernanceWrappedERC20_v1_0_0} from "@aragon/osx-v1.0.1/token/ERC20/governance/GovernanceWrappedERC20.sol";
+import {GovernanceWrappedERC20 as GovernanceWrappedERC20_v1_0_0} from "@aragon/osx-v1.0.0/token/ERC20/governance/GovernanceWrappedERC20.sol";
 import {GovernanceWrappedERC20 as GovernanceWrappedERC20_v1_3_0} from "@aragon/osx-v1.3.0/token/ERC20/governance/GovernanceWrappedERC20.sol";
 
 import {ProxyFactory} from "@aragon/osx-commons-contracts/src/utils/deployment/ProxyFactory.sol";
