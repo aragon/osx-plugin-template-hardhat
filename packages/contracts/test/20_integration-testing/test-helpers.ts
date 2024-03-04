@@ -1,4 +1,5 @@
-import {IPlugin} from '../../typechain';
+import {IPlugin, ProxyFactory__factory} from '../../typechain';
+import {ProxyCreatedEvent} from '../../typechain/@aragon/osx-commons-contracts/src/utils/deployment/ProxyFactory';
 import {hashHelpers} from '../../utils/helpers';
 import {
   DAO_PERMISSIONS,
@@ -11,10 +12,12 @@ import {
   PluginSetupProcessor,
   DAOStructs,
   DAO,
+  DAO__factory,
 } from '@aragon/osx-ethers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {ContractTransaction} from 'ethers';
+import {ethers} from 'hardhat';
 
 export async function installPLugin(
   signer: SignerWithAddress,
@@ -212,4 +215,32 @@ async function checkPermissions(
   ) {
     throw `The used signer does not have the permission with ID '${applyPermissionId}' granted and thus cannot apply the setup`;
   }
+}
+
+// TODO Move into OSX commons as part of Task OS-928.
+export async function createDaoProxy(
+  deployer: SignerWithAddress,
+  dummyMetadata: string
+): Promise<DAO> {
+  const daoImplementation = await new DAO__factory(deployer).deploy();
+  const daoProxyFactory = await new ProxyFactory__factory(deployer).deploy(
+    daoImplementation.address
+  );
+
+  const daoInitData = daoImplementation.interface.encodeFunctionData(
+    'initialize',
+    [
+      dummyMetadata,
+      deployer.address,
+      ethers.constants.AddressZero,
+      dummyMetadata,
+    ]
+  );
+  const tx = await daoProxyFactory.deployUUPSProxy(daoInitData);
+  const event = await findEvent<ProxyCreatedEvent>(
+    tx,
+    daoProxyFactory.interface.getEvent('ProxyCreated').name
+  );
+  const dao = DAO__factory.connect(event.args.proxy, deployer);
+  return dao;
 }

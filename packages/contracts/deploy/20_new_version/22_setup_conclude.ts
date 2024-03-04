@@ -1,5 +1,5 @@
 import {PLUGIN_SETUP_CONTRACT_NAME} from '../../plugin-settings';
-import {AdminSetup__factory, Admin__factory} from '../../typechain';
+import {MultisigSetup__factory, Multisig__factory} from '../../typechain';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
@@ -17,9 +17,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Get the plugin setup address
   const setupDeployment = await deployments.get(PLUGIN_SETUP_CONTRACT_NAME);
-  const setup = AdminSetup__factory.connect(setupDeployment.address, deployer);
+  const setup = MultisigSetup__factory.connect(
+    setupDeployment.address,
+    deployer
+  );
   // Get the plugin implementation address
-  const implementation = Admin__factory.connect(
+  const implementation = Multisig__factory.connect(
     await setup.implementation(),
     deployer
   );

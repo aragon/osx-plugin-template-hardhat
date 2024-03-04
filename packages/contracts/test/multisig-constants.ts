@@ -1,8 +1,8 @@
 import {ethers} from 'hardhat';
 
 export const MULTISIG_EVENTS = {
-  MULTISIG_SETTINGS_UPDATED: 'MultisigSettingsUpdated',
-  APPROVED: 'Approved',
+  MultisigSettingsUpdated: 'MultisigSettingsUpdated',
+  Approved: 'Approved',
 };
 
 export const MULTISIG_INTERFACE = new ethers.utils.Interface([

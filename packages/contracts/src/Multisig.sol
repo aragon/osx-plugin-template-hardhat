@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.8;
 
+/* solhint-disable max-line-length */
 import {SafeCastUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/math/SafeCastUpgradeable.sol";
 
 import {IMembership} from "@aragon/osx-commons-contracts/src/plugin/extensions/membership/IMembership.sol";
@@ -12,10 +13,12 @@ import {IDAO} from "@aragon/osx-commons-contracts/src/dao/IDAO.sol";
 
 import {IMultisig} from "./IMultisig.sol";
 
+/* solhint-enable max-line-length */
+
 /// @title Multisig
 /// @author Aragon Association - 2022-2023
 /// @notice The on-chain multisig governance plugin in which a proposal passes if X out of Y approvals are met.
-/// @dev v1.2 (Release 1, Build 2)
+/// @dev v1.3 (Release 1, Build 3)
 /// @custom:security-contact sirt@aragon.org
 contract Multisig is
     IMultisig,
@@ -32,7 +35,9 @@ contract Multisig is
     /// @param parameters The proposal-specific approve settings at the time of the proposal creation.
     /// @param approvers The approves casted by the approvers.
     /// @param actions The actions to be executed when the proposal passes.
-    /// @param _allowFailureMap A bitmap allowing the proposal to succeed, even if individual actions might revert. If the bit at index `i` is 1, the proposal succeeds even if the `i`th action reverts. A failure map value of 0 requires every action to not revert.
+    /// @param _allowFailureMap A bitmap allowing the proposal to succeed, even if individual actions might revert.
+    /// If the bit at index `i` is 1, the proposal succeeds even if the `i`th action reverts.
+    /// A failure map value of 0 requires every action to not revert.
     struct Proposal {
         bool executed;
         uint16 approvals;
@@ -74,13 +79,15 @@ contract Multisig is
         keccak256("UPDATE_MULTISIG_SETTINGS_PERMISSION");
 
     /// @notice A mapping between proposal IDs and proposal information.
+    // solhint-disable-next-line named-parameters-mapping
     mapping(uint256 => Proposal) internal proposals;
 
     /// @notice The current plugin settings.
     MultisigSettings public multisigSettings;
 
     /// @notice Keeps track at which block number the multisig settings have been changed the last time.
-    /// @dev This variable prevents a proposal from being created in the same block in which the multisig settings change.
+    /// @dev This variable prevents a proposal from being created in the same block in which the multisig
+    /// settings change.
     uint64 public lastMultisigSettingsChange;
 
     /// @notice Thrown when a sender is not allowed to create a proposal.
@@ -99,7 +106,8 @@ contract Multisig is
     /// @param proposalId The ID of the proposal.
     error ProposalExecutionForbidden(uint256 proposalId);
 
-    /// @notice Thrown if the minimal approvals value is out of bounds (less than 1 or greater than the number of members in the address list).
+    /// @notice Thrown if the minimal approvals value is out of bounds (less than 1 or greater than the number of
+    /// members in the address list).
     /// @param limit The maximal value.
     /// @param actual The actual value.
     error MinApprovalsOutOfBounds(uint16 limit, uint16 actual);
@@ -166,7 +174,8 @@ contract Multisig is
     ) external auth(UPDATE_MULTISIG_SETTINGS_PERMISSION_ID) {
         uint256 newAddresslistLength = addresslistLength() + _members.length;
 
-        // Check if the new address list length would be greater than `type(uint16).max`, the maximal number of approvals.
+        // Check if the new address list length would be greater than `type(uint16).max`, the maximal number of
+        // approvals.
         if (newAddresslistLength > type(uint16).max) {
             revert AddresslistLengthOutOfBounds({
                 limit: type(uint16).max,
@@ -209,12 +218,16 @@ contract Multisig is
     /// @notice Creates a new multisig proposal.
     /// @param _metadata The metadata of the proposal.
     /// @param _actions The actions that will be executed after the proposal passes.
-    /// @param _allowFailureMap A bitmap allowing the proposal to succeed, even if individual actions might revert. If the bit at index `i` is 1, the proposal succeeds even if the `i`th action reverts. A failure map value of 0 requires every action to not revert.
+    /// @param _allowFailureMap A bitmap allowing the proposal to succeed, even if individual actions might revert.
+    /// If the bit at index `i` is 1, the proposal succeeds even if the `i`th action reverts.
+    /// A failure map value of 0 requires every action to not revert.
     /// @param _approveProposal If `true`, the sender will approve the proposal.
-    /// @param _tryExecution If `true`, execution is tried after the vote cast. The call does not revert if early execution is not possible.
+    /// @param _tryExecution If `true`, execution is tried after the vote cast. The call does not revert if early
+    /// execution is not possible.
     /// @param _startDate The start date of the proposal.
     /// @param _endDate The end date of the proposal.
     /// @return proposalId The ID of the proposal.
+    // solhint-disable-next-line code-complexity
     function createProposal(
         bytes calldata _metadata,
         IDAO.Action[] calldata _actions,
@@ -230,7 +243,9 @@ contract Multisig is
 
         uint64 snapshotBlock;
         unchecked {
-            snapshotBlock = block.number.toUint64() - 1; // The snapshot block must be mined already to protect the transaction against backrunning transactions causing census changes.
+            // The snapshot block must be mined already to protect the transaction against backrunning transactions
+            // causing census changes.
+            snapshotBlock = block.number.toUint64() - 1;
         }
 
         // Revert if the settings have been changed in the same block as this proposal should be created in.
@@ -323,7 +338,9 @@ contract Multisig is
     /// @return approvals The number of approvals casted.
     /// @return parameters The parameters of the proposal vote.
     /// @return actions The actions to be executed in the associated DAO after the proposal has passed.
-    /// @param allowFailureMap A bitmap allowing the proposal to succeed, even if individual actions might revert. If the bit at index `i` is 1, the proposal succeeds even if the `i`th action reverts. A failure map value of 0 requires every action to not revert.
+    /// @param allowFailureMap A bitmap allowing the proposal to succeed, even if individual actions might revert.
+    /// If the bit at index `i` is 1, the proposal succeeds even if the `i`th action reverts.
+    /// A failure map value of 0 requires every action to not revert.
     function getProposal(
         uint256 _proposalId
     )

@@ -1,6 +1,6 @@
 {
   "ui": {},
-  "change": "- The ability to create a proposal now depends on the membership status of the current instead of the snapshot block.\n- Added a check ensuring that the initial member list cannot overflow.",
+  "change": "v1.3\n - TODO TODO.",
   "pluginSetup": {
     "prepareInstallation": {
       "description": "The information required for the installation.",
@@ -29,12 +29,16 @@
           "internalType": "struct Multisig.MultisigSettings",
           "name": "multisigSettings",
           "type": "tuple",
-          "description": "The inital multisig settings."
+          "description": "The initial multisig settings."
         }
       ]
     },
     "prepareUpdate": {
       "1": {
+        "description": "No input is required for the update.",
+        "inputs": []
+      },
+      "2": {
         "description": "No input is required for the update.",
         "inputs": []
       }
