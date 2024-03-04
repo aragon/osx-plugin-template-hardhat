@@ -99,10 +99,6 @@
       "2": {
         "description": "No input is required for the update.",
         "inputs": []
-      },
-      "2": {
-        "description": "No input is required for the update.",
-        "inputs": []
       }
     },
     "prepareUninstallation": {
