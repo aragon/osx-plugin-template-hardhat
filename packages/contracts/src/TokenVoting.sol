@@ -17,7 +17,7 @@ import {MajorityVotingBase} from "./MajorityVotingBase.sol";
 /// @notice The majority voting implementation using an
 /// [OpenZeppelin `Votes`](https://docs.openzeppelin.com/contracts/4.x/api/governance#Votes)
 /// compatible governance token.
-/// @dev v1.2 (Release 1, Build 2)
+/// @dev v1.3 (Release 1, Build 3)
 /// @custom:security-contact sirt@aragon.org
 contract TokenVoting is IMembership, MajorityVotingBase {
     using SafeCastUpgradeable for uint256;
