@@ -24,10 +24,6 @@ import 'solidity-coverage';
 const dotenvConfigPath: string = process.env.DOTENV_CONFIG_PATH || '../../.env';
 dotenvConfig({path: resolve(__dirname, dotenvConfigPath), override: true});
 
-if (!process.env.INFURA_API_KEY) {
-  throw new Error('INFURA_API_KEY in .env not set');
-}
-
 // Fetch the accounts specified in the .env file
 function specifiedAccounts(): string[] {
   return process.env.PRIVATE_KEY ? process.env.PRIVATE_KEY.split(',') : [];
