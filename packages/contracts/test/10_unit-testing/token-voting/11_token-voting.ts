@@ -19,7 +19,6 @@ import {
   MAJORITY_VOTING_BASE_INTERFACE,
   VOTING_EVENTS,
 } from '../../test-utils/majority-voting-constants';
-import {osxContractsVersion} from '../../test-utils/protocol-version';
 import {deployWithProxy} from '../../test-utils/proxy';
 import {
   TOKEN_VOTING_INTERFACE,
@@ -250,7 +249,7 @@ describe('TokenVoting', function () {
       );
       expect(fromProtocolVersion).to.not.deep.equal(toProtocolVersion);
       expect(fromProtocolVersion).to.deep.equal([1, 0, 0]);
-      expect(toProtocolVersion).to.deep.equal(osxContractsVersion());
+      expect(toProtocolVersion).to.deep.equal([1, 4, 0]);
     });
 
     it('from v1.3.0', async () => {
@@ -278,7 +277,7 @@ describe('TokenVoting', function () {
       );
       expect(fromProtocolVersion).to.not.deep.equal(toProtocolVersion);
       expect(fromProtocolVersion).to.deep.equal([1, 0, 0]);
-      expect(toProtocolVersion).to.deep.equal(osxContractsVersion());
+      expect(toProtocolVersion).to.deep.equal([1, 4, 0]);
     });
   });
 

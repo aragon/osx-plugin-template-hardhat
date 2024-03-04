@@ -63,7 +63,7 @@
   dependencies:
     ethers "^5.6.2"
 
-"@aragon/osx-v1.0.1@npm:@aragon/osx@1.0.1":
+"@aragon/osx-v1.0.0@npm:@aragon/osx@1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@aragon/osx/-/osx-1.0.1.tgz#b758ba87db93a46a8ddabfaefc99ac8e44c46c78"
   integrity sha512-TiP5/1AGv/hth+V8PoDVFlwMzmLazYxzp//jiepAZ0WJkx9EnQNYafo+M7+pjAqRPG005liQjmFZNiK6ARLULg==
