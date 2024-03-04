@@ -14,7 +14,7 @@ import {
 } from '../../../typechain/src/TokenVoting';
 import {ExecutedEvent} from '../../../typechain/src/mocks/DAOMock';
 import {VITALIK} from '../../test-utils/address';
-import {deployNewDAO} from '../../test-utils/dao';
+import {EMPTY_DATA, createDaoProxy} from '../../test-utils/dao';
 import {
   MAJORITY_VOTING_BASE_INTERFACE,
   VOTING_EVENTS,
@@ -91,7 +91,7 @@ describe('TokenVoting', function () {
       ethers.utils.toUtf8Bytes('0x123456789')
     );
 
-    dao = await deployNewDAO(signers[0]);
+    dao = await createDaoProxy(signers[0], EMPTY_DATA);
   });
 
   beforeEach(async function () {

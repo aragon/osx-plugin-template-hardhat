@@ -7,7 +7,7 @@ import {
   MajorityVotingMock__factory,
   IProtocolVersion__factory,
 } from '../../../typechain';
-import {deployNewDAO} from '../../test-utils/dao';
+import {EMPTY_DATA, createDaoProxy} from '../../test-utils/dao';
 import {MAJORITY_VOTING_BASE_INTERFACE} from '../../test-utils/majority-voting-constants';
 import {deployWithProxy} from '../../test-utils/proxy';
 import {VotingSettings, VotingMode} from '../../test-utils/voting-helpers';
@@ -30,7 +30,7 @@ describe('MajorityVotingMock', function () {
     signers = await ethers.getSigners();
     ownerAddress = await signers[0].getAddress();
 
-    dao = await deployNewDAO(signers[0]);
+    dao = await createDaoProxy(signers[0], EMPTY_DATA);
   });
 
   beforeEach(async () => {

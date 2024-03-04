@@ -10,7 +10,7 @@ import {
   TokenVotingSetup__factory,
   TokenVoting__factory,
 } from '../../../typechain';
-import {deployNewDAO} from '../../test-utils/dao';
+import {createDaoProxy, EMPTY_DATA} from '../../test-utils/dao';
 import {TOKEN_VOTING_INTERFACE} from '../../test-utils/token-voting-constants';
 import {VotingMode, VotingSettings} from '../../test-utils/voting-helpers';
 import {Operation} from '@aragon/osx-commons-sdk';
@@ -29,7 +29,6 @@ let defaultMintSettings: {receivers: string[]; amounts: number[]};
 
 const abiCoder = ethers.utils.defaultAbiCoder;
 const AddressZero = ethers.constants.AddressZero;
-const EMPTY_DATA = '0x';
 
 const prepareInstallationDataTypes = getNamedTypesFromMetadata(
   metadata.pluginSetup.prepareInstallation.inputs
@@ -59,7 +58,7 @@ describe('TokenVotingSetup', function () {
 
   before(async () => {
     signers = await ethers.getSigners();
-    targetDao = await deployNewDAO(signers[0]);
+    targetDao = await createDaoProxy(signers[0], EMPTY_DATA);
 
     defaultVotingSettings = {
       votingMode: VotingMode.EarlyExecution,

@@ -9,6 +9,7 @@ import {ethers} from 'hardhat';
 export const ZERO_BYTES32 =
   '0x0000000000000000000000000000000000000000000000000000000000000000';
 export const daoExampleURI = 'https://example.com';
+export const EMPTY_DATA = '0x';
 
 export const TOKEN_INTERFACE_IDS = {
   erc721ReceivedId: '0x150b7a02',
@@ -43,17 +44,6 @@ export async function createDaoProxy(
   );
   const dao = DAO__factory.connect(event.args.proxy, deployer);
   return dao;
-}
-
-const dummyMetadata = ethers.utils.hexlify(
-  ethers.utils.toUtf8Bytes('0x123456789')
-);
-
-export async function deployNewDAO(
-  signer: SignerWithAddress,
-  metadata = dummyMetadata
-): Promise<DAO> {
-  return await createDaoProxy(signer, metadata);
 }
 
 export function getERC20TransferAction(

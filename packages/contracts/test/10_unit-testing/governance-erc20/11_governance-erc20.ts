@@ -5,7 +5,7 @@ import {
   IERC20Upgradeable__factory,
   IVotesUpgradeable__factory,
 } from '../../../typechain';
-import {deployNewDAO} from '../../test-utils/dao';
+import {EMPTY_DATA, createDaoProxy} from '../../test-utils/dao';
 import {
   GovernanceERC20__factory,
   GovernanceERC20,
@@ -42,7 +42,7 @@ describe('GovernanceERC20', function () {
 
   before(async () => {
     signers = await ethers.getSigners();
-    dao = await deployNewDAO(signers[0]);
+    dao = await createDaoProxy(signers[0], EMPTY_DATA);
     GovernanceERC20 = new GovernanceERC20__factory(signers[0]);
 
     from = signers[0];
