@@ -258,7 +258,7 @@ describe('GovernanceWrappedERC20', function () {
   describe('delegate', async () => {
     beforeEach(async function () {
       // approve and deposit for all token holders
-      let promises = defaultBalances.map(balance =>
+      const promises = defaultBalances.map(balance =>
         erc20.approve(balance.account, balance.amount)
       );
 
@@ -312,7 +312,7 @@ describe('GovernanceWrappedERC20', function () {
         signers[2].address
       );
 
-      let tx1 = await governanceToken
+      const tx1 = await governanceToken
         .connect(signers[0])
         .delegate(signers[1].address);
       await ethers.provider.send('evm_mine', []);
@@ -326,9 +326,7 @@ describe('GovernanceWrappedERC20', function () {
         balanceSigner2
       );
 
-      let tx2 = await governanceToken
-        .connect(signers[0])
-        .delegate(signers[2].address);
+      await governanceToken.connect(signers[0]).delegate(signers[2].address);
       await ethers.provider.send('evm_mine', []);
 
       // verify that current votes are correct

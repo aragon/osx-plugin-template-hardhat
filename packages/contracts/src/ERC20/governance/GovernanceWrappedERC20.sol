@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.8;
 
+/* solhint-disable max-line-length */
 import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import {ERC20WrapperUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20WrapperUpgradeable.sol";
 import {IVotesUpgradeable} from "@openzeppelin/contracts-upgradeable/governance/utils/IVotesUpgradeable.sol";
@@ -11,19 +12,26 @@ import {IERC20MetadataUpgradeable} from "@openzeppelin/contracts-upgradeable/tok
 import {ERC20VotesUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol";
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {ERC165Upgradeable} from "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
-
-import {DaoAuthorizableUpgradeable} from "@aragon/osx-commons-contracts/src/permission/auth/DaoAuthorizableUpgradeable.sol";
-import {IDAO} from "@aragon/osx-commons-contracts/src/dao/IDAO.sol";
 import {IGovernanceWrappedERC20} from "./IGovernanceWrappedERC20.sol";
+
+/* solhint-enable max-line-length */
 
 /// @title GovernanceWrappedERC20
 /// @author Aragon Association
-/// @notice Wraps an existing [ERC-20](https://eips.ethereum.org/EIPS/eip-20) token by inheriting from `ERC20WrapperUpgradeable` and allows to use it for voting by inheriting from `ERC20VotesUpgradeable`. The latter is compatible with [OpenZeppelin's `Votes`](https://docs.openzeppelin.com/contracts/4.x/api/governance#Votes) interface.
-/// The contract also supports meta transactions. To use an `amount` of underlying tokens for voting, the token owner has to
+/// @notice Wraps an existing [ERC-20](https://eips.ethereum.org/EIPS/eip-20) token by
+/// inheriting from `ERC20WrapperUpgradeable` and allows using it for voting by inheriting from `ERC20VotesUpgradeable`.
+/// The latter is compatible with
+/// [OpenZeppelin's `Votes`](https://docs.openzeppelin.com/contracts/4.x/api/governance#Votes) interface.
+/// The contract supports meta transactions. To use an `amount` of underlying tokens for voting, the token owner must:
 /// 1. call `approve` for the tokens to be used by this contract
-/// 2. call `depositFor` to wrap them, which safely transfers the underlying [ERC-20](https://eips.ethereum.org/EIPS/eip-20) tokens to the contract and mints wrapped [ERC-20](https://eips.ethereum.org/EIPS/eip-20) tokens.
-/// To get the [ERC-20](https://eips.ethereum.org/EIPS/eip-20) tokens back, the owner of the wrapped tokens can call `withdrawFor`, which  burns the wrapped [ERC-20](https://eips.ethereum.org/EIPS/eip-20) tokens and safely transfers the underlying tokens back to the owner.
-/// @dev This contract intentionally has no public mint functionality because this is the responsibility of the underlying [ERC-20](https://eips.ethereum.org/EIPS/eip-20) token contract.
+/// 2. call `depositFor` to wrap them, which safely transfers the underlying
+/// [ERC-20](https://eips.ethereum.org/EIPS/eip-20) tokens to the contract and mints wrapped
+/// [ERC-20](https://eips.ethereum.org/EIPS/eip-20) tokens.
+/// To get the [ERC-20](https://eips.ethereum.org/EIPS/eip-20) tokens back, the owner of the wrapped tokens can call
+/// `withdrawFor`, which  burns the wrapped [ERC-20](https://eips.ethereum.org/EIPS/eip-20) tokens and
+/// safely transfers the underlying tokens back to the owner.
+/// @dev This contract intentionally has no public mint functionality because this is the
+/// responsibility of the underlying [ERC-20](https://eips.ethereum.org/EIPS/eip-20) token contract.
 /// @custom:security-contact sirt@aragon.org
 contract GovernanceWrappedERC20 is
     IGovernanceWrappedERC20,

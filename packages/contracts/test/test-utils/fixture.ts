@@ -1,6 +1,6 @@
 import networks from '@aragon/osx-commons-configs';
 import {getNetworkByNameOrAlias} from '@aragon/osx-commons-configs';
-import hre, {network, deployments} from 'hardhat';
+import {network, deployments} from 'hardhat';
 
 export interface ForkOsxVersion {
   version: string;

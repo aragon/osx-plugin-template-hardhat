@@ -14,6 +14,7 @@ pragma solidity ^0.8.8;
  */
 
 /* solhint-disable no-unused-import */
+/* solhint-disable max-line-length */
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
@@ -30,3 +31,4 @@ import {GovernanceWrappedERC20 as GovernanceWrappedERC20_v1_3_0} from "@aragon/o
 import {ProxyFactory} from "@aragon/osx-commons-contracts/src/utils/deployment/ProxyFactory.sol";
 
 /* solhint-enable no-unused-import */
+/* solhint-enable max-line-length */

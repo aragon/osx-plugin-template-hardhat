@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.8;
 
-import "../MajorityVotingBase.sol";
+import {MajorityVotingBase, IDAO} from "../MajorityVotingBase.sol";
 
 contract MajorityVotingMock is MajorityVotingBase {
     function initializeMock(IDAO _dao, VotingSettings calldata _votingSettings) public initializer {
@@ -25,6 +25,7 @@ contract MajorityVotingMock is MajorityVotingBase {
         return 0;
     }
 
+    /* solhint-disable no-empty-blocks */
     function _vote(
         uint256 /* _proposalId */,
         VoteOption /* _voteOption */,

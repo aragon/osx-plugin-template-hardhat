@@ -193,7 +193,7 @@ describe('GovernanceERC20', function () {
       const balanceSigner1 = await token.balanceOf(signers[1].address);
       const balanceSigner2 = await token.balanceOf(signers[2].address);
 
-      let tx1 = await token.connect(signers[0]).delegate(signers[1].address);
+      const tx1 = await token.connect(signers[0]).delegate(signers[1].address);
       await ethers.provider.send('evm_mine', []);
 
       // verify that current votes are correct
@@ -203,7 +203,7 @@ describe('GovernanceERC20', function () {
       );
       expect(await token.getVotes(signers[2].address)).to.eq(balanceSigner2);
 
-      let tx2 = await token.connect(signers[0]).delegate(signers[2].address);
+      await token.connect(signers[0]).delegate(signers[2].address);
       await ethers.provider.send('evm_mine', []);
 
       // verify that current votes are correct

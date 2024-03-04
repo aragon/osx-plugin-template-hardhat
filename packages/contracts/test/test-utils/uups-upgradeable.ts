@@ -101,7 +101,7 @@ export async function deployAndUpgradeFromToCheck(
   toImplementation: string;
 }> {
   // Deploy proxy and implementation
-  let proxy = await upgrades.deployProxy(
+  const proxy = await upgrades.deployProxy(
     from.connect(deployer),
     Object.values(initArgs),
     {

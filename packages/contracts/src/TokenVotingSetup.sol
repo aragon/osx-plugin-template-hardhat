@@ -38,16 +38,20 @@ contract TokenVotingSetup is PluginSetup {
     bytes32 public constant EXECUTE_PERMISSION_ID = keccak256("EXECUTE_PERMISSION");
 
     /// @notice The address of the `TokenVoting` base contract.
+    // solhint-disable-next-line immutable-vars-naming
     TokenVoting private immutable tokenVotingBase;
 
     /// @notice The address of the `GovernanceERC20` base contract.
+    // solhint-disable-next-line immutable-vars-naming
     address public immutable governanceERC20Base;
 
     /// @notice The address of the `GovernanceWrappedERC20` base contract.
+    // solhint-disable-next-line immutable-vars-naming
     address public immutable governanceWrappedERC20Base;
 
     /// @notice The token settings struct.
-    /// @param addr The token address. If this is `address(0)`, a new `GovernanceERC20` token is deployed. If not, the existing token is wrapped as an `GovernanceWrappedERC20`.
+    /// @param addr The token address. If this is `address(0)`, a new `GovernanceERC20` token is deployed.
+    /// If not, the existing token is wrapped as an `GovernanceWrappedERC20`.
     /// @param name The token name. This parameter is only relevant if the token address is `address(0)`.
     /// @param symbol The token symbol. This parameter is only relevant if the token address is `address(0)`.
     struct TokenSettings {
@@ -68,7 +72,8 @@ contract TokenVotingSetup is PluginSetup {
     /// @param length The array length of passed helpers.
     error WrongHelpersArrayLength(uint256 length);
 
-    /// @notice The contract constructor deploying the plugin implementation contract and receiving the governance token base contracts to clone from.
+    /// @notice The contract constructor deploying the plugin implementation contract
+    /// and receiving the governance token base contracts to clone from.
     /// @param _governanceERC20Base The base `GovernanceERC20` contract to create clones from.
     /// @param _governanceWrappedERC20Base The base `GovernanceWrappedERC20` contract to create clones from.
     constructor(

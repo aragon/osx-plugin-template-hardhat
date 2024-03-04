@@ -26,5 +26,8 @@ for (let i = 0; i < OSX_VERSION_ALIASES.length; i++) {
   generateTypechain(
     `./artifacts/${OSX_VERSION_ALIASES[i]}`,
     `./typechain/${OSX_VERSION_ALIASES[i]}`
-  );
+  ).catch(e => {
+    console.error(e);
+    process.exit(1);
+  });
 }

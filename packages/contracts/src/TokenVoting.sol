@@ -7,15 +7,16 @@ import {SafeCastUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/mat
 import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 
 import {IMembership} from "@aragon/osx-commons-contracts/src/plugin/extensions/membership/IMembership.sol";
-import {RATIO_BASE, _applyRatioCeiled} from "@aragon/osx-commons-contracts/src/utils/math/Ratio.sol";
+import {_applyRatioCeiled} from "@aragon/osx-commons-contracts/src/utils/math/Ratio.sol";
 
 import {IDAO} from "@aragon/osx-commons-contracts/src/dao/IDAO.sol";
 import {MajorityVotingBase} from "./MajorityVotingBase.sol";
-import {IMajorityVoting} from "./IMajorityVoting.sol";
 
 /// @title TokenVoting
 /// @author Aragon Association - 2021-2023
-/// @notice The majority voting implementation using an [OpenZeppelin `Votes`](https://docs.openzeppelin.com/contracts/4.x/api/governance#Votes) compatible governance token.
+/// @notice The majority voting implementation using an
+/// [OpenZeppelin `Votes`](https://docs.openzeppelin.com/contracts/4.x/api/governance#Votes)
+/// compatible governance token.
 /// @dev v1.2 (Release 1, Build 2)
 /// @custom:security-contact sirt@aragon.org
 contract TokenVoting is IMembership, MajorityVotingBase {
@@ -25,7 +26,8 @@ contract TokenVoting is IMembership, MajorityVotingBase {
     bytes4 internal constant TOKEN_VOTING_INTERFACE_ID =
         this.initialize.selector ^ this.getVotingToken.selector;
 
-    /// @notice An [OpenZeppelin `Votes`](https://docs.openzeppelin.com/contracts/4.x/api/governance#Votes) compatible contract referencing the token being used for voting.
+    /// @notice An [OpenZeppelin `Votes`](https://docs.openzeppelin.com/contracts/4.x/api/governance#Votes)
+    /// compatible contract referencing the token being used for voting.
     IVotesUpgradeable private votingToken;
 
     /// @notice Thrown if the voting power is zero
@@ -59,7 +61,8 @@ contract TokenVoting is IMembership, MajorityVotingBase {
     }
 
     /// @notice getter function for the voting token.
-    /// @dev public function also useful for registering interfaceId and for distinguishing from majority voting interface.
+    /// @dev public function also useful for registering interfaceId
+    /// and for distinguishing from majority voting interface.
     /// @return The token used for voting.
     function getVotingToken() public view returns (IVotesUpgradeable) {
         return votingToken;
@@ -85,7 +88,8 @@ contract TokenVoting is IMembership, MajorityVotingBase {
             uint256 minProposerVotingPower_ = minProposerVotingPower();
 
             if (minProposerVotingPower_ != 0) {
-                // Because of the checks in `TokenVotingSetup`, we can assume that `votingToken` is an [ERC-20](https://eips.ethereum.org/EIPS/eip-20) token.
+                // Because of the checks in `TokenVotingSetup`, we can assume that `votingToken`
+                // is an [ERC-20](https://eips.ethereum.org/EIPS/eip-20) token.
                 if (
                     votingToken.getVotes(_msgSender()) < minProposerVotingPower_ &&
                     IERC20Upgradeable(address(votingToken)).balanceOf(_msgSender()) <
@@ -98,7 +102,9 @@ contract TokenVoting is IMembership, MajorityVotingBase {
 
         uint256 snapshotBlock;
         unchecked {
-            snapshotBlock = block.number - 1; // The snapshot block must be mined already to protect the transaction against backrunning transactions causing census changes.
+            // The snapshot block must be mined already to
+            // protect the transaction against backrunning transactions causing census changes.
+            snapshotBlock = block.number - 1;
         }
 
         uint256 totalVotingPower_ = totalVotingPower(snapshotBlock);

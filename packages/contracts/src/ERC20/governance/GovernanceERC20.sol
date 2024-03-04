@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.8;
 
+/* solhint-disable max-line-length */
 import {IERC20PermitUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20PermitUpgradeable.sol";
 import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import {IERC20MetadataUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
@@ -14,9 +15,12 @@ import {DaoAuthorizableUpgradeable} from "@aragon/osx-commons-contracts/src/perm
 import {IDAO} from "@aragon/osx-commons-contracts/src/dao/IDAO.sol";
 import {IERC20MintableUpgradeable} from "../IERC20MintableUpgradeable.sol";
 
+/* solhint-enable max-line-length */
+
 /// @title GovernanceERC20
 /// @author Aragon Association
-/// @notice An [OpenZeppelin `Votes`](https://docs.openzeppelin.com/contracts/4.x/api/governance#Votes) compatible [ERC-20](https://eips.ethereum.org/EIPS/eip-20) token that can be used for voting and is managed by a DAO.
+/// @notice An [OpenZeppelin `Votes`](https://docs.openzeppelin.com/contracts/4.x/api/governance#Votes)
+/// compatible [ERC-20](https://eips.ethereum.org/EIPS/eip-20) token, used for voting and managed by a DAO.
 /// @custom:security-contact sirt@aragon.org
 contract GovernanceERC20 is
     IERC20MintableUpgradeable,

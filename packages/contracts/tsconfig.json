@@ -23,6 +23,7 @@
     "deploy/**/*",
     "test/**/*",
     "utils/**/*",
-    "plugin-settings.ts"
+    "plugin-settings.ts",
+    "scripts/**/*.ts"
   ]
 }
