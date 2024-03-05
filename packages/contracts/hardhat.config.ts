@@ -59,7 +59,7 @@ function getHardhatNetworkAccountsConfig(
       const oneEther = BigNumber.from(10).pow(18);
       return {
         privateKey,
-        balance: oneEther.mul(100).toString(), // 100 ether
+        balance: oneEther.mul(1000).toString(),
       };
     }
   );

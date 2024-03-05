@@ -1,22 +1,15 @@
 import {DAOMock, IPlugin} from '../../typechain';
 import {hashHelpers} from '../../utils/helpers';
-import {
-  DAO_PERMISSIONS,
-  PLUGIN_SETUP_PROCESSOR_PERMISSIONS,
-  findEvent,
-} from '@aragon/osx-commons-sdk';
+import {findEvent} from '@aragon/osx-commons-sdk';
 import {
   PluginSetupProcessorEvents,
   PluginSetupProcessorStructs,
   PluginSetupProcessor,
-  DAOStructs,
 } from '@aragon/osx-ethers';
-import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {ContractTransaction} from 'ethers';
 
 export async function installPLugin(
-  signer: SignerWithAddress,
   psp: PluginSetupProcessor,
   dao: DAOMock,
   pluginSetupRef: PluginSetupProcessorStructs.PluginSetupRefStruct,
@@ -27,7 +20,7 @@ export async function installPLugin(
   preparedEvent: PluginSetupProcessorEvents.InstallationPreparedEvent;
   appliedEvent: PluginSetupProcessorEvents.InstallationAppliedEvent;
 }> {
-  const prepareTx = await psp.connect(signer).prepareInstallation(dao.address, {
+  const prepareTx = await psp.prepareInstallation(dao.address, {
     pluginSetupRef: pluginSetupRef,
     data: data,
   });
@@ -39,20 +32,11 @@ export async function installPLugin(
     );
 
   const plugin = preparedEvent.args.plugin;
-  const preparedPermissions = preparedEvent.args.preparedSetupData.permissions;
 
-  await checkPermissions(
-    preparedPermissions,
-    dao,
-    psp,
-    signer,
-    PLUGIN_SETUP_PROCESSOR_PERMISSIONS.APPLY_INSTALLATION_PERMISSION_ID
-  );
-
-  const applyTx = await psp.connect(signer).applyInstallation(dao.address, {
+  const applyTx = await psp.applyInstallation(dao.address, {
     pluginSetupRef: pluginSetupRef,
     plugin: plugin,
-    permissions: preparedPermissions,
+    permissions: preparedEvent.args.preparedSetupData.permissions,
     helpersHash: hashHelpers(preparedEvent.args.preparedSetupData.helpers),
   });
 
@@ -66,7 +50,6 @@ export async function installPLugin(
 }
 
 export async function uninstallPLugin(
-  signer: SignerWithAddress,
   psp: PluginSetupProcessor,
   dao: DAOMock,
   plugin: IPlugin,
@@ -79,16 +62,14 @@ export async function uninstallPLugin(
   preparedEvent: PluginSetupProcessorEvents.UninstallationPreparedEvent;
   appliedEvent: PluginSetupProcessorEvents.UninstallationAppliedEvent;
 }> {
-  const prepareTx = await psp
-    .connect(signer)
-    .prepareUninstallation(dao.address, {
-      pluginSetupRef: pluginSetupRef,
-      setupPayload: {
-        plugin: plugin.address,
-        currentHelpers: currentHelpers,
-        data: data,
-      },
-    });
+  const prepareTx = await psp.prepareUninstallation(dao.address, {
+    pluginSetupRef: pluginSetupRef,
+    setupPayload: {
+      plugin: plugin.address,
+      currentHelpers: currentHelpers,
+      data: data,
+    },
+  });
 
   const preparedEvent =
     await findEvent<PluginSetupProcessorEvents.UninstallationPreparedEvent>(
@@ -98,15 +79,7 @@ export async function uninstallPLugin(
 
   const preparedPermissions = preparedEvent.args.permissions;
 
-  await checkPermissions(
-    preparedPermissions,
-    dao,
-    psp,
-    signer,
-    PLUGIN_SETUP_PROCESSOR_PERMISSIONS.APPLY_UNINSTALLATION_PERMISSION_ID
-  );
-
-  const applyTx = await psp.connect(signer).applyUninstallation(dao.address, {
+  const applyTx = await psp.applyUninstallation(dao.address, {
     plugin: plugin.address,
     pluginSetupRef: pluginSetupRef,
     permissions: preparedPermissions,
@@ -120,8 +93,8 @@ export async function uninstallPLugin(
 
   return {prepareTx, applyTx, preparedEvent, appliedEvent};
 }
+
 export async function updatePlugin(
-  signer: SignerWithAddress,
   psp: PluginSetupProcessor,
   dao: DAOMock,
   plugin: IPlugin,
@@ -139,7 +112,7 @@ export async function updatePlugin(
     pluginSetupRefUpdate.pluginSetupRepo
   );
 
-  const prepareTx = await psp.connect(signer).prepareUpdate(dao.address, {
+  const prepareTx = await psp.prepareUpdate(dao.address, {
     currentVersionTag: pluginSetupRefCurrent.versionTag,
     newVersionTag: pluginSetupRefUpdate.versionTag,
     pluginSetupRepo: pluginSetupRefUpdate.pluginSetupRepo,
@@ -155,21 +128,11 @@ export async function updatePlugin(
       psp.interface.getEvent('UpdatePrepared').name
     );
 
-  const preparedPermissions = preparedEvent.args.preparedSetupData.permissions;
-
-  await checkPermissions(
-    preparedPermissions,
-    dao,
-    psp,
-    signer,
-    PLUGIN_SETUP_PROCESSOR_PERMISSIONS.APPLY_UPDATE_PERMISSION_ID
-  );
-
-  const applyTx = await psp.connect(signer).applyUpdate(dao.address, {
+  const applyTx = await psp.applyUpdate(dao.address, {
     plugin: plugin.address,
     pluginSetupRef: pluginSetupRefUpdate,
     initData: preparedEvent.args.initData,
-    permissions: preparedPermissions,
+    permissions: preparedEvent.args.preparedSetupData.permissions,
     helpersHash: hashHelpers(preparedEvent.args.preparedSetupData.helpers),
   });
   const appliedEvent =
@@ -179,36 +142,4 @@ export async function updatePlugin(
     );
 
   return {prepareTx, applyTx, preparedEvent, appliedEvent};
-}
-
-async function checkPermissions(
-  preparedPermissions: DAOStructs.MultiTargetPermissionStruct[],
-  dao: DAOMock,
-  psp: PluginSetupProcessor,
-  signer: SignerWithAddress,
-  applyPermissionId: string
-) {
-  if (preparedPermissions.length !== 0) {
-    if (
-      !(await dao.hasPermission(
-        dao.address,
-        psp.address,
-        DAO_PERMISSIONS.ROOT_PERMISSION_ID,
-        []
-      ))
-    ) {
-      throw `The 'PluginSetupProcessor' does not have 'ROOT_PERMISSION_ID' on the DAO and thus cannot process the list of permissions requested by the plugin setup.`;
-    }
-  }
-  if (
-    signer.address !== dao.address &&
-    !(await dao.hasPermission(
-      psp.address,
-      signer.address,
-      applyPermissionId,
-      []
-    ))
-  ) {
-    throw `The used signer does not have the permission with ID '${applyPermissionId}' granted and thus cannot apply the setup`;
-  }
 }
