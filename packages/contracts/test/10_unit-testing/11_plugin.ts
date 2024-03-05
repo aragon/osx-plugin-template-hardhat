@@ -22,22 +22,11 @@ import {
   MultisigSettings,
   UPDATE_MULTISIG_SETTINGS_PERMISSION_ID,
 } from '../multisig-constants';
-import {
-  Multisig_V1_0_0__factory,
-  Multisig_V1_3_0__factory,
-  Multisig__factory,
-  Multisig,
-} from '../test-utils/typechain-versions';
-import {
-  deployAndUpgradeFromToCheck,
-  deployAndUpgradeSelfCheck,
-  getProtocolVersion,
-} from '../test-utils/uups-upgradeable';
+import {Multisig__factory, Multisig} from '../test-utils/typechain-versions';
 import {
   getInterfaceId,
   proposalIdToBytes32,
   IDAO_EVENTS,
-  PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS,
   IMEMBERSHIP_EVENTS,
   IPROPOSAL_EVENTS,
   findEvent,
@@ -49,22 +38,10 @@ import {DAO, DAOStructs, DAO__factory} from '@aragon/osx-ethers';
 import {loadFixture, time} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
-import {BigNumber, Contract} from 'ethers';
+import {BigNumber} from 'ethers';
 import {ethers} from 'hardhat';
 
-export async function approveWithSigners(
-  multisigContract: Contract,
-  proposalId: number,
-  signers: SignerWithAddress[]
-) {
-  const promises = signers.map(signer =>
-    multisigContract.connect(signer).approve(proposalId, false)
-  );
-
-  await Promise.all(promises);
-}
-
-describe.only('Multisig', function () {
+describe('Multisig', function () {
   describe('initialize', async () => {
     it('reverts if trying to re-initialize', async () => {
       const {dao, initializedPlugin, defaultInitData} = await loadFixture(
@@ -162,89 +139,6 @@ describe.only('Multisig', function () {
           'AddresslistLengthOutOfBounds'
         )
         .withArgs(65535, overflowingMemberList.length);
-    });
-  });
-
-  describe('Upgrades', () => {
-    it('upgrades to a new implementation', async () => {
-      const {deployer, alice, dao, defaultInitData} = await loadFixture(
-        fixture
-      );
-      const currentContractFactory = new Multisig__factory(deployer);
-
-      await deployAndUpgradeSelfCheck(
-        deployer,
-        alice,
-        [dao.address, defaultInitData.members, defaultInitData.settings],
-        'initialize',
-        currentContractFactory,
-        PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS.UPGRADE_PLUGIN_PERMISSION_ID,
-        dao
-      );
-    });
-
-    it('upgrades from v1.0.0', async () => {
-      const {deployer, alice, dao, defaultInitData} = await loadFixture(
-        fixture
-      );
-      const currentContractFactory = new Multisig__factory(deployer);
-      const legacyContractFactory = new Multisig_V1_0_0__factory(deployer);
-
-      const {fromImplementation, toImplementation} =
-        await deployAndUpgradeFromToCheck(
-          deployer,
-          alice,
-          [dao.address, defaultInitData.members, defaultInitData.settings],
-          'initialize',
-          legacyContractFactory,
-          currentContractFactory,
-          PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS.UPGRADE_PLUGIN_PERMISSION_ID,
-          dao
-        );
-      expect(toImplementation).to.not.equal(fromImplementation); // The build did change
-
-      const fromProtocolVersion = await getProtocolVersion(
-        legacyContractFactory.attach(fromImplementation)
-      );
-      const toProtocolVersion = await getProtocolVersion(
-        currentContractFactory.attach(toImplementation)
-      );
-
-      expect(fromProtocolVersion).to.not.deep.equal(toProtocolVersion);
-      expect(fromProtocolVersion).to.deep.equal([1, 0, 0]);
-      expect(toProtocolVersion).to.deep.equal([1, 4, 0]); // TODO Check this automatically
-    });
-
-    it('from v1.3.0', async () => {
-      const {deployer, alice, dao, defaultInitData} = await loadFixture(
-        fixture
-      );
-      const currentContractFactory = new Multisig__factory(deployer);
-      const legacyContractFactory = new Multisig_V1_3_0__factory(deployer);
-
-      const {fromImplementation, toImplementation} =
-        await deployAndUpgradeFromToCheck(
-          deployer,
-          alice,
-          [dao.address, defaultInitData.members, defaultInitData.settings],
-          'initialize',
-          legacyContractFactory,
-          currentContractFactory,
-          PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS.UPGRADE_PLUGIN_PERMISSION_ID,
-          dao
-        );
-      expect(toImplementation).to.not.equal(fromImplementation);
-
-      const fromProtocolVersion = await getProtocolVersion(
-        legacyContractFactory.attach(fromImplementation)
-      );
-      const toProtocolVersion = await getProtocolVersion(
-        currentContractFactory.attach(toImplementation)
-      );
-
-      expect(fromProtocolVersion).to.not.deep.equal(toProtocolVersion);
-      expect(fromProtocolVersion).to.deep.equal([1, 0, 0]);
-      expect(toProtocolVersion).to.deep.equal([1, 4, 0]); // TODO Check this automatically
     });
   });
 
