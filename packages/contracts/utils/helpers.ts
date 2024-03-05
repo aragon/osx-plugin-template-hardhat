@@ -195,3 +195,21 @@ export async function createVersion(
 
 export const AragonOSxAsciiArt =
   "                                          ____   _____      \n     /\\                                  / __ \\ / ____|     \n    /  \\   _ __ __ _  __ _  ___  _ __   | |  | | (_____  __ \n   / /\\ \\ | '__/ _` |/ _` |/ _ \\| '_ \\  | |  | |\\___ \\ \\/ / \n  / ____ \\| | | (_| | (_| | (_) | | | | | |__| |____) >  <  \n /_/    \\_\\_|  \\__,_|\\__, |\\___/|_| |_|  \\____/|_____/_/\\_\\ \n                      __/ |                                 \n                     |___/                                  \n";
+
+export type NetworkForkConfig = {
+  blockNumber: number;
+};
+
+export type NetworksForkConfig = {
+  [network: string]: NetworkForkConfig;
+};
+
+export const networksForkConfig: NetworksForkConfig = {
+  [SupportedNetworks.SEPOLIA]: {blockNumber: 5387390},
+};
+
+export function getNetworkForkConfig(
+  network: string
+): NetworkForkConfig | undefined {
+  return networksForkConfig[network];
+}

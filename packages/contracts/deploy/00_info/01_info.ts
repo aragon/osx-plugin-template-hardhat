@@ -2,6 +2,7 @@ import {
   AragonOSxAsciiArt,
   getProductionNetworkName,
   isLocal,
+  getNetworkForkConfig,
 } from '../../utils/helpers';
 import {getNetworkByNameOrAlias} from '@aragon/osx-commons-configs';
 import {UnsupportedNetworkError} from '@aragon/osx-commons-sdk';
@@ -31,12 +32,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     if (networkConfig === null) {
       throw new UnsupportedNetworkError(productionNetworkName);
     }
+    const blockNumber = getNetworkForkConfig(
+      productionNetworkName
+    )?.blockNumber;
     await hre.network.provider.request({
       method: 'hardhat_reset',
       params: [
         {
           forking: {
             jsonRpcUrl: networkConfig.url,
+            blockNumber: blockNumber,
           },
         },
       ],
