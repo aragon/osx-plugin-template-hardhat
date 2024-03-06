@@ -41,6 +41,97 @@ import {expect} from 'chai';
 import {BigNumber} from 'ethers';
 import {ethers} from 'hardhat';
 
+type FixtureResult = {
+  deployer: SignerWithAddress;
+  alice: SignerWithAddress;
+  bob: SignerWithAddress;
+  carol: SignerWithAddress;
+  dave: SignerWithAddress;
+  eve: SignerWithAddress;
+  ivan: SignerWithAddress;
+  initializedPlugin: Multisig;
+  uninitializedPlugin: Multisig;
+  defaultInitData: {
+    members: string[];
+    settings: MultisigSettings;
+  };
+  dao: DAO;
+  dummyActions: DAOStructs.ActionStruct[];
+  dummyMetadata: string;
+};
+
+async function fixture(): Promise<FixtureResult> {
+  const [deployer, alice, bob, carol, dave, eve, ivan] =
+    await ethers.getSigners();
+
+  const dummyMetadata = ethers.utils.hexlify(
+    ethers.utils.toUtf8Bytes('0x123456789')
+  );
+  const dao = await createDaoProxy(deployer, dummyMetadata);
+
+  const pluginImplementation = await new Multisig__factory(deployer).deploy();
+  const proxyFactory = await new ProxyFactory__factory(deployer).deploy(
+    pluginImplementation.address
+  );
+
+  // Create an initialized plugin clone
+  const defaultInitData = {
+    members: [alice.address, bob.address, carol.address],
+    settings: {
+      onlyListed: true,
+      minApprovals: 2,
+    },
+  };
+
+  const pluginInitdata = pluginImplementation.interface.encodeFunctionData(
+    'initialize',
+    [dao.address, defaultInitData.members, defaultInitData.settings]
+  );
+  const deploymentTx1 = await proxyFactory.deployUUPSProxy(pluginInitdata);
+  const proxyCreatedEvent1 = await findEvent<ProxyCreatedEvent>(
+    deploymentTx1,
+    proxyFactory.interface.getEvent('ProxyCreated').name
+  );
+  const initializedPlugin = Multisig__factory.connect(
+    proxyCreatedEvent1.args.proxy,
+    deployer
+  );
+
+  const deploymentTx2 = await proxyFactory.deployUUPSProxy([]);
+  const proxyCreatedEvent2 = await findEvent<ProxyCreatedEvent>(
+    deploymentTx2,
+    proxyFactory.interface.getEvent('ProxyCreated').name
+  );
+  const uninitializedPlugin = Multisig__factory.connect(
+    proxyCreatedEvent2.args.proxy,
+    deployer
+  );
+
+  const dummyActions: DAOStructs.ActionStruct[] = [
+    {
+      to: deployer.address,
+      data: '0x1234',
+      value: 0,
+    },
+  ];
+
+  return {
+    deployer,
+    alice,
+    bob,
+    carol,
+    dave,
+    eve,
+    ivan,
+    initializedPlugin,
+    uninitializedPlugin,
+    defaultInitData,
+    dao,
+    dummyActions,
+    dummyMetadata,
+  };
+}
+
 describe('Multisig', function () {
   describe('initialize', async () => {
     it('reverts if trying to re-initialize', async () => {
@@ -2139,94 +2230,3 @@ describe('Multisig', function () {
     });
   });
 });
-
-type FixtureResult = {
-  deployer: SignerWithAddress;
-  alice: SignerWithAddress;
-  bob: SignerWithAddress;
-  carol: SignerWithAddress;
-  dave: SignerWithAddress;
-  eve: SignerWithAddress;
-  ivan: SignerWithAddress;
-  initializedPlugin: Multisig;
-  uninitializedPlugin: Multisig;
-  defaultInitData: {
-    members: string[];
-    settings: MultisigSettings;
-  };
-  dao: DAO;
-  dummyActions: DAOStructs.ActionStruct[];
-  dummyMetadata: string;
-};
-
-async function fixture(): Promise<FixtureResult> {
-  const [deployer, alice, bob, carol, dave, eve, ivan] =
-    await ethers.getSigners();
-
-  const dummyMetadata = ethers.utils.hexlify(
-    ethers.utils.toUtf8Bytes('0x123456789')
-  );
-  const dao = await createDaoProxy(deployer, dummyMetadata);
-
-  const pluginImplementation = await new Multisig__factory(deployer).deploy();
-  const proxyFactory = await new ProxyFactory__factory(deployer).deploy(
-    pluginImplementation.address
-  );
-
-  // Create an initialized plugin clone
-  const defaultInitData = {
-    members: [alice.address, bob.address, carol.address],
-    settings: {
-      onlyListed: true,
-      minApprovals: 2,
-    },
-  };
-
-  const pluginInitdata = pluginImplementation.interface.encodeFunctionData(
-    'initialize',
-    [dao.address, defaultInitData.members, defaultInitData.settings]
-  );
-  const deploymentTx1 = await proxyFactory.deployUUPSProxy(pluginInitdata);
-  const proxyCreatedEvent1 = await findEvent<ProxyCreatedEvent>(
-    deploymentTx1,
-    proxyFactory.interface.getEvent('ProxyCreated').name
-  );
-  const initializedPlugin = Multisig__factory.connect(
-    proxyCreatedEvent1.args.proxy,
-    deployer
-  );
-
-  const deploymentTx2 = await proxyFactory.deployUUPSProxy([]);
-  const proxyCreatedEvent2 = await findEvent<ProxyCreatedEvent>(
-    deploymentTx2,
-    proxyFactory.interface.getEvent('ProxyCreated').name
-  );
-  const uninitializedPlugin = Multisig__factory.connect(
-    proxyCreatedEvent2.args.proxy,
-    deployer
-  );
-
-  const dummyActions: DAOStructs.ActionStruct[] = [
-    {
-      to: deployer.address,
-      data: '0x1234',
-      value: 0,
-    },
-  ];
-
-  return {
-    deployer,
-    alice,
-    bob,
-    carol,
-    dave,
-    eve,
-    ivan,
-    initializedPlugin,
-    uninitializedPlugin,
-    defaultInitData,
-    dao,
-    dummyActions,
-    dummyMetadata,
-  };
-}

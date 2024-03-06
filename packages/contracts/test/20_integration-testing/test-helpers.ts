@@ -1,10 +1,18 @@
-import {IPlugin, ProxyFactory__factory} from '../../typechain';
+import {METADATA, VERSION} from '../../plugin-settings';
+import {
+  IPlugin,
+  PluginUpgradeableSetup__factory,
+  ProxyFactory__factory,
+} from '../../typechain';
 import {ProxyCreatedEvent} from '../../typechain/@aragon/osx-commons-contracts/src/utils/deployment/ProxyFactory';
+import {PluginUUPSUpgradeable__factory} from '../../typechain/factories/@aragon/osx-v1.0.0/core/plugin';
 import {hashHelpers} from '../../utils/helpers';
 import {
   DAO_PERMISSIONS,
   PLUGIN_SETUP_PROCESSOR_PERMISSIONS,
+  PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS,
   findEvent,
+  getNamedTypesFromMetadata,
 } from '@aragon/osx-commons-sdk';
 import {
   PluginSetupProcessorEvents,
@@ -13,6 +21,7 @@ import {
   DAOStructs,
   DAO,
   DAO__factory,
+  PluginRepo,
 } from '@aragon/osx-ethers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
@@ -215,6 +224,115 @@ async function checkPermissions(
   ) {
     throw `The used signer does not have the permission with ID '${applyPermissionId}' granted and thus cannot apply the setup`;
   }
+}
+
+export async function updateFromBuildTest(
+  dao: DAO,
+  deployer: SignerWithAddress,
+  psp: PluginSetupProcessor,
+  pluginRepo: PluginRepo,
+  pluginSetupRefLatestBuild: PluginSetupProcessorStructs.PluginSetupRefStruct,
+  build: number,
+  installationInputs: any[],
+  updateInputs: any[]
+) {
+  // Grant deployer all required permissions
+  await dao
+    .connect(deployer)
+    .grant(
+      psp.address,
+      deployer.address,
+      PLUGIN_SETUP_PROCESSOR_PERMISSIONS.APPLY_INSTALLATION_PERMISSION_ID
+    );
+  await dao
+    .connect(deployer)
+    .grant(
+      psp.address,
+      deployer.address,
+      PLUGIN_SETUP_PROCESSOR_PERMISSIONS.APPLY_UPDATE_PERMISSION_ID
+    );
+
+  await dao
+    .connect(deployer)
+    .grant(dao.address, psp.address, DAO_PERMISSIONS.ROOT_PERMISSION_ID);
+
+  // Install build 1.
+  const pluginSetupRefBuild1 = {
+    versionTag: {
+      release: VERSION.release,
+      build: build,
+    },
+    pluginSetupRepo: pluginRepo.address,
+  };
+  const installationResults = await installPLugin(
+    deployer,
+    psp,
+    dao,
+    pluginSetupRefBuild1,
+    ethers.utils.defaultAbiCoder.encode(
+      getNamedTypesFromMetadata(
+        METADATA.build.pluginSetup.prepareInstallation.inputs
+      ),
+      installationInputs
+    )
+  );
+
+  // Get the plugin address.
+  const plugin = PluginUUPSUpgradeable__factory.connect(
+    installationResults.preparedEvent.args.plugin,
+    deployer
+  );
+
+  // Check that the implementation of the plugin proxy matches the latest build
+  const implementationBuild1 = await PluginUpgradeableSetup__factory.connect(
+    (
+      await pluginRepo['getVersion((uint8,uint16))'](
+        pluginSetupRefBuild1.versionTag
+      )
+    ).pluginSetup,
+    deployer
+  ).implementation();
+  expect(await plugin.implementation()).to.equal(implementationBuild1);
+
+  // Grant the PSP the permission to upgrade the plugin implementation.
+  await dao
+    .connect(deployer)
+    .grant(
+      plugin.address,
+      psp.address,
+      PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS.UPGRADE_PLUGIN_PERMISSION_ID
+    );
+
+  // Update build 1 to the latest build
+  await expect(
+    updatePlugin(
+      deployer,
+      psp,
+      dao,
+      plugin,
+      installationResults.preparedEvent.args.preparedSetupData.helpers,
+      pluginSetupRefBuild1,
+      pluginSetupRefLatestBuild,
+      ethers.utils.defaultAbiCoder.encode(
+        getNamedTypesFromMetadata(
+          METADATA.build.pluginSetup.prepareUpdate[1].inputs
+        ),
+        updateInputs
+      )
+    )
+  ).to.not.be.reverted;
+
+  // Check that the implementation of the plugin proxy matches the latest build
+  const implementationLatestBuild =
+    await PluginUpgradeableSetup__factory.connect(
+      (
+        await pluginRepo['getVersion((uint8,uint16))'](
+          pluginSetupRefLatestBuild.versionTag
+        )
+      ).pluginSetup,
+      deployer
+    ).implementation();
+  expect(await plugin.implementation()).to.equal(implementationLatestBuild);
 }
 
 // TODO Move into OSX commons as part of Task OS-928.
