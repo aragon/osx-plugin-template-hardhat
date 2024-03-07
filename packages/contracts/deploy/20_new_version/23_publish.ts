@@ -1,5 +1,6 @@
 import {
   METADATA,
+  PLUGIN_CONTRACT_NAME,
   PLUGIN_REPO_ENS_SUBDOMAIN_NAME,
   PLUGIN_SETUP_CONTRACT_NAME,
   VERSION,
@@ -7,6 +8,8 @@ import {
 import {
   findPluginRepo,
   getPastVersionCreatedEvents,
+  impersonatedManagementDaoSigner,
+  isLocal,
   pluginEnsDomain,
 } from '../../utils/helpers';
 import {
@@ -14,6 +17,7 @@ import {
   toHex,
   uploadToIPFS,
 } from '@aragon/osx-commons-sdk';
+import {writeFile} from 'fs/promises';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
@@ -77,25 +81,42 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     );
   }
 
-  // Create Version
+  if (setup == undefined || setup?.receipt == undefined) {
+    throw Error('setup deployment unavailable');
+  }
+
+  const isDeployerMaintainer = await pluginRepo.isGranted(
+    pluginRepo.address,
+    deployer.address,
+    PLUGIN_REPO_PERMISSIONS.MAINTAINER_PERMISSION_ID,
+    []
+  );
+
+  // If this is a local deployment and the deployer doesn't have `MAINTAINER_PERMISSION_ID`  permission
+  // we impersonate the management DAO for integration testing purposes.
+  const signer =
+    isDeployerMaintainer || !isLocal(hre)
+      ? deployer
+      : await impersonatedManagementDaoSigner(hre);
+
+  // Check if the signer has the permission to maintain the plugin repo
   if (
-    await pluginRepo.callStatic.isGranted(
+    await pluginRepo.isGranted(
       pluginRepo.address,
-      deployer.address,
+      signer.address,
       PLUGIN_REPO_PERMISSIONS.MAINTAINER_PERMISSION_ID,
       []
     )
   ) {
-    const tx = await pluginRepo.createVersion(
-      VERSION.release,
-      setup.address,
-      toHex(buildMetadataURI),
-      toHex(releaseMetadataURI)
-    );
-
-    if (setup == undefined || setup?.receipt == undefined) {
-      throw Error('setup deployment unavailable');
-    }
+    // Create the new version
+    const tx = await pluginRepo
+      .connect(signer)
+      .createVersion(
+        VERSION.release,
+        setup.address,
+        toHex(buildMetadataURI),
+        toHex(releaseMetadataURI)
+      );
 
     await tx.wait();
 
@@ -110,8 +131,31 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       `Published ${PLUGIN_SETUP_CONTRACT_NAME} at ${setup.address} in PluginRepo ${PLUGIN_REPO_ENS_SUBDOMAIN_NAME} at ${pluginRepo.address}.`
     );
   } else {
-    throw Error(
-      `The new version cannot be published because the deployer ('${deployer.address}') is lacking the ${PLUGIN_REPO_PERMISSIONS.MAINTAINER_PERMISSION_ID} permission on repo (${pluginRepo.address}).`
+    // The deployer does not have `MAINTAINER_PERMISSION_ID` permission and we are not deploying to a production network,
+    // so we write the data into a file for a management DAO member to create a proposal from it.
+    const data = {
+      proposalTitle: `Publish '${PLUGIN_CONTRACT_NAME}' plugin v${VERSION.release}.${VERSION.build}`,
+      proposalSummary: `Publishes v${VERSION.release}.${VERSION.build} of the '${PLUGIN_CONTRACT_NAME}' plugin in the '${ensDomain}' plugin repo.`,
+      proposalDescription: `Publishes the '${PLUGIN_SETUP_CONTRACT_NAME}' deployed at '${setup.address}' 
+      as v${VERSION.release}.${VERSION.build} in the '${ensDomain}' plugin repo at '${pluginRepo.address}', 
+      with release metadata '${releaseMetadataURI}' and (immutable) build metadata '${buildMetadataURI}'.`,
+      actions: [
+        {
+          to: pluginRepo.address,
+          createVersion: {
+            _release: VERSION.release,
+            _pluginSetup: setup.address,
+            _buildMetadata: toHex(buildMetadataURI),
+            _releaseMetadata: toHex(releaseMetadataURI),
+          },
+        },
+      ],
+    };
+
+    const path = `./createVersionProposalData-${hre.network.name}.json`;
+    await writeFile(path, JSON.stringify(data, null, 2));
+    console.log(
+      `Saved data to '${path}'. Use this to create a proposal on the managing DAO calling the 'createVersion' function on the ${ensDomain} plugin repo deployed at ${pluginRepo.address}.`
     );
   }
 };
