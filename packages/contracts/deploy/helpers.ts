@@ -99,7 +99,9 @@ export async function getContractAddress(
     if (contract) {
       return contract.address;
     }
-  } catch (e) {}
+  } catch (e) {
+    // prettier-ignore
+  }
 
   try {
     if (!hre.testingFork.osxVersion && !hre.testingFork.activeContracts) {
@@ -113,7 +115,9 @@ export async function getContractAddress(
     if (activeContracts && activeContracts[networkName][contractName]) {
       return activeContracts[networkName][contractName];
     }
-  } catch (e) {}
+  } catch (e) {
+    // prettier-ignore
+  }
 
   return getLatestContractAddress(contractName, hre);
 }
