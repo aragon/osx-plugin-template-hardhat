@@ -1,14 +1,20 @@
-import {readStorage, ERC1967_IMPLEMENTATION_SLOT} from './storage';
 import {DAO, PluginRepo} from '@aragon/osx-ethers';
+import {defaultAbiCoder} from '@ethersproject/abi';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
 import {Contract, ContractFactory, errors} from 'ethers';
-import {upgrades} from 'hardhat';
+import {ethers, upgrades} from 'hardhat';
 
 // The protocol version number of contracts not having a `getProtocolVersion()` function because they don't inherit from `ProtocolVersion.sol` yet.
 export const IMPLICIT_INITIAL_PROTOCOL_VERSION: [number, number, number] = [
   1, 0, 0,
 ];
+
+// See https://eips.ethereum.org/EIPS/eip-1967
+export const ERC1967_IMPLEMENTATION_SLOT =
+  '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc'; // bytes32(uint256(keccak256('eip1967.proxy.implementation')) - 1)
+
+export const OZ_INITIALIZED_SLOT_POSITION = 0;
 
 // Deploys a proxy and a new implementation from the same factory and checks that the upgrade works.
 export async function deployAndUpgradeSelfCheck(
@@ -70,22 +76,20 @@ export async function deployAndUpgradeSelfCheck(
   const toImplementation = (await factory.deploy()).address;
 
   // Confirm that the two implementations are different
-  const fromImplementation = await readStorage(
-    proxy.address,
-    ERC1967_IMPLEMENTATION_SLOT,
-    ['address']
-  );
+
+  const fromImplementation = await ethers.provider
+    .getStorageAt(proxy.address, ERC1967_IMPLEMENTATION_SLOT)
+    .then(encoded => defaultAbiCoder.decode(['address'], encoded)[0]);
+
   expect(toImplementation).to.not.equal(fromImplementation);
 
   // Upgrade from the old to the new implementation
   await proxy.connect(upgrader).upgradeTo(toImplementation);
 
   // Confirm that the proxy points to the new implementation
-  const implementationAfterUpgrade = await readStorage(
-    proxy.address,
-    ERC1967_IMPLEMENTATION_SLOT,
-    ['address']
-  );
+  const implementationAfterUpgrade = await ethers.provider
+    .getStorageAt(proxy.address, ERC1967_IMPLEMENTATION_SLOT)
+    .then(encoded => defaultAbiCoder.decode(['address'], encoded)[0]);
   expect(implementationAfterUpgrade).to.equal(toImplementation);
 }
 
@@ -116,11 +120,9 @@ export async function deployAndUpgradeFromToCheck(
     }
   );
 
-  const fromImplementation = await readStorage(
-    proxy.address,
-    ERC1967_IMPLEMENTATION_SLOT,
-    ['address']
-  );
+  const fromImplementation = await ethers.provider
+    .getStorageAt(proxy.address, ERC1967_IMPLEMENTATION_SLOT)
+    .then(encoded => defaultAbiCoder.decode(['address'], encoded)[0]);
 
   // Grant the upgrade permission
   const grantArgs: [string, string, string] = [
@@ -159,11 +161,9 @@ export async function deployAndUpgradeFromToCheck(
     constructorArgs: [],
   });
 
-  const toImplementation = await readStorage(
-    proxy.address,
-    ERC1967_IMPLEMENTATION_SLOT,
-    ['address']
-  );
+  const toImplementation = await ethers.provider
+    .getStorageAt(proxy.address, ERC1967_IMPLEMENTATION_SLOT)
+    .then(encoded => defaultAbiCoder.decode(['address'], encoded)[0]);
   return {proxy, fromImplementation, toImplementation};
 }
 

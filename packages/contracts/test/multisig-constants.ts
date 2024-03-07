@@ -15,8 +15,3 @@ export const MULTISIG_INTERFACE = new ethers.utils.Interface([
 export const UPDATE_MULTISIG_SETTINGS_PERMISSION_ID = ethers.utils.id(
   'UPDATE_MULTISIG_SETTINGS_PERMISSION'
 );
-
-export type MultisigSettings = {
-  minApprovals: number;
-  onlyListed: boolean;
-};
