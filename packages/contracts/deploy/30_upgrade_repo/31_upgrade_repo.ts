@@ -21,6 +21,11 @@ import path from 'path';
 
 type SemVer = [number, number, number];
 
+/**
+ * This function pushes an upgrade to the plugin repo. It does not upgrade the actual plugin - this requires
+ * DAOs installing said plugin to upgrade the plugin themselves. In Aragon's case, this requires the management
+ * DAO to create a proposal to upgrade the plugin.
+ */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const [deployer] = await hre.ethers.getSigners();
   const productionNetworkName: string = getProductionNetworkName(hre);
