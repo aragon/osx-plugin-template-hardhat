@@ -1,5 +1,11 @@
-import {PLUGIN_SETUP_CONTRACT_NAME} from '../../plugin-settings';
-import {MyPluginSetup__factory, MyPlugin__factory} from '../../typechain';
+import {
+  GOVERNANCE_ERC20_CONTRACT_NAME,
+  GOVERNANCE_ERC20_DEPLOY_ARGS,
+  GOVERNANCE_WRAPPED_ERC20_CONTRACT_NAME,
+  GOVERNANCE_WRAPPED_ERC20_DEPLOY_ARGS,
+  PLUGIN_SETUP_CONTRACT_NAME,
+} from '../../plugin-settings';
+import {TokenVotingSetup__factory, TokenVoting__factory} from '../../typechain';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
@@ -17,14 +23,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Get the plugin setup address
   const setupDeployment = await deployments.get(PLUGIN_SETUP_CONTRACT_NAME);
-  const setup = MyPluginSetup__factory.connect(
+  const setup = TokenVotingSetup__factory.connect(
     setupDeployment.address,
     deployer
   );
   // Get the plugin implementation address
-  const implementation = MyPlugin__factory.connect(
+  const implementation = TokenVoting__factory.connect(
     await setup.implementation(),
     deployer
+  );
+
+  const governanceERC20DeployResult = await deployments.get(
+    GOVERNANCE_ERC20_CONTRACT_NAME
+  );
+  const governanceWrappedERC20DeployResult = await deployments.get(
+    GOVERNANCE_WRAPPED_ERC20_CONTRACT_NAME
   );
 
   // Queue the plugin setup and implementation for verification on the block explorers
@@ -32,9 +45,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     address: setup.address,
     args: setupDeployment.args,
   });
+
   hre.aragonToVerifyContracts.push({
     address: implementation.address,
-    args: [],
+    args: [
+      governanceERC20DeployResult.address,
+      governanceWrappedERC20DeployResult.address,
+    ],
+  });
+
+  hre.aragonToVerifyContracts.push({
+    address: governanceERC20DeployResult.address,
+    args: GOVERNANCE_ERC20_DEPLOY_ARGS,
+  });
+
+  hre.aragonToVerifyContracts.push({
+    address: governanceWrappedERC20DeployResult.address,
+    args: GOVERNANCE_WRAPPED_ERC20_DEPLOY_ARGS,
   });
 };
 
