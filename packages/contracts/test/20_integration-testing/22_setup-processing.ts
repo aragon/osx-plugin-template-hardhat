@@ -130,7 +130,7 @@ async function fixture(): Promise<FixtureResult> {
   };
 }
 
-describe.only(`PluginSetup processing on network '${productionNetworkName}'`, function () {
+describe(`PluginSetup processing on network '${productionNetworkName}'`, function () {
   it('installs & uninstalls the current build with a token', async () => {
     const {
       alice,
@@ -312,7 +312,7 @@ describe.only(`PluginSetup processing on network '${productionNetworkName}'`, fu
     );
   });
 
-  it.only('updates from build 2 to the current build', async () => {
+  it('updates from build 2 to the current build', async () => {
     const {
       deployer,
       psp,

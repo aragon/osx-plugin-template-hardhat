@@ -54,7 +54,6 @@ export async function installPLugin(
   const plugin = preparedEvent.args.plugin;
   const preparedPermissions = preparedEvent.args.preparedSetupData.permissions;
 
-  console.log('1b');
   await checkPermissions(
     preparedPermissions,
     dao,
@@ -153,7 +152,6 @@ export async function updatePlugin(
     pluginSetupRefUpdate.pluginSetupRepo
   );
 
-  console.log('2a');
   const prepareTx = await psp.connect(signer).prepareUpdate(dao.address, {
     currentVersionTag: pluginSetupRefCurrent.versionTag,
     newVersionTag: pluginSetupRefUpdate.versionTag,
@@ -171,7 +169,6 @@ export async function updatePlugin(
     );
 
   const preparedPermissions = preparedEvent.args.preparedSetupData.permissions;
-  console.log('2b');
   await checkPermissions(
     preparedPermissions,
     dao,
@@ -179,7 +176,7 @@ export async function updatePlugin(
     signer,
     PLUGIN_SETUP_PROCESSOR_PERMISSIONS.APPLY_UPDATE_PERMISSION_ID
   );
-  console.log('2c');
+
   const applyTx = await psp.connect(signer).applyUpdate(dao.address, {
     plugin: plugin.address,
     pluginSetupRef: pluginSetupRefUpdate,
@@ -187,7 +184,7 @@ export async function updatePlugin(
     permissions: preparedPermissions,
     helpersHash: hashHelpers(preparedEvent.args.preparedSetupData.helpers),
   });
-  console.log('2d');
+
   const appliedEvent =
     await findEvent<PluginSetupProcessorEvents.UpdateAppliedEvent>(
       applyTx,
@@ -259,11 +256,11 @@ export async function updateFromBuildTest(
     .connect(deployer)
     .grant(dao.address, psp.address, DAO_PERMISSIONS.ROOT_PERMISSION_ID);
 
-  // Install build
+  // Install build 1.
   const pluginSetupRefBuild1 = {
     versionTag: {
       release: VERSION.release,
-      build,
+      build: build,
     },
     pluginSetupRepo: pluginRepo.address,
   };
@@ -295,7 +292,6 @@ export async function updateFromBuildTest(
     ).pluginSetup,
     deployer
   ).implementation();
-
   expect(await plugin.implementation()).to.equal(implementationBuild1);
 
   // Grant the PSP the permission to upgrade the plugin implementation.
@@ -307,39 +303,7 @@ export async function updateFromBuildTest(
       PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS.UPGRADE_PLUGIN_PERMISSION_ID
     );
 
-  // Update build to the latest build
-  await updatePlugin(
-    deployer,
-    psp,
-    dao,
-    plugin,
-    installationResults.preparedEvent.args.preparedSetupData.helpers,
-    pluginSetupRefBuild1,
-    pluginSetupRefLatestBuild,
-    ethers.utils.defaultAbiCoder.encode(
-      getNamedTypesFromMetadata(
-        METADATA.build.pluginSetup.prepareUpdate[1].inputs
-      ),
-      updateInputs
-    )
-  );
-
-  await updatePlugin(
-    deployer,
-    psp,
-    dao,
-    plugin,
-    installationResults.preparedEvent.args.preparedSetupData.helpers,
-    pluginSetupRefBuild1,
-    pluginSetupRefLatestBuild,
-    ethers.utils.defaultAbiCoder.encode(
-      getNamedTypesFromMetadata(
-        METADATA.build.pluginSetup.prepareUpdate[1].inputs
-      ),
-      updateInputs
-    )
-  );
-
+  // Update build 1 to the latest build
   await expect(
     updatePlugin(
       deployer,

@@ -1227,7 +1227,6 @@ describe('TokenVoting', function () {
           0
         );
 
-        console.log(signers.length);
         await expect(voting.connect(vitalik).vote(id, VoteOption.Yes, false))
           .to.be.revertedWithCustomError(voting, 'VoteCastForbidden')
           .withArgs(id, vitalik.address, VoteOption.Yes);
