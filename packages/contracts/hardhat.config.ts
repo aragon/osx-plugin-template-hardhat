@@ -59,7 +59,7 @@ function getHardhatNetworkAccountsConfig(
       const oneEther = BigNumber.from(10).pow(18);
       return {
         privateKey,
-        balance: oneEther.mul(1000).toString(),
+        balance: oneEther.mul(10000).toString(),
       };
     }
   );
@@ -168,7 +168,9 @@ const config: HardhatUserConfig = {
     tests: './test',
     deploy: './deploy',
   },
-
+  mocha: {
+    timeout: 60_000,
+  },
   solidity: {
     version: '0.8.17',
     settings: {
