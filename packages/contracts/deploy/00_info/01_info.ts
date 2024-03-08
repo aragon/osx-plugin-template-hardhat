@@ -4,6 +4,7 @@ import {
   isLocal,
 } from '../../utils/helpers';
 import {getNetworkByNameOrAlias} from '@aragon/osx-commons-configs';
+import {UnsupportedNetworkError} from '@aragon/osx-commons-sdk';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
@@ -26,7 +27,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     );
 
     // Fork the network provided in the `.env` file
-    const networkConfig = getNetworkByNameOrAlias(productionNetworkName)!;
+    const networkConfig = getNetworkByNameOrAlias(productionNetworkName);
+    if (networkConfig === null) {
+      throw new UnsupportedNetworkError(productionNetworkName);
+    }
     await hre.network.provider.request({
       method: 'hardhat_reset',
       params: [

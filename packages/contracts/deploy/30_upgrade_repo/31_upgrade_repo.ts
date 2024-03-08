@@ -1,20 +1,41 @@
-import {findPluginRepo, getProductionNetworkName} from '../../utils/helpers';
+import {
+  findPluginRepo,
+  getProductionNetworkName,
+  impersonatedManagementDaoSigner,
+  isLocal,
+} from '../../utils/helpers';
 import {
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
 } from '@aragon/osx-commons-configs';
-import {PLUGIN_REPO_PERMISSIONS} from '@aragon/osx-commons-sdk';
+import {
+  PLUGIN_REPO_PERMISSIONS,
+  UnsupportedNetworkError,
+} from '@aragon/osx-commons-sdk';
 import {PluginRepo__factory} from '@aragon/osx-ethers';
 import {BytesLike} from 'ethers';
+import {writeFile} from 'fs/promises';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import path from 'path';
 
 type SemVer = [number, number, number];
 
+/**
+ * Upgrades the plugin repo to the latest implementation.
+ * @param {HardhatRuntimeEnvironment} hre
+ */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const [deployer] = await hre.ethers.getSigners();
   const productionNetworkName: string = getProductionNetworkName(hre);
+  const network = getNetworkNameByAlias(productionNetworkName);
+  if (network === null) {
+    throw new UnsupportedNetworkError(productionNetworkName);
+  }
+  const networkDeployments = getLatestNetworkDeployment(network);
+  if (networkDeployments === null) {
+    throw `Deployments are not available on network ${network}.`;
+  }
 
   // Get PluginRepo
   const {pluginRepo, ensDomain} = await findPluginRepo(hre);
@@ -28,8 +49,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Get the latest `PluginRepo` implementation as the upgrade target
   const latestPluginRepoImplementation = PluginRepo__factory.connect(
-    getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
-      .PluginRepoBase.address,
+    networkDeployments.PluginRepoBase.address,
     deployer
   );
 
@@ -53,22 +73,36 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // Re-initialization will happen through a call to `function initializeFrom(uint8[3] calldata _previousProtocolVersion, bytes calldata _initData)`
   // that Aragon might add to the `PluginRepo` contract once it's required.
   /*
-  // Define the `initData` arguments that 
+  // Define the `_initData` arguments 
   const initData: BytesLike[] = [];
   // Encode the call to `function initializeFrom(uint8[3] calldata _previousProtocolVersion, bytes calldata _initData)` with `initData`
   const initializeFromCalldata =
-    newPluginRepoImplementation.interface.encodeFunctionData('initializeFrom', [
+    latestPluginRepoImplementation.interface.encodeFunctionData('initializeFrom', [
       current,
       initData,
     ]);
   */
   const initializeFromCalldata: BytesLike = [];
 
-  // Check if deployer has the permission to upgrade the plugin repo
+  const isDeployerUpgrader = await pluginRepo.isGranted(
+    pluginRepo.address,
+    deployer.address,
+    PLUGIN_REPO_PERMISSIONS.UPGRADE_REPO_PERMISSION_ID,
+    []
+  );
+
+  // If this is a local deployment and the deployer doesn't have `UPGRADE_REPO_PERMISSION_ID` permission
+  // we impersonate the management DAO for integration testing purposes.
+  const signer =
+    isDeployerUpgrader || !isLocal(hre)
+      ? deployer
+      : await impersonatedManagementDaoSigner(hre);
+
+  // Check if the signer has the permission to upgrade the plugin repo
   if (
     await pluginRepo.isGranted(
       pluginRepo.address,
-      deployer.address,
+      signer.address,
       PLUGIN_REPO_PERMISSIONS.UPGRADE_REPO_PERMISSION_ID,
       []
     )
@@ -84,9 +118,35 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       await pluginRepo.upgradeTo(latestPluginRepoImplementation.address);
     }
   } else {
-    throw Error(
-      `The new version cannot be published because the deployer ('${deployer.address}')
-      is lacking the ${PLUGIN_REPO_PERMISSIONS.UPGRADE_REPO_PERMISSION_ID} permission.`
+    // The deployer does not have `UPGRADE_REPO_PERMISSION_ID` permission and we are not deploying to a production network,
+    // so we write the data into a file for a management DAO member to create a proposal from it.
+    const upgradeAction =
+      initializeFromCalldata.length === 0
+        ? {
+            to: pluginRepo.address,
+            upgradeTo: {
+              NewImplementation: latestPluginRepoImplementation.address,
+            },
+          }
+        : {
+            to: pluginRepo.address,
+            upgradeToAndCall: {
+              NewImplementation: latestPluginRepoImplementation.address,
+              Data: initializeFromCalldata,
+              PayableAmount: 0,
+            },
+          };
+    const data = {
+      proposalTitle: `Upgrade the '${ensDomain}' plugin repo`,
+      proposalSummary: `Upgrades '${ensDomain}' plugin repo at '${pluginRepo.address}',' plugin in the '${ensDomain}' plugin repo.`,
+      proposalDescription: `TODO: Describe the changes to the 'PluginRepo' implementation.`,
+      actions: [upgradeAction],
+    };
+
+    const path = `./upgradeRepoProposalData-${hre.network.name}.json`;
+    await writeFile(path, JSON.stringify(data, null, 2));
+    console.log(
+      `Saved data to '${path}'. Use this to create a proposal on the managing DAO calling the 'upgradeTo' or 'upgradeToAndCall' function on the ${ensDomain} plugin repo deployed at ${pluginRepo.address}.`
     );
   }
 };
@@ -102,11 +162,18 @@ func.skip = async (hre: HardhatRuntimeEnvironment) => {
 
   const [deployer] = await hre.ethers.getSigners();
   const productionNetworkName: string = getProductionNetworkName(hre);
+  const network = getNetworkNameByAlias(productionNetworkName);
+  if (network === null) {
+    throw new UnsupportedNetworkError(productionNetworkName);
+  }
+  const networkDeployments = getLatestNetworkDeployment(network);
+  if (networkDeployments === null) {
+    throw `Deployments are not available on network ${network}.`;
+  }
 
   // Get the latest `PluginRepo` implementation as the upgrade target
   const latestPluginRepoImplementation = PluginRepo__factory.connect(
-    getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
-      .PluginRepoBase.address,
+    networkDeployments.PluginRepoBase.address,
     deployer
   );
 
