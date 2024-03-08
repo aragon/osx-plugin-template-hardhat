@@ -171,21 +171,37 @@ Deploy the contracts to the local Hardhat Network (being forked from the network
 yarn deploy --tags CreateRepo,NewVersion
 ```
 
-This will create a plugin repo and publish the the first version (`v1.1`) of your plugin.
-
-Deploy the contracts to sepolia with
+This will create a plugin repo and publish the first version (`v1.1`) of your plugin.
+By adding the tag `TransferOwnershipToManagmentDao`, the `ROOT_PERMISSION_ID`, `MAINTAINER_PERMISSION_ID`, and
+`UPGRADE_REPO_PERMISSION_ID` are granted to the management DAO and revoked from the deployer.
+You can do this directly
 
 ```sh
-yarn deploy --network sepolia --tags CreateRepo,NewVersion,Verification
+yarn deploy --tags CreateRepo,NewVersion,TransferOwnershipToManagmentDao
 ```
 
-This will create a plugin repo, publish the the first version (`v1.1`) of your plugin, and verfiy the contracts on sepolia.
+or at a later point by executing
+
+```sh
+yarn deploy --tags TransferOwnershipToManagmentDao
+```
+
+To deploy the contracts to a production network use the `--network` option, for example
+
+```sh
+yarn deploy --network sepolia --tags CreateRepo,NewVersion,TransferOwnershipToManagmentDao,Verification
+```
+
+This will create a plugin repo, publish the first version (`v1.1`) of your plugin, transfer permissions to the
+management DAO, and lastly verfiy the contracts on sepolia.
 
 If you want to deploy a new version of your plugin afterwards (e.g., `1.2`), simply change the `VERSION` entry in the `packages/contracts/plugin-settings.ts` file and use
 
 ```sh
 yarn deploy --network sepolia --tags NewVersion,Verification
 ```
+
+Note, that if the deploying account doesn't own the repo anymore, this will create a `createVersionProposalData-sepolia.json` containing the data for a management DAO signer to create a proposal publishing a new version.
 
 Note, that if you include the `CreateRepo` tag after you've created your plugin repo already, this part of the script will be skipped.
 
@@ -205,6 +221,8 @@ yarn deploy --network sepolia --tags UpgradeRepo
 
 This will upgrade your plugin repo to the latest Aragon OSx protocol version implementation, which might include new features and security updates.
 **For this to work, make sure that you are using the latest version of [this repository](https://github.com/aragon/osx-plugin-template-hardhat) in your fork.**
+
+Note, that if the deploying account doesn't own the repo anymore, this will create a `upgradeRepoProposalData-sepolia.json` containing the data for a management DAO signer to create a proposal upgrading the repo.
 
 ## Subgraph
 

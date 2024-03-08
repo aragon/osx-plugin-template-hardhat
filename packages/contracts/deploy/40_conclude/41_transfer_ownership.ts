@@ -30,7 +30,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   );
 
   const permissions: DAOStructs.MultiTargetPermissionStruct[] = [
-    // Grant to the managment DAO
+    // Grant to the management DAO
     {
       operation: Operation.Grant,
       where: pluginRepo.address,

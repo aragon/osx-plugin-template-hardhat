@@ -1,5 +1,5 @@
 {
-  "name": "@aragon/osx-plugin-template",
+  "name": "@aragon/multisig-plugin",
   "description": "A template to fork from when developing an Aragon OSx plugin",
   "version": "0.0.1-alpha.1",
   "license": "AGPL-3.0-or-later",

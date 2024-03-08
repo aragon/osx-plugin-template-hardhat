@@ -1,5 +1,5 @@
 {
-  "name": "@aragon/osx-plugin-template-subgraph",
+  "name": "@aragon/multisig-plugin-subgraph",
   "version": "1.0.0",
   "license": "AGPL-3.0-or-later",
   "scripts": {
