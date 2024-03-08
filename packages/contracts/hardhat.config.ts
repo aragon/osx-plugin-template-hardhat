@@ -105,7 +105,7 @@ const config: HardhatUserConfig = {
       throwOnTransactionFailures: true,
       throwOnCallFailures: true,
       blockGasLimit: BigNumber.from(10).pow(6).mul(30).toNumber(), // 30 million, really high to test some things that are only possible with a higher block gas limit
-      gasPrice: BigNumber.from(10).pow(9).mul(150).toNumber(), // 150 gwei
+      gasPrice: BigNumber.from(10).pow(9).mul(1000).toNumber(), // 1000 gwei
       accounts: getHardhatNetworkAccountsConfig(
         Object.keys(namedAccounts).length
       ),
