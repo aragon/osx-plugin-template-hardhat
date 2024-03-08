@@ -97,7 +97,6 @@ async function fixture(): Promise<FixtureResult> {
   const release = 1;
   const latestVersion = await pluginRepo['getLatestVersion(uint8)'](release);
 
-  console.log('latestVersion', latestVersion);
   const pluginSetup = TokenVotingSetup__factory.connect(
     latestVersion.pluginSetup,
     deployer
