@@ -133,7 +133,6 @@ describe(`PluginSetup processing on network '${productionNetworkName}'`, functio
   it('installs & uninstalls the current build with a token', async () => {
     const {
       alice,
-      bob,
       deployer,
       psp,
       dao,
