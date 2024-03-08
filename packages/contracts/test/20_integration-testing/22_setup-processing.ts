@@ -1,10 +1,8 @@
 import {METADATA, VERSION} from '../../plugin-settings';
-import {governance} from '../../typechain/@openzeppelin/contracts-upgradeable';
 import {getProductionNetworkName, findPluginRepo} from '../../utils/helpers';
 import {
   DEFAULT_VOTING_SETTINGS,
   TokenVotingSettings,
-  spreadSettings,
 } from '../test-utils/token-voting-constants';
 import {
   GovernanceERC20__factory,
@@ -24,10 +22,8 @@ import {
 import {
   DAO_PERMISSIONS,
   PLUGIN_SETUP_PROCESSOR_PERMISSIONS,
-  TIME,
   UnsupportedNetworkError,
   getNamedTypesFromMetadata,
-  pctToRatio,
 } from '@aragon/osx-commons-sdk';
 import {
   PluginSetupProcessor,
@@ -134,7 +130,7 @@ async function fixture(): Promise<FixtureResult> {
   };
 }
 
-describe(`PluginSetup processing on network '${productionNetworkName}'`, function () {
+describe.only(`PluginSetup processing on network '${productionNetworkName}'`, function () {
   it('installs & uninstalls the current build with a token', async () => {
     const {
       alice,
@@ -216,7 +212,7 @@ describe(`PluginSetup processing on network '${productionNetworkName}'`, functio
   });
 
   it('installs & uninstalls the current build without a token', async () => {
-    const {alice, bob, deployer, psp, dao, pluginSetupRefLatestBuild} =
+    const {alice, deployer, psp, dao, pluginSetupRefLatestBuild} =
       await loadFixture(fixture);
 
     // Grant deployer all required permissions
@@ -288,7 +284,7 @@ describe(`PluginSetup processing on network '${productionNetworkName}'`, functio
     );
   });
 
-  it.only('updates from build 1 to the current build', async () => {
+  it('updates from build 1 to the current build', async () => {
     const {
       deployer,
       psp,
@@ -316,7 +312,7 @@ describe(`PluginSetup processing on network '${productionNetworkName}'`, functio
     );
   });
 
-  it('updates from build 2 to the current build', async () => {
+  it.only('updates from build 2 to the current build', async () => {
     const {
       deployer,
       psp,

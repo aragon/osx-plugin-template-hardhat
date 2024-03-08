@@ -15,7 +15,7 @@ import {GovernanceWrappedERC20} from "./ERC20/governance/GovernanceWrappedERC20.
 import {IDAO} from "@aragon/osx-commons-contracts/src/dao/IDAO.sol";
 import {PermissionLib} from "@aragon/osx-commons-contracts/src/permission/PermissionLib.sol";
 import {IPluginSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/IPluginSetup.sol";
-import {PluginSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/PluginSetup.sol";
+import {PluginUpgradeableSetup} from "@aragon/osx-commons-contracts/src/plugin/setup/PluginUpgradeableSetup.sol";
 
 import {MajorityVotingBase} from "./MajorityVotingBase.sol";
 import {TokenVoting} from "./TokenVoting.sol";
@@ -27,7 +27,7 @@ import {ProxyLib} from "@aragon/osx-commons-contracts/src/utils/deployment/Proxy
 /// @notice The setup contract of the `TokenVoting` plugin.
 /// @dev v1.3 (Release 1, Build 3)
 /// @custom:security-contact sirt@aragon.org
-contract TokenVotingSetup is PluginSetup {
+contract TokenVotingSetup is PluginUpgradeableSetup {
     using Address for address;
     using Clones for address;
     using ERC165Checker for address;
@@ -79,7 +79,7 @@ contract TokenVotingSetup is PluginSetup {
     constructor(
         GovernanceERC20 _governanceERC20Base,
         GovernanceWrappedERC20 _governanceWrappedERC20Base
-    ) PluginSetup(address(new TokenVoting())) {
+    ) PluginUpgradeableSetup(address(new TokenVoting())) {
         tokenVotingBase = TokenVoting(IMPLEMENTATION);
         governanceERC20Base = address(_governanceERC20Base);
         governanceWrappedERC20Base = address(_governanceWrappedERC20Base);
@@ -206,6 +206,22 @@ contract TokenVotingSetup is PluginSetup {
 
         preparedSetupData.helpers = helpers;
         preparedSetupData.permissions = permissions;
+    }
+
+    /// @inheritdoc IPluginSetup
+    /// @dev Nothing needs to happen for the update.
+    function prepareUpdate(
+        address _dao,
+        uint16 _currentBuild,
+        SetupPayload calldata _payload
+    )
+        external
+        pure
+        override
+        returns (bytes memory initData, PreparedSetupData memory preparedSetupData)
+    // solhint-disable-next-line no-empty-blocks
+    {
+
     }
 
     /// @inheritdoc IPluginSetup

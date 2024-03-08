@@ -1,7 +1,7 @@
 import {METADATA, VERSION} from '../../plugin-settings';
 import {
   IPlugin,
-  PluginSetup__factory,
+  PluginUpgradeableSetup__factory,
   ProxyFactory__factory,
 } from '../../typechain';
 import {ProxyCreatedEvent} from '../../typechain/@aragon/osx-commons-contracts/src/utils/deployment/ProxyFactory';
@@ -153,6 +153,7 @@ export async function updatePlugin(
     pluginSetupRefUpdate.pluginSetupRepo
   );
 
+  console.log('2a');
   const prepareTx = await psp.connect(signer).prepareUpdate(dao.address, {
     currentVersionTag: pluginSetupRefCurrent.versionTag,
     newVersionTag: pluginSetupRefUpdate.versionTag,
@@ -170,7 +171,7 @@ export async function updatePlugin(
     );
 
   const preparedPermissions = preparedEvent.args.preparedSetupData.permissions;
-
+  console.log('2b');
   await checkPermissions(
     preparedPermissions,
     dao,
@@ -178,7 +179,7 @@ export async function updatePlugin(
     signer,
     PLUGIN_SETUP_PROCESSOR_PERMISSIONS.APPLY_UPDATE_PERMISSION_ID
   );
-
+  console.log('2c');
   const applyTx = await psp.connect(signer).applyUpdate(dao.address, {
     plugin: plugin.address,
     pluginSetupRef: pluginSetupRefUpdate,
@@ -186,6 +187,7 @@ export async function updatePlugin(
     permissions: preparedPermissions,
     helpersHash: hashHelpers(preparedEvent.args.preparedSetupData.helpers),
   });
+  console.log('2d');
   const appliedEvent =
     await findEvent<PluginSetupProcessorEvents.UpdateAppliedEvent>(
       applyTx,
@@ -285,7 +287,7 @@ export async function updateFromBuildTest(
   );
 
   // Check that the implementation of the plugin proxy matches the latest build
-  const implementationBuild1 = await PluginSetup__factory.connect(
+  const implementationBuild1 = await PluginUpgradeableSetup__factory.connect(
     (
       await pluginRepo['getVersion((uint8,uint16))'](
         pluginSetupRefBuild1.versionTag
@@ -294,7 +296,6 @@ export async function updateFromBuildTest(
     deployer
   ).implementation();
 
-  console.log('3');
   expect(await plugin.implementation()).to.equal(implementationBuild1);
 
   // Grant the PSP the permission to upgrade the plugin implementation.
@@ -306,7 +307,39 @@ export async function updateFromBuildTest(
       PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS.UPGRADE_PLUGIN_PERMISSION_ID
     );
 
-  // Update build 1 to the latest build
+  // Update build to the latest build
+  await updatePlugin(
+    deployer,
+    psp,
+    dao,
+    plugin,
+    installationResults.preparedEvent.args.preparedSetupData.helpers,
+    pluginSetupRefBuild1,
+    pluginSetupRefLatestBuild,
+    ethers.utils.defaultAbiCoder.encode(
+      getNamedTypesFromMetadata(
+        METADATA.build.pluginSetup.prepareUpdate[1].inputs
+      ),
+      updateInputs
+    )
+  );
+
+  await updatePlugin(
+    deployer,
+    psp,
+    dao,
+    plugin,
+    installationResults.preparedEvent.args.preparedSetupData.helpers,
+    pluginSetupRefBuild1,
+    pluginSetupRefLatestBuild,
+    ethers.utils.defaultAbiCoder.encode(
+      getNamedTypesFromMetadata(
+        METADATA.build.pluginSetup.prepareUpdate[1].inputs
+      ),
+      updateInputs
+    )
+  );
+
   await expect(
     updatePlugin(
       deployer,
@@ -326,14 +359,15 @@ export async function updateFromBuildTest(
   ).to.not.be.reverted;
 
   // Check that the implementation of the plugin proxy matches the latest build
-  const implementationLatestBuild = await PluginSetup__factory.connect(
-    (
-      await pluginRepo['getVersion((uint8,uint16))'](
-        pluginSetupRefLatestBuild.versionTag
-      )
-    ).pluginSetup,
-    deployer
-  ).implementation();
+  const implementationLatestBuild =
+    await PluginUpgradeableSetup__factory.connect(
+      (
+        await pluginRepo['getVersion((uint8,uint16))'](
+          pluginSetupRefLatestBuild.versionTag
+        )
+      ).pluginSetup,
+      deployer
+    ).implementation();
   expect(await plugin.implementation()).to.equal(implementationLatestBuild);
 }
 
