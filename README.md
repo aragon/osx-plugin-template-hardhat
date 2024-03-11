@@ -105,6 +105,8 @@ To be able to work on the contracts, make sure that you have created an `.env` f
 
 Before deploying, you MUST also change the default hardhat private key (`PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"`).
 
+Note that if using some networks (e.g. sepolia), fork tests will be unable to find early versions of the build.
+
 ## Contracts
 
 In `packages/contracts`, first run
