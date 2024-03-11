@@ -5,6 +5,78 @@ type DaoPlugin @entity {
   dao: Bytes!
   pluginAddress: Bytes!
 
-  "Set plugin specific related data below:"
-  number: BigInt
+  "Plugin specific data:"
+  proposalCount: BigInt
+  proposals: [MultisigProposal!]! @derivedFrom(field: "plugin")
+  members: [MultisigApprover!]! @derivedFrom(field: "plugin")
+
+  # multisig settings
+  minApprovals: Int
+  onlyListed: Boolean
+}
+
+interface IProposal {
+  id: ID! # package + proposalId
+  dao: Bytes! #Before: Dao! // TODO remove this comment
+  creator: Bytes!
+  metadata: String
+  actions: [Action!]! @derivedFrom(field: "proposal")
+  allowFailureMap: BigInt!
+  failureMap: BigInt
+  executed: Boolean!
+  createdAt: BigInt!
+  startDate: BigInt!
+  endDate: BigInt!
+  executionTxHash: Bytes
+}
+
+type Action @entity {
+  id: ID!
+  to: Bytes!
+  value: BigInt!
+  data: Bytes!
+  dao: Bytes! #Before: Dao! // TODO remove this comment
+  proposal: IProposal!
+  execResult: Bytes
+}
+
+type MultisigApprover @entity {
+  id: ID! # plugin_address + member_address
+  address: String # address as string to facilitate filtering by address on the UI
+  proposals: [MultisigProposalApprover!]! @derivedFrom(field: "approver")
+  plugin: DaoPlugin!
+}
+
+type MultisigProposalApprover @entity(immutable: true) {
+  "ApproverProposal for Many-to-Many"
+  id: ID! # approver + proposal
+  approver: MultisigApprover!
+  proposal: MultisigProposal!
+  createdAt: BigInt!
+}
+
+type MultisigProposal implements IProposal @entity {
+  id: ID! # plugin + proposalId
+  dao: Bytes! #Before: Dao! // TODO remove this comment
+  actions: [Action!]! @derivedFrom(field: "proposal")
+  allowFailureMap: BigInt!
+  failureMap: BigInt
+  plugin: DaoPlugin! #Before: MultisigPlugin! // TODO remove this comment
+  pluginProposalId: BigInt!
+  creator: Bytes!
+  metadata: String
+  createdAt: BigInt!
+  startDate: BigInt!
+  endDate: BigInt!
+  creationBlockNumber: BigInt!
+  snapshotBlock: BigInt!
+  minApprovals: Int!
+  approvals: Int
+  approvalReached: Boolean!
+  isSignaling: Boolean!
+  executed: Boolean!
+  executionDate: BigInt
+  executionBlockNumber: BigInt
+  executionTxHash: Bytes
+  approvers: [MultisigProposalApprover!]! @derivedFrom(field: "proposal")
 }

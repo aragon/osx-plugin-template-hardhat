@@ -7,23 +7,16 @@ const rootDir = path.join(__dirname, '../../../'); // Adjust the path as necessa
 dotenv.config({path: path.join(rootDir, '.env')});
 
 // Extract Repo address from the production-network-deployments.json
-function extractAndWriteAddressToTS(jsonPath: string): void {
-  // Read the production-network-deployments.json file
-  const aragonDeploymentsInfo = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-
-  // Get the network from environment variables
+function writeAddressToTS(): void {
   const network = process.env.SUBGRAPH_NETWORK_NAME;
-
-  // Check if the network is defined in aragonDeploymentsInfo
-  if (!network || !aragonDeploymentsInfo[network]) {
-    throw new Error(
-      `Network '${network}' not found in production-network-deployments.json`
-    );
+  if (network !== 'sepolia') {
+    throw 'The plugin repo address has been hardcoded only for sepolia for now.';
   }
+  const sepoliaAddr = '0x9e7956C8758470dE159481e5DD0d08F8B59217A2';
 
   // Start the Map creation code with the specific network address
   const tsContent: string[] = [
-    `export const PLUGIN_REPO_ADDRESS = '${aragonDeploymentsInfo[network].address}';`,
+    `export const PLUGIN_REPO_ADDRESS = '${sepoliaAddr}';`,
   ];
 
   const outputDir = path.join(__dirname, '../imported');
@@ -42,8 +35,4 @@ function extractAndWriteAddressToTS(jsonPath: string): void {
   );
 }
 
-const aragonDeploymentsInfoPath = path.join(
-  rootDir,
-  'production-network-deployments.json'
-);
-extractAndWriteAddressToTS(aragonDeploymentsInfoPath);
+writeAddressToTS();

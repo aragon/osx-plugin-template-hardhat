@@ -32,7 +32,7 @@ dataSources:
   {{/dataSources.PluginSetupProcessors}}
 # templates
 templates:
-  # Plugin (package)
+  # Plugin
   - name: Plugin
     kind: ethereum/contract
     network: {{network}}
@@ -46,9 +46,18 @@ templates:
         - Dao
       abis:
         - name: Plugin
-          file: $PLUGIN_MODULE/contracts/artifacts/src/MyPlugin.sol/MyPlugin.json
+          file: $PLUGIN_MODULE/contracts/artifacts/src/Multisig.sol/Multisig.json
       eventHandlers:
-        - event: NumberStored(uint256)
-          handler: handleNumberStored
+        - event: MembersAdded(address[])
+          handler: handleMembersAdded
+        - event: MembersRemoved(address[])
+          handler: handleMembersRemoved
+        - event: Approved(indexed uint256,indexed address)
+          handler: handleApproved
+        - event: ProposalCreated(indexed uint256,indexed address,uint64,uint64,bytes,(address,uint256,bytes)[],uint256)
+          handler: handleProposalCreated
+        - event: ProposalExecuted(indexed uint256)
+          handler: handleProposalExecuted
+        - event: MultisigSettingsUpdated(bool,indexed uint16)
+          handler: handleMultisigSettingsUpdated
       file: ./src/plugin/plugin.ts
-
