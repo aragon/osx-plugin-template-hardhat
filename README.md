@@ -7,13 +7,12 @@
 
 ## Quickstart
 
-After [creating a new repository from this template](https://github.com/new?template_name=osx-plugin-template-hardhat&template_owner=aragon), cloning, and opening it in your IDE, run
+After [creating a new repository from this template](https://github.com/new?template_name=osx-plugin-template-hardhat&template_owner=aragon), cloning, and opening it in your IDE, create a `.env` file from the `.env.example` file and put in the Alchemy API key, fell free to add other API keys for the services that you want to use. Now run,
 
 ```sh
 yarn install && cd packages/contracts && yarn install && yarn build && yarn typechain
 ```
 
-Meanwhile, create an `.env` file from the `.env.example` file and put in the API keys for the services that you want to use.
 You can now develop a plugin by changing the `src/MyPlugin.sol` and `src/MyPluginSetup.sol` files. You can directly import contracts from [Aragon OSx](https://github.com/aragon/osx) as well as OpenZeppelin's [openzeppelin-contracts](https://github.com/OpenZeppelin/openzeppelin-contracts) and [openzeppelin-contracts-upgradeable](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable) that are already set up for you.
 
 ```sol
