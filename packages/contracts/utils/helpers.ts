@@ -191,7 +191,7 @@ export async function createVersion(
   return tx;
 }
 
-export function generateRandomEns(length: number): string {
+export function generateRandomName(length: number): string {
   const allowedCharacters = 'abcdefghijklmnopqrstuvwxyz-0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
