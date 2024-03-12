@@ -3,7 +3,6 @@
  * The classes of this file are meant to be incorporated into the classes of ./extended-schema.ts
  */
 import {
-  Dao,
   ERC20Balance,
   ERC20Contract,
   ERC20Transfer,
@@ -127,7 +126,7 @@ class ERC1155BalanceMethods extends ERC1155Balance {
 
     this.id = balanceId;
     this.token = tokenId;
-    this.dao = daoId;
+    this.dao = Bytes.fromHexString(daoId);
     this.metadataUri = 'https://example.org/{id}.json';
     this.lastUpdated = BigInt.zero();
     return this;
@@ -153,7 +152,7 @@ class ERC1155TransferMethods extends ERC1155Transfer {
     id: string = getERC1155TransferId(Bytes.empty(), BigInt.zero(), 0, 0)
   ): ERC1155TransferMethods {
     this.id = id;
-    this.dao = DAO_ADDRESS;
+    this.dao = Bytes.fromHexString(DAO_ADDRESS);
     this.token = Address.fromString(DAO_TOKEN_ADDRESS).toHexString();
     this.tokenId = BigInt.zero();
     this.from = Address.fromHexString(ADDRESS_ONE);
@@ -202,7 +201,7 @@ class ERC721BalanceMethods extends ERC721Balance {
 
     this.id = balanceId;
     this.token = Address.fromHexString(DAO_TOKEN_ADDRESS).toHexString();
-    this.dao = DAO_ADDRESS;
+    this.dao = Bytes.fromHexString(DAO_ADDRESS);
     this.tokenIds = [BigInt.zero()];
     this.lastUpdated = BigInt.zero();
     return this;
@@ -215,7 +214,7 @@ class ERC721TransferMethods extends ERC721Transfer {
     id: string = getTransferId(Bytes.empty(), BigInt.zero(), 0)
   ): ERC721TransferMethods {
     this.id = id;
-    this.dao = DAO_ADDRESS;
+    this.dao = Bytes.fromHexString(DAO_ADDRESS);
     this.token = Address.fromString(DAO_TOKEN_ADDRESS).toHexString();
     this.tokenId = BigInt.zero();
     this.from = Address.fromHexString(ADDRESS_ONE);
@@ -321,7 +320,7 @@ class ERC20BalanceMethods extends ERC20Balance {
 
     this.id = balanceId;
     this.token = Address.fromHexString(DAO_TOKEN_ADDRESS).toHexString();
-    this.dao = DAO_ADDRESS;
+    this.dao = Bytes.fromHexString(DAO_ADDRESS);
     this.balance = BigInt.zero();
     this.lastUpdated = BigInt.zero();
     return this;
@@ -333,7 +332,7 @@ class ERC20TransferMethods extends ERC20Transfer {
     id: string = getTransferId(Bytes.empty(), BigInt.zero(), 0)
   ): ERC20TransferMethods {
     this.id = id;
-    this.dao = DAO_ADDRESS;
+    this.dao = Bytes.fromHexString(DAO_ADDRESS);
     this.token = Address.fromString(DAO_TOKEN_ADDRESS).toHexString();
     this.amount = BigInt.zero();
     this.from = Address.fromHexString(ADDRESS_ONE);
@@ -353,7 +352,7 @@ class NativeTransferMethods extends NativeTransfer {
     id: string = getTransferId(Bytes.empty(), BigInt.zero(), 0)
   ): NativeTransferMethods {
     this.id = id;
-    this.dao = DAO_ADDRESS;
+    this.dao = Bytes.fromHexString(DAO_ADDRESS);
     this.amount = BigInt.zero();
     this.from = Address.fromHexString(ADDRESS_ONE);
     this.to = Address.fromHexString(DAO_ADDRESS);
@@ -371,7 +370,7 @@ class NativeTransferMethods extends NativeTransfer {
 class NativeBalanceMethods extends NativeBalance {
   withDefaultValues(): NativeBalanceMethods {
     this.id = DAO_ADDRESS.concat('_').concat(ADDRESS_ZERO);
-    this.dao = DAO_ADDRESS;
+    this.dao = Bytes.fromHexString(DAO_ADDRESS);
     this.balance = BigInt.zero();
     this.lastUpdated = BigInt.zero();
 
@@ -399,7 +398,7 @@ class TokenVotingProposalMethods extends TokenVotingProposal {
   withDefaultValues(): TokenVotingProposalMethods {
     this.id = PROPOSAL_ENTITY_ID;
 
-    this.dao = DAO_ADDRESS;
+    this.dao = Bytes.fromHexString(DAO_ADDRESS);
     this.plugin = Address.fromHexString(CONTRACT_ADDRESS).toHexString();
     this.pluginProposalId = BigInt.fromString(PLUGIN_PROPOSAL_ID);
     this.creator = Address.fromHexString(ADDRESS_ONE);
@@ -559,7 +558,7 @@ class TokenVotingPluginMethods extends TokenVotingPlugin {
     const pluginEntityId = generatePluginEntityId(pluginAddress);
 
     this.id = pluginEntityId;
-    this.dao = DAO_ADDRESS;
+    this.dao = Bytes.fromHexString(DAO_ADDRESS);
     this.pluginAddress = pluginAddress;
     this.votingMode = votingMode;
     this.supportThreshold = BigInt.fromString(SUPPORT_THRESHOLD);

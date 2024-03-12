@@ -1,5 +1,5 @@
 import {InstallationPrepared} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
-import {DaoPlugin} from '../../generated/schema';
+import {TokenVotingPlugin as DaoPlugin} from '../../generated/schema';
 import {TokenVoting as PluginTemplate} from '../../generated/templates';
 import {PLUGIN_REPO_ADDRESS} from '../../imported/repo-address';
 import {generatePluginInstallationEntityId} from '@aragon/osx-commons-subgraph';

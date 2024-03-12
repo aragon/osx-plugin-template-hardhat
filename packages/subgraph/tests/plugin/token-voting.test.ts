@@ -50,7 +50,7 @@ test('Run TokenVoting (handleProposalCreated) mappings with mock event', () => {
   let event = proposal.createEvent_ProposalCreated(actions, STRING_DATA);
 
   // handle event
-  _handleProposalCreated(event, proposal.dao, STRING_DATA);
+  _handleProposalCreated(event, proposal.dao.toString(), STRING_DATA);
 
   // checks
   // expected changes

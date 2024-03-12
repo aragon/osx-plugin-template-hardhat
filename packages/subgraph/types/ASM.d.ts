@@ -10,5 +10,5 @@ declare function changetype<T>(
   input: ethereum['value'][]
 ): T & ethereum['value'];
 
-// declare type i32 = number;
+declare type i32 = number;
 

@@ -22,7 +22,12 @@ import {
   generatePluginEntityId,
   generateProposalEntityId,
 } from '@aragon/osx-commons-subgraph';
-import {BigInt, dataSource, DataSourceContext} from '@graphprotocol/graph-ts';
+import {
+  BigInt,
+  Bytes,
+  dataSource,
+  DataSourceContext,
+} from '@graphprotocol/graph-ts';
 
 export function handleProposalCreated(event: ProposalCreated): void {
   let context = dataSource.context();
@@ -46,7 +51,7 @@ export function _handleProposalCreated(
   );
 
   let proposalEntity = new TokenVotingProposal(proposalEntityId);
-  proposalEntity.dao = daoId;
+  proposalEntity.dao = Bytes.fromHexString(daoId);
   proposalEntity.plugin = pluginEntityId;
   proposalEntity.pluginProposalId = pluginProposalId;
   proposalEntity.creator = event.params.creator;
@@ -92,7 +97,7 @@ export function _handleProposalCreated(
       actionEntity.to = action.to;
       actionEntity.value = action.value;
       actionEntity.data = action.data;
-      actionEntity.dao = daoId;
+      actionEntity.dao = Bytes.fromHexString(daoId);
       actionEntity.proposal = proposalEntityId;
       actionEntity.save();
     }
