@@ -7,13 +7,12 @@
 
 ## Quickstart
 
-After [creating a new repository from this template](https://github.com/new?template_name=osx-plugin-template-hardhat&template_owner=aragon), cloning, and opening it in your IDE, run
+After [creating a new repository from this template](https://github.com/new?template_name=osx-plugin-template-hardhat&template_owner=aragon), cloning, and opening it in your IDE, create an `.env` file from the `.env.example` file and put in the Alchemy API key. Feel free to add other API keys for the services that you want to use. Now run,
 
 ```sh
 yarn install && cd packages/contracts && yarn install && yarn build && yarn typechain
 ```
 
-Meanwhile, create an `.env` file from the `.env.example` file and put in the API keys for the services that you want to use.
 You can now develop a plugin by changing the `src/MyPlugin.sol` and `src/MyPluginSetup.sol` files. You can directly import contracts from [Aragon OSx](https://github.com/aragon/osx) as well as OpenZeppelin's [openzeppelin-contracts](https://github.com/OpenZeppelin/openzeppelin-contracts) and [openzeppelin-contracts-upgradeable](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable) that are already set up for you.
 
 ```sol
@@ -99,7 +98,7 @@ yarn lint
 
 To be able to work on the contracts, make sure that you have created an `.env` file from the `.env.example` file and put in the API keys for
 
-- [Infura](https://www.infura.io/) that we use as the web3 provider
+- [Alchemy](https://www.alchemy.com) that we use as the web3 provider
 - [Alchemy Subgraphs](https://www.alchemy.com/subgraphs) that we use as the subgraph provider
 - the block explorer that you want to use depending on the networks that you want to deploy to
 
