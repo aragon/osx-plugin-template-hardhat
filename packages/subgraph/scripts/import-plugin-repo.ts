@@ -1,5 +1,6 @@
 import {
   SupportedNetworks,
+  getNetwork,
   getNetworkDeployments,
 } from '@aragon/osx-commons-configs';
 import dotenv from 'dotenv';
@@ -10,41 +11,42 @@ import path from 'path';
 const rootDir = path.join(__dirname, '../../../'); // Adjust the path as necessary
 dotenv.config({path: path.join(rootDir, '.env')});
 
-// Extract Repo address from the production-network-deployments.json
-function extractAndWriteAddressToTS(jsonPath: string): void {
-  // Read the production-network-deployments.json file
+const OSX_VERSION = 'v1.3.0';
+const PLUGIN_REPO_NAME = 'PluginRepoBase';
 
-  let aragonDeploymentsInfo;
-  try {
-    aragonDeploymentsInfo = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-  } catch (e) {
-    console.warn(`Error reading ${jsonPath}: ${e}`);
-    // @ts-ignore
-    aragonDeploymentsInfo = getNetworkDeployments(
-      process.env.SUBGRAPH_NETWORK_NAME as SupportedNetworks
-    )['v1.3.0']['PluginRepoBase'];
+function getPluginRepoAddress(network: string): string {
+  // we cast this as we do a runtime check for the network in the next line
+  const networkDeployments = getNetworkDeployments(
+    network as SupportedNetworks
+  );
+  if (
+    !networkDeployments ||
+    !networkDeployments[OSX_VERSION] ||
+    !networkDeployments[OSX_VERSION][PLUGIN_REPO_NAME]
+  ) {
+    throw new Error(
+      `${PLUGIN_REPO_NAME} not found in network deployments for ${OSX_VERSION} on ${network} network.`
+    );
   }
+  return networkDeployments[OSX_VERSION][PLUGIN_REPO_NAME].address;
+}
 
-  console.log(aragonDeploymentsInfo);
-  // Get the network from environment variables
+/**
+ * Retrieves the deployed plugin repository address from osx-commons-configs.
+ * This address is saved then used when building the subgraph.
+ */
+function extractAndWriteAddressToTS(): void {
+  // Read the production-network-deployments.json file
   const network = process.env.SUBGRAPH_NETWORK_NAME;
 
-  // Check if the network is defined in aragonDeploymentsInfo
-  //   if (!network || !aragonDeploymentsInfo[network]) {
-  //     throw new Error(
-  //       `Network '${network}' not found in production-network-deployments.json`
-  //     );
-  //   }
+  if (!network) {
+    throw new Error('SUBGRAPH_NETWORK_NAME environment variable not set');
+  }
 
-  // Start the Map creation code with the specific network address
-  //   const tsContent: string[] = [
-  //     // @ts-ignore
-  //     `export const PLUGIN_REPO_ADDRESS = '${aragonDeploymentsInfo[network].address}';`,
-  //   ];
+  const address = getPluginRepoAddress(network);
 
   const tsContent: string[] = [
-    // @ts-ignore
-    `export const PLUGIN_REPO_ADDRESS = '${aragonDeploymentsInfo.address}';`,
+    `export const PLUGIN_REPO_ADDRESS = '${address}';`,
   ];
 
   const outputDir = path.join(__dirname, '../imported');
@@ -63,8 +65,4 @@ function extractAndWriteAddressToTS(jsonPath: string): void {
   );
 }
 
-const aragonDeploymentsInfoPath = path.join(
-  rootDir,
-  'production-network-deployments.json'
-);
-extractAndWriteAddressToTS(aragonDeploymentsInfoPath);
+extractAndWriteAddressToTS();
