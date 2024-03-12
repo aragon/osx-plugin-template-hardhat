@@ -323,3 +323,5 @@ to deploy the subgraph and check your [Alchemy subgraph dashboard](https://subgr
 ## License
 
 This project is licensed under AGPL-3.0-or-later.
+
+small comment to check pipeline run all needed tests even if the commit is only changing the Readme
