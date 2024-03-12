@@ -25,7 +25,7 @@ import {
   ERC20_AMOUNT_FULL,
 } from '../utils/constants';
 import {createDummyAction} from '@aragon/osx-commons-subgraph';
-import {bigInt, BigInt} from '@graphprotocol/graph-ts';
+import {bigInt, BigInt, log} from '@graphprotocol/graph-ts';
 import {assert, clearStore, describe, test} from 'matchstick-as/assembly/index';
 
 let actions = [createDummyAction(DAO_TOKEN_ADDRESS, '0', '0x00000000')];
@@ -50,7 +50,7 @@ test('Run TokenVoting (handleProposalCreated) mappings with mock event', () => {
   let event = proposal.createEvent_ProposalCreated(actions, STRING_DATA);
 
   // handle event
-  _handleProposalCreated(event, proposal.dao.toString(), STRING_DATA);
+  _handleProposalCreated(event, proposal.dao.toHexString(), STRING_DATA);
 
   // checks
   // expected changes

@@ -12,8 +12,12 @@ const rootDir = path.join(__dirname, '../../../'); // Adjust the path as necessa
 dotenv.config({path: path.join(rootDir, '.env')});
 
 const OSX_VERSION = 'v1.3.0';
-const PLUGIN_REPO_NAME = 'PluginRepoBase';
+const PLUGIN_REPO_NAME = 'TokenVotingRepoProxy';
 
+/**
+ * TODO: this is coupled tightly with OSx core and framework,
+ * long term do we expect the enshrined plugins to always be available?
+ */
 function getPluginRepoAddress(network: string): string {
   // we cast this as we do a runtime check for the network in the next line
   const networkDeployments = getNetworkDeployments(

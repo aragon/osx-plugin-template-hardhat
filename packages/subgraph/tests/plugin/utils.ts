@@ -332,7 +332,7 @@ export function createTokenVotingProposalEntityState(
   earlyExecutable: boolean = false
 ): TokenVotingProposal {
   let tokenVotingProposal = new TokenVotingProposal(entityID);
-  tokenVotingProposal.dao = Address.fromString(dao).toHexString();
+  tokenVotingProposal.dao = Bytes.fromHexString(dao);
   tokenVotingProposal.plugin = Address.fromString(pkg).toHexString();
   tokenVotingProposal.pluginProposalId = BigInt.fromString(pluginProposalId);
   tokenVotingProposal.creator = Address.fromString(creator);
@@ -555,6 +555,107 @@ export function createTotalVotingPowerCall(
     .returns([
       ethereum.Value.fromUnsignedBigInt(BigInt.fromString(totalVotingPower)),
     ]);
+}
+
+export function createSupportThresholdCall(
+  contractAddress: string,
+  returns: string
+): void {
+  createMockedFunction(
+    Address.fromString(contractAddress),
+    'supportThreshold',
+    'supportThreshold():(uint32)'
+  )
+    .withArgs([])
+    .returns([ethereum.Value.fromUnsignedBigInt(BigInt.fromString(returns))]);
+}
+
+export function createMinParticipationCall(
+  contractAddress: string,
+  returns: string
+): void {
+  createMockedFunction(
+    Address.fromString(contractAddress),
+    'minParticipation',
+    'minParticipation():(uint32)'
+  )
+    .withArgs([])
+    .returns([ethereum.Value.fromUnsignedBigInt(BigInt.fromString(returns))]);
+}
+
+export function createMinDurationCall(
+  contractAddress: string,
+  returns: string
+): void {
+  createMockedFunction(
+    Address.fromString(contractAddress),
+    'minDuration',
+    'minDuration():(uint64)'
+  )
+    .withArgs([])
+    .returns([ethereum.Value.fromUnsignedBigInt(BigInt.fromString(returns))]);
+}
+
+export function createGetVotingTokenCall(
+  contractAddress: string,
+  returns: string
+): void {
+  createMockedFunction(
+    Address.fromString(contractAddress),
+    'getVotingToken',
+    'getVotingToken():(address)'
+  )
+    .withArgs([])
+    .returns([ethereum.Value.fromAddress(Address.fromString(returns))]);
+}
+
+export function createNameCall(contractAddress: string, returns: string): void {
+  createMockedFunction(
+    Address.fromString(contractAddress),
+    'name',
+    'name():(string)'
+  )
+    .withArgs([])
+    .returns([ethereum.Value.fromString(returns)]);
+}
+
+export function createSymbolCall(
+  contractAddress: string,
+  returns: string
+): void {
+  createMockedFunction(
+    Address.fromString(contractAddress),
+    'symbol',
+    'symbol():(string)'
+  )
+    .withArgs([])
+    .returns([ethereum.Value.fromString(returns)]);
+}
+
+export function createDecimalsCall(
+  contractAddress: string,
+  returns: string
+): void {
+  createMockedFunction(
+    Address.fromString(contractAddress),
+    'decimals',
+    'decimals():(uint8)'
+  )
+    .withArgs([])
+    .returns([ethereum.Value.fromUnsignedBigInt(BigInt.fromString(returns))]);
+}
+
+export function createTotalSupplyCall(
+  contractAddress: string,
+  returns: string
+): void {
+  createMockedFunction(
+    Address.fromString(contractAddress),
+    'totalSupply',
+    'totalSupply():(uint256)'
+  )
+    .withArgs([])
+    .returns([ethereum.Value.fromSignedBigInt(BigInt.fromString(returns))]);
 }
 
 export function getBalanceOf(

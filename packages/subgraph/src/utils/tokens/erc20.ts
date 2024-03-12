@@ -17,6 +17,7 @@ import {
 } from '@aragon/osx-commons-subgraph';
 import {Address, BigInt, Bytes, ethereum} from '@graphprotocol/graph-ts';
 
+type bool = boolean;
 export function supportsERC20Wrapped(token: Address): bool {
   // Double check that it's ERC20Wrapped by calling supportsInterface checks.
   let erc20Wrapped = GovernanceWrappedERC20.bind(token);
@@ -157,7 +158,7 @@ export function updateERC20Balance(
 
   if (!erc20Balance) {
     erc20Balance = new ERC20Balance(balanceEntityId);
-    erc20Balance.dao = daoEntityId;
+    erc20Balance.dao = Bytes.fromHexString(daoEntityId);
     erc20Balance.token = tokenEntityId;
     erc20Balance.balance = BigInt.zero();
   }
@@ -229,7 +230,7 @@ export function handleERC20Action(
 
   transfer.from = from;
   transfer.to = to;
-  transfer.dao = daoEntityId;
+  transfer.dao = Bytes.fromHexString(daoEntityId);
   transfer.amount = amount;
   transfer.txHash = event.transaction.hash;
   transfer.createdAt = event.block.timestamp;
@@ -285,7 +286,7 @@ export function handleERC20Deposit(
 
   erc20Transfer.from = from;
   erc20Transfer.to = dao;
-  erc20Transfer.dao = daoEntityId;
+  erc20Transfer.dao = Bytes.fromHexString(daoEntityId);
   erc20Transfer.amount = amount;
   erc20Transfer.txHash = event.transaction.hash;
   erc20Transfer.createdAt = event.block.timestamp;

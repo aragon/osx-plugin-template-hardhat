@@ -23,11 +23,13 @@ import {
   generateProposalEntityId,
 } from '@aragon/osx-commons-subgraph';
 import {
+  Address,
   BigInt,
   Bytes,
   dataSource,
   DataSourceContext,
 } from '@graphprotocol/graph-ts';
+import {log} from 'matchstick-as';
 
 export function handleProposalCreated(event: ProposalCreated): void {
   let context = dataSource.context();
