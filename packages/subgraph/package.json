@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@aragon/osx-ethers": "1.4.0-alpha.0",
-    "@aragon/osx-commons-configs": "0.2.0",
+    "@aragon/osx-commons-configs": "0.4.0",
     "@graphprotocol/graph-cli": "^0.51.0",
     "@graphprotocol/graph-ts": "^0.31.0",
     "cross-env": "^7.0.3",
