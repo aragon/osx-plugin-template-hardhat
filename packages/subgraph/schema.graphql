@@ -9,7 +9,7 @@ type DaoPlugin @entity {
   number: BigInt
 }
 
-# Types
+# Token
 
 interface Token {
   id: ID! # use address as id

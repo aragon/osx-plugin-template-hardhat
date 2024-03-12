@@ -48,12 +48,6 @@ import {
   getTransferId,
 } from '../../src/utils/tokens/common';
 import {
-  createGetProposalCall,
-  createTotalVotingPowerCall,
-  getBalanceOf,
-  getSupportsInterface,
-} from '../plugin/utils';
-import {
   createNewDelegateChangedEvent,
   createNewDelegateVotesChangedEvent,
   createNewMembershipContractAnnouncedEvent,
@@ -62,7 +56,13 @@ import {
   createNewVoteCastEvent,
   createNewVotingSettingsUpdatedEvent,
   delegatesCall,
+  getBalanceOf,
   getProposalCountCall,
+  getSupportsInterface,
+} from '../plugin/utils';
+import {
+  createGetProposalCall,
+  createTotalVotingPowerCall,
 } from '../plugin/utils';
 import {
   ADDRESS_ONE,
@@ -625,8 +625,9 @@ class TokenVotingMemberMethods extends TokenVotingMember {
     memberAddress: string = ADDRESS_ONE,
     pluginAddress: string = CONTRACT_ADDRESS
   ): TokenVotingMemberMethods {
-    const plugin = Address.fromHexString(pluginAddress);
-    let id = memberAddress.concat('_').concat(plugin.toHexString());
+    const plugin = Address.fromBytes(Bytes.fromHexString(pluginAddress));
+    const member = Address.fromBytes(Bytes.fromHexString(memberAddress));
+    let id = generateMemberEntityId(plugin, member);
 
     this.id = id;
     this.address = Address.fromHexString(memberAddress);

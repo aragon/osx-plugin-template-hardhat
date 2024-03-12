@@ -6,7 +6,7 @@ import {
 } from '../../../generated/schema';
 import {ERC20} from '../../../generated/templates/TokenVoting/ERC20';
 import {GovernanceWrappedERC20} from '../../../generated/templates/TokenVoting/GovernanceWrappedERC20';
-import {GOVERNANCE_WRAPPED_ERC20_INTERFACE_ID} from '../../utils/constants';
+import {GOVERNANCE_WRAPPED_ERC20_INTERFACE_ID} from '../constants';
 import {supportsInterface} from '../erc165';
 import {generateTokenEntityId} from '../ids';
 import {ERC20_transfer, ERC20_transferFrom} from './common';
@@ -16,9 +16,6 @@ import {
   generateTransferEntityId,
 } from '@aragon/osx-commons-subgraph';
 import {Address, BigInt, Bytes, ethereum} from '@graphprotocol/graph-ts';
-
-type i32 = number;
-type bool = boolean;
 
 export function supportsERC20Wrapped(token: Address): bool {
   // Double check that it's ERC20Wrapped by calling supportsInterface checks.
