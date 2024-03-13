@@ -37,7 +37,7 @@ yarn clean && yarn build && yarn test
 
 ## Project
 
-The root folder of the repo includes three subfolders:
+The root folder of the repo includes two subfolders:
 
 ```markdown
 .
@@ -201,7 +201,7 @@ Deploy the contracts to the local Hardhat Network (being forked from the network
 yarn deploy --tags CreateRepo,NewVersion
 ```
 
-This will create a plugin repo and publish the the first version (`v1.1`) of your plugin.
+This will create a plugin repo and publish the first version (`v1.1`) of your plugin.
 
 Deploy the contracts to sepolia with
 
@@ -209,7 +209,7 @@ Deploy the contracts to sepolia with
 yarn deploy --network sepolia --tags CreateRepo,NewVersion,Verification
 ```
 
-This will create a plugin repo, publish the the first version (`v1.1`) of your plugin, and verfiy the contracts on sepolia.
+This will create a plugin repo, publish the first version (`v1.1`) of your plugin, and verfiy the contracts on sepolia.
 
 If you want to deploy a new version of your plugin afterwards (e.g., `1.2`), simply change the `VERSION` entry in the `packages/contracts/plugin-settings.ts` file and use
 

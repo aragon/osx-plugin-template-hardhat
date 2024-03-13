@@ -191,5 +191,16 @@ export async function createVersion(
   return tx;
 }
 
+export function generateRandomName(length: number): string {
+  const allowedCharacters = 'abcdefghijklmnopqrstuvwxyz-0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += allowedCharacters.charAt(
+      Math.floor(Math.random() * allowedCharacters.length)
+    );
+  }
+  return result;
+}
+
 export const AragonOSxAsciiArt =
   "                                          ____   _____      \n     /\\                                  / __ \\ / ____|     \n    /  \\   _ __ __ _  __ _  ___  _ __   | |  | | (_____  __ \n   / /\\ \\ | '__/ _` |/ _` |/ _ \\| '_ \\  | |  | |\\___ \\ \\/ / \n  / ____ \\| | | (_| | (_| | (_) | | | | | |__| |____) >  <  \n /_/    \\_\\_|  \\__,_|\\__, |\\___/|_| |_|  \\____/|_____/_/\\_\\ \n                      __/ |                                 \n                     |___/                                  \n";
