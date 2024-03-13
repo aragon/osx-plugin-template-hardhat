@@ -2,13 +2,13 @@
 
 interface IPlugin {
   id: ID! # plugin address
-  dao: Bytes!
+  daoAddress: Bytes!
   pluginAddress: Bytes!
 }
 
 interface IProposal {
   id: ID! # package + proposalId
-  dao: Bytes!
+  daoAddress: Bytes!
   creator: Bytes!
   metadata: String
   actions: [Action!]! @derivedFrom(field: "proposal")
@@ -46,7 +46,7 @@ enum VotingMode {
 
 type TokenVotingPlugin implements IPlugin @entity {
   id: ID! # the plugin installation entity id from the pluginSetupProcessor
-  dao: Bytes!
+  daoAddress: Bytes!
   pluginAddress: Bytes!
 
   proposals: [TokenVotingProposal!]! @derivedFrom(field: "plugin")
@@ -95,7 +95,7 @@ type TokenVotingVote @entity {
 
 type TokenVotingProposal implements IProposal @entity {
   id: ID! # package + proposalId
-  dao: Bytes!
+  daoAddress: Bytes!
   actions: [Action!]! @derivedFrom(field: "proposal")
   allowFailureMap: BigInt!
   failureMap: BigInt
@@ -137,7 +137,7 @@ type Action @entity {
   to: Bytes!
   value: BigInt!
   data: Bytes!
-  dao: Bytes!
+  daoAddress: Bytes!
   proposal: IProposal!
   execResult: Bytes
 }

@@ -53,7 +53,7 @@ export function _handleProposalCreated(
   );
 
   let proposalEntity = new TokenVotingProposal(proposalEntityId);
-  proposalEntity.dao = Bytes.fromHexString(daoId);
+  proposalEntity.daoAddress = Bytes.fromHexString(daoId);
   proposalEntity.plugin = pluginEntityId;
   proposalEntity.pluginProposalId = pluginProposalId;
   proposalEntity.creator = event.params.creator;
@@ -105,7 +105,7 @@ export function _handleProposalCreated(
       actionEntity.to = action.to;
       actionEntity.value = action.value;
       actionEntity.data = action.data;
-      actionEntity.dao = Bytes.fromHexString(daoId);
+      actionEntity.daoAddress = Bytes.fromHexString(daoId);
       actionEntity.proposal = proposalEntityId;
       actionEntity.save();
     }

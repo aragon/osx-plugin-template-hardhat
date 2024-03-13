@@ -62,7 +62,7 @@ function createTokenVotingPlugin(plugin: Address, dao: Address): void {
   if (!pluginEntity) {
     pluginEntity = new TokenVotingPlugin(pluginId);
     pluginEntity.pluginAddress = plugin;
-    pluginEntity.dao = Bytes.fromHexString(dao.toHexString());
+    pluginEntity.daoAddress = Bytes.fromHexString(dao.toHexString());
     pluginEntity.proposalCount = BigInt.zero();
 
     let contract = TokenVotingContract.bind(plugin);

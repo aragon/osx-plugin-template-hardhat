@@ -29,7 +29,6 @@ import {
   VOTING_MODE_INDEXES,
 } from '../../src/utils/constants';
 import {generateMemberEntityId} from '../../src/utils/ids';
-import {getTransferId} from '../../src/utils/tokens/common';
 import {
   createNewDelegateChangedEvent,
   createNewDelegateVotesChangedEvent,
@@ -68,7 +67,6 @@ import {
   MIN_DURATION,
   DAO_TOKEN_ADDRESS,
   STRING_DATA,
-  ADDRESS_ZERO,
 } from '../utils/constants';
 import {
   generateEntityIdFromAddress,
@@ -181,7 +179,7 @@ class TokenVotingProposalMethods extends TokenVotingProposal {
   withDefaultValues(): TokenVotingProposalMethods {
     this.id = PROPOSAL_ENTITY_ID;
 
-    this.dao = Bytes.fromHexString(DAO_ADDRESS);
+    this.daoAddress = Bytes.fromHexString(DAO_ADDRESS);
     this.plugin = Address.fromHexString(CONTRACT_ADDRESS).toHexString();
     this.pluginProposalId = BigInt.fromString(PLUGIN_PROPOSAL_ID);
     this.creator = Address.fromHexString(ADDRESS_ONE);
@@ -341,7 +339,7 @@ class TokenVotingPluginMethods extends TokenVotingPlugin {
     const pluginEntityId = generatePluginEntityId(pluginAddress);
 
     this.id = pluginEntityId;
-    this.dao = Bytes.fromHexString(DAO_ADDRESS);
+    this.daoAddress = Bytes.fromHexString(DAO_ADDRESS);
     this.pluginAddress = pluginAddress;
     this.votingMode = votingMode;
     this.supportThreshold = BigInt.fromString(SUPPORT_THRESHOLD);
