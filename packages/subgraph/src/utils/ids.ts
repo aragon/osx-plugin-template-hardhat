@@ -45,13 +45,3 @@ export function generateVoteEntityId(
 ): string {
   return [generateEntityIdFromAddress(memberAddress), proposalId].join('_');
 }
-
-export function generateAdministratorAdminPluginEntityId(
-  pluginAddress: Address,
-  administratorAddress: Address
-): string {
-  return [
-    generateEntityIdFromAddress(pluginAddress),
-    generateEntityIdFromAddress(administratorAddress),
-  ].join('_');
-}

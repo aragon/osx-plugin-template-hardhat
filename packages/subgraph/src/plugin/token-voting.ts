@@ -72,7 +72,13 @@ export function _handleProposalCreated(
 
     // ProposalParameters
     let parameters = proposal.value.value2;
-    proposalEntity.votingMode = VOTING_MODES.get(parameters.votingMode);
+    let votingMode = VOTING_MODES.get(parameters.votingMode);
+
+    if (!votingMode) {
+      return;
+    }
+
+    proposalEntity.votingMode = votingMode as string;
     proposalEntity.supportThreshold = parameters.supportThreshold;
     proposalEntity.snapshotBlock = parameters.snapshotBlock;
     proposalEntity.minVotingPower = parameters.minVotingPower;
@@ -153,7 +159,7 @@ export function handleVoteCast(event: VoteCast): void {
     voterProposalVoteEntity.voteReplaced = false;
     voterProposalVoteEntity.updatedAt = BigInt.zero();
   }
-  voterProposalVoteEntity.voteOption = voteOption;
+  voterProposalVoteEntity.voteOption = voteOption as string;
   voterProposalVoteEntity.votingPower = event.params.votingPower;
   voterProposalVoteEntity.save();
 
@@ -256,7 +262,11 @@ export function handleVotingSettingsUpdated(
     generatePluginEntityId(event.address)
   );
   if (packageEntity) {
-    packageEntity.votingMode = VOTING_MODES.get(event.params.votingMode);
+    let votingMode = VOTING_MODES.get(event.params.votingMode);
+    if (!votingMode) {
+      return;
+    }
+    packageEntity.votingMode = votingMode as string;
     packageEntity.supportThreshold = event.params.supportThreshold;
     packageEntity.minParticipation = event.params.minParticipation;
     packageEntity.minDuration = event.params.minDuration;

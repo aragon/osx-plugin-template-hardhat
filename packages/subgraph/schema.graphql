@@ -1,3 +1,47 @@
+## interfaces
+
+interface IPlugin {
+  id: ID! # plugin address
+  dao: Bytes!
+  pluginAddress: Bytes!
+}
+
+interface IProposal {
+  id: ID! # package + proposalId
+  dao: Bytes!
+  creator: Bytes!
+  metadata: String
+  actions: [Action!]! @derivedFrom(field: "proposal")
+  allowFailureMap: BigInt!
+  failureMap: BigInt
+  executed: Boolean!
+  createdAt: BigInt!
+  startDate: BigInt!
+  endDate: BigInt!
+  executionTxHash: Bytes
+}
+
+interface Token {
+  id: ID! # use address as id
+  name: String
+  symbol: String
+}
+
+# Enums
+
+enum VoteOption {
+  None
+  Abstain
+  Yes
+  No
+}
+
+enum VotingMode {
+  Standard
+  EarlyExecution
+  VoteReplacement
+}
+
 # Types
 
 type TokenVotingPlugin implements IPlugin @entity {
@@ -98,52 +142,7 @@ type Action @entity {
   execResult: Bytes
 }
 
-interface IPlugin {
-  id: ID! # plugin address
-  dao: Bytes!
-  pluginAddress: Bytes!
-}
-
-### Entities below should move to there respective subgraph once plugin is seperated from the Aragon OSx
-# Proposal
-
-interface IProposal {
-  id: ID! # package + proposalId
-  dao: Bytes!
-  creator: Bytes!
-  metadata: String
-  actions: [Action!]! @derivedFrom(field: "proposal")
-  allowFailureMap: BigInt!
-  failureMap: BigInt
-  executed: Boolean!
-  createdAt: BigInt!
-  startDate: BigInt!
-  endDate: BigInt!
-  executionTxHash: Bytes
-}
-
-# Voting
-
-enum VoteOption {
-  None
-  Abstain
-  Yes
-  No
-}
-
-enum VotingMode {
-  Standard
-  EarlyExecution
-  VoteReplacement
-}
-
-# Token
-
-interface Token {
-  id: ID! # use address as id
-  name: String
-  symbol: String
-}
+# Token Contracts
 
 type ERC20Contract implements Token @entity(immutable: true) {
   id: ID! # use address as id
@@ -152,122 +151,10 @@ type ERC20Contract implements Token @entity(immutable: true) {
   decimals: Int!
 }
 
-type ERC20WrapperContract implements Token @entity(inmutable: true) {
+type ERC20WrapperContract implements Token @entity(immutable: true) {
   id: ID! # use address as id
   name: String
   symbol: String
   decimals: Int!
   underlyingToken: ERC20Contract!
-}
-
-type ERC721Contract implements Token @entity(immutable: true) {
-  id: ID! # use address as id
-  name: String
-  symbol: String
-}
-
-type ERC1155Contract implements Token @entity(immutable: true) {
-  id: ID! # use address as id
-  name: String
-  symbol: String
-}
-
-# Token Balances
-interface TokenBalance {
-  id: ID! # dao address + token address
-  dao: Bytes!
-  lastUpdated: BigInt!
-}
-
-type ERC20Balance implements TokenBalance @entity {
-  id: ID!
-  token: ERC20Contract!
-  dao: Bytes!
-  balance: BigInt!
-  lastUpdated: BigInt!
-}
-
-type ERC721Balance implements TokenBalance @entity {
-  id: ID!
-  token: ERC721Contract!
-  dao: Bytes!
-  tokenIds: [BigInt!]!
-  lastUpdated: BigInt!
-}
-
-type ERC1155Balance implements TokenBalance @entity {
-  id: ID!
-  token: ERC1155Contract!
-  dao: Bytes!
-  balances: [ERC1155TokenIdBalance!]! @derivedFrom(field: "balance")
-  metadataUri: String!
-  lastUpdated: BigInt!
-}
-
-type ERC1155TokenIdBalance @entity {
-  id: ID!
-  balance: ERC1155Balance!
-  tokenId: BigInt!
-  amount: BigInt!
-  lastUpdated: BigInt!
-}
-
-# Token Transfers
-
-enum TransferType {
-  ExternalTransfer # when from/to are both NOT equal to dao.
-  Withdraw
-  Deposit
-}
-
-interface TokenTransfer {
-  id: ID!
-  dao: Bytes!
-  from: Bytes!
-  to: Bytes!
-  type: TransferType!
-  proposal: IProposal
-  txHash: Bytes!
-  createdAt: BigInt!
-}
-
-type ERC20Transfer implements TokenTransfer @entity(immutable: true) {
-  id: ID!
-  dao: Bytes!
-  token: Token!
-  amount: BigInt!
-  from: Bytes!
-  to: Bytes!
-  proposal: IProposal
-  type: TransferType!
-  txHash: Bytes!
-  createdAt: BigInt!
-}
-
-type ERC721Transfer implements TokenTransfer @entity(immutable: true) {
-  id: ID!
-  dao: Bytes!
-  token: ERC721Contract!
-  tokenId: BigInt!
-  from: Bytes!
-  to: Bytes!
-  proposal: IProposal
-  type: TransferType!
-  txHash: Bytes!
-  createdAt: BigInt!
-}
-
-type ERC1155Transfer implements TokenTransfer @entity(immutable: true) {
-  id: ID!
-  dao: Bytes!
-  token: ERC1155Contract!
-  tokenId: BigInt!
-  amount: BigInt!
-  operator: Bytes!
-  from: Bytes!
-  to: Bytes!
-  proposal: IProposal
-  type: TransferType!
-  txHash: Bytes!
-  createdAt: BigInt!
 }

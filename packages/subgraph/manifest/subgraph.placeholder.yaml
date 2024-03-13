@@ -14,13 +14,13 @@ dataSources:
       address: '{{address}}'
       startBlock: {{startBlock}}
     mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
       entities:
         - PluginInstallation
         - PluginPreparation
         - PluginPermission
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
       abis:        
         - name: PluginSetupProcessor
           file: ./imported/PluginSetupProcessor.json
