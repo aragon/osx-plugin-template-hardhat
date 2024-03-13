@@ -280,6 +280,10 @@ and finally the subgraph itself with
 yarn build:subgraph
 ```
 
+When running `yarn build`, it requires a plugin address, which is obtained from the configuration file located
+at `subgraph/manifest/data/<network>.json`, based on the network specified in your `.env` file under the `SUBGRAPH_NETWORK_NAME` variable.
+You do not need to provide a plugin address for building or testing purposes, but it becomes necessary when deploying the subgraph.
+
 During development of the subgraph, you might want to clean outdated files that were build, imported, and generated. To do this, run
 
 ```sh
@@ -312,7 +316,8 @@ yarn coverage
 
 ### Deployment
 
-To deploy the subgraph to the subgraph provider, write your intended subgraph name and version into the `SUBGRAPH_NAME` and `SUBGRAPH_VERSION` variables [in the `.env` file that you created in the beginning](environment-variables) and pick a network name `SUBGRAPH_NETWORK_NAME` [being supported by the subgraph provider](https://docs.alchemy.com/reference/supported-subgraph-chains). Then run
+To deploy the subgraph to the subgraph provider, write your intended subgraph name and version into the `SUBGRAPH_NAME` and `SUBGRAPH_VERSION` variables [in the `.env` file that you created in the beginning](environment-variables) and pick a network name `SUBGRAPH_NETWORK_NAME` [being supported by the subgraph provider](https://docs.alchemy.com/reference/supported-subgraph-chains). Remember to place correctly the Plugin address on the network you are going to deploy to, you can do that by adding it on `subgraph/manifest/data/<network>.json`.
+Then run
 
 ```sh
 yarn deploy
