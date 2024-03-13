@@ -1,12 +1,12 @@
 {
   "info": "# Do not edit subgraph.yaml,this is a generated file. \n# Instead, edit subgraph.placeholder.yaml and run: yarn manifest",
-  "network": "rinkeby",
+  "network": "arbitrum-one",
   "dataSources": {
     "PluginSetupProcessors": [
       {
         "name": "PluginSetupProcessor",
-        "address": "0x2B8C4DD137104d1E869105cd0106e7D9EF955BfE",
-        "startBlock": 7727664
+        "address": "0x308a1DC5020c4B5d992F5543a7236c465997fecB",
+        "startBlock": 145462184
       }
     ],
     "Plugin": {
