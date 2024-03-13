@@ -8,15 +8,15 @@ import {Address} from '@graphprotocol/graph-ts';
 
 export function supportsERC20Wrapped(token: Address): bool {
   // Double check that it's ERC20Wrapped by calling supportsInterface checks.
-  let erc20Wrapped = GovernanceWrappedERC20.bind(token);
-  let introspection_wrapped_erc20 = supportsInterface(
+  const erc20Wrapped = GovernanceWrappedERC20.bind(token);
+  const introspection_wrapped_erc20 = supportsInterface(
     erc20Wrapped,
     GOVERNANCE_WRAPPED_ERC20_INTERFACE_ID
   ); // GovernanceWrappedERC20
   if (!introspection_wrapped_erc20) {
     return false;
   }
-  let introspection_ffffffff = supportsInterface(
+  const introspection_ffffffff = supportsInterface(
     erc20Wrapped,
     'ffffffff',
     false
@@ -28,7 +28,7 @@ export function fetchOrCreateWrappedERC20Entity(
   address: Address
 ): ERC20WrapperContract | null {
   const tokenEntityId = generateTokenEntityId(address);
-  let wrappedErc20 = GovernanceWrappedERC20.bind(address);
+  const wrappedErc20 = GovernanceWrappedERC20.bind(address);
   // try load entry
   let contract = ERC20WrapperContract.load(tokenEntityId);
   if (contract != null) {
@@ -37,18 +37,18 @@ export function fetchOrCreateWrappedERC20Entity(
 
   contract = new ERC20WrapperContract(tokenEntityId);
 
-  let try_name = wrappedErc20.try_name();
-  let try_symbol = wrappedErc20.try_symbol();
-  let totalSupply = wrappedErc20.try_totalSupply();
-  let try_decimals = wrappedErc20.try_decimals();
+  const try_name = wrappedErc20.try_name();
+  const try_symbol = wrappedErc20.try_symbol();
+  const totalSupply = wrappedErc20.try_totalSupply();
+  const try_decimals = wrappedErc20.try_decimals();
   // extra checks
-  let balanceOf = wrappedErc20.try_balanceOf(address);
-  let underlying = wrappedErc20.try_underlying();
+  const balanceOf = wrappedErc20.try_balanceOf(address);
+  const underlying = wrappedErc20.try_underlying();
   if (totalSupply.reverted || balanceOf.reverted || underlying.reverted) {
     return null;
   }
   // get and save the underliying contract
-  let underlyingContract = fetchOrCreateERC20Entity(underlying.value);
+  const underlyingContract = fetchOrCreateERC20Entity(underlying.value);
   if (!underlyingContract) {
     return null;
   }
@@ -65,7 +65,7 @@ export function fetchOrCreateERC20Entity(
   address: Address
 ): ERC20Contract | null {
   const tokenEntityId = generateTokenEntityId(address);
-  let erc20 = ERC20.bind(address);
+  const erc20 = ERC20.bind(address);
 
   // Try load entry
   let contract = ERC20Contract.load(tokenEntityId);
@@ -75,13 +75,13 @@ export function fetchOrCreateERC20Entity(
 
   contract = new ERC20Contract(tokenEntityId);
 
-  let try_name = erc20.try_name();
-  let try_symbol = erc20.try_symbol();
-  let try_decimals = erc20.try_decimals();
+  const try_name = erc20.try_name();
+  const try_symbol = erc20.try_symbol();
+  const try_decimals = erc20.try_decimals();
 
   // Extra check to make sure contract is ERC20.
-  let totalSupply = erc20.try_totalSupply();
-  let balanceOf = erc20.try_balanceOf(address);
+  const totalSupply = erc20.try_totalSupply();
+  const balanceOf = erc20.try_balanceOf(address);
   if (totalSupply.reverted || balanceOf.reverted) {
     return null;
   }
@@ -109,13 +109,13 @@ export function identifyAndFetchOrCreateERC20TokenEntity(
 ): string | null {
   let tokenAddress: string;
   if (supportsERC20Wrapped(token)) {
-    let contract = fetchOrCreateWrappedERC20Entity(token);
+    const contract = fetchOrCreateWrappedERC20Entity(token);
     if (!contract) {
       return null;
     }
     tokenAddress = contract.id;
   } else {
-    let contract = fetchOrCreateERC20Entity(token);
+    const contract = fetchOrCreateERC20Entity(token);
     if (!contract) {
       return null;
     }

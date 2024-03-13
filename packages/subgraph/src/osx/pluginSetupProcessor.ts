@@ -45,7 +45,7 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
 }
 
 function createTokenVotingPlugin(plugin: Address, dao: Address): void {
-  let pluginGenerationResult = generatePluginInstallationEntityId(dao, plugin);
+  const pluginGenerationResult = generatePluginInstallationEntityId(dao, plugin);
 
   if (!pluginGenerationResult) {
     log.error('Failed to generate pluginId', [
@@ -55,7 +55,7 @@ function createTokenVotingPlugin(plugin: Address, dao: Address): void {
     return;
   }
 
-  let pluginId: string = pluginGenerationResult as string;
+  const pluginId: string = pluginGenerationResult as string;
 
   let pluginEntity = TokenVotingPlugin.load(pluginId);
 
@@ -65,11 +65,11 @@ function createTokenVotingPlugin(plugin: Address, dao: Address): void {
     pluginEntity.daoAddress = Bytes.fromHexString(dao.toHexString());
     pluginEntity.proposalCount = BigInt.zero();
 
-    let contract = TokenVotingContract.bind(plugin);
-    let supportThreshold = contract.try_supportThreshold();
-    let minParticipation = contract.try_minParticipation();
-    let minDuration = contract.try_minDuration();
-    let token = contract.try_getVotingToken();
+    const contract = TokenVotingContract.bind(plugin);
+    const supportThreshold = contract.try_supportThreshold();
+    const minParticipation = contract.try_minParticipation();
+    const minDuration = contract.try_minDuration();
+    const token = contract.try_getVotingToken();
 
     pluginEntity.supportThreshold = supportThreshold.reverted
       ? null
@@ -80,16 +80,16 @@ function createTokenVotingPlugin(plugin: Address, dao: Address): void {
     pluginEntity.minDuration = minDuration.reverted ? null : minDuration.value;
 
     if (!token.reverted) {
-      let tokenAddress = token.value;
+      const tokenAddress = token.value;
       if (supportsERC20Wrapped(tokenAddress)) {
-        let contract = fetchOrCreateWrappedERC20Entity(tokenAddress);
+        const contract = fetchOrCreateWrappedERC20Entity(tokenAddress);
         if (!contract) {
           return;
         }
 
         pluginEntity.token = contract.id;
       } else {
-        let contract = fetchOrCreateERC20Entity(tokenAddress);
+        const contract = fetchOrCreateERC20Entity(tokenAddress);
         if (!contract) {
           return;
         }
@@ -99,7 +99,7 @@ function createTokenVotingPlugin(plugin: Address, dao: Address): void {
     }
 
     // Create template
-    let context = new DataSourceContext();
+    const context = new DataSourceContext();
     context.setString('daoAddress', dao.toHexString());
     TokenVoting.createWithContext(plugin, context);
 

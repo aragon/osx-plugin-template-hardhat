@@ -5,8 +5,8 @@ import {generateMemberEntityId} from '../utils/ids';
 import {Address, BigInt} from '@graphprotocol/graph-ts';
 
 export function getERC20Balance(user: Address, tokenAddress: Address): BigInt {
-  let contract = GovernanceERC20Contract.bind(tokenAddress);
-  let balance = contract.balanceOf(user);
+  const contract = GovernanceERC20Contract.bind(tokenAddress);
+  const balance = contract.balanceOf(user);
   return balance;
 }
 
@@ -14,8 +14,8 @@ export function getDelegation(
   user: Address,
   tokenAddress: Address
 ): string | null {
-  let contract = GovernanceERC20Contract.bind(tokenAddress);
-  let delegate = contract.delegates(user);
+  const contract = GovernanceERC20Contract.bind(tokenAddress);
+  const delegate = contract.delegates(user);
 
   return delegate === Address.fromString(ADDRESS_ZERO)
     ? null
@@ -27,7 +27,7 @@ export function getDelegateeId(
   tokenAddress: Address,
   pluginId: string
 ): string | null {
-  let delegatee = getDelegation(user, tokenAddress);
+  const delegatee = getDelegation(user, tokenAddress);
   return delegatee
     ? generateMemberEntityId(
         Address.fromString(pluginId),
@@ -37,8 +37,8 @@ export function getDelegateeId(
 }
 
 export function getVotingPower(user: Address, tokenAddress: Address): BigInt {
-  let contract = GovernanceERC20Contract.bind(tokenAddress);
-  let votingPower = contract.getVotes(user);
+  const contract = GovernanceERC20Contract.bind(tokenAddress);
+  const votingPower = contract.getVotes(user);
   return votingPower;
 }
 

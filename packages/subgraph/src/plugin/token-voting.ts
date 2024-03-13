@@ -23,18 +23,16 @@ import {
   generateProposalEntityId,
 } from '@aragon/osx-commons-subgraph';
 import {
-  Address,
   BigInt,
   Bytes,
   dataSource,
   DataSourceContext,
 } from '@graphprotocol/graph-ts';
-import {log} from 'matchstick-as';
 
 export function handleProposalCreated(event: ProposalCreated): void {
-  let context = dataSource.context();
-  let daoId = context.getString('daoAddress');
-  let metadata = event.params.metadata.toString();
+  const context = dataSource.context();
+  const daoId = context.getString('daoAddress');
+  const metadata = event.params.metadata.toString();
   _handleProposalCreated(event, daoId, metadata);
 }
 
@@ -44,15 +42,15 @@ export function _handleProposalCreated(
   daoId: string,
   metadata: string
 ): void {
-  let pluginAddress = event.address;
-  let pluginEntityId = generatePluginEntityId(pluginAddress);
-  let pluginProposalId = event.params.proposalId;
-  let proposalEntityId = generateProposalEntityId(
+  const pluginAddress = event.address;
+  const pluginEntityId = generatePluginEntityId(pluginAddress);
+  const pluginProposalId = event.params.proposalId;
+  const proposalEntityId = generateProposalEntityId(
     pluginAddress,
     pluginProposalId
   );
 
-  let proposalEntity = new TokenVotingProposal(proposalEntityId);
+  const proposalEntity = new TokenVotingProposal(proposalEntityId);
   proposalEntity.daoAddress = Bytes.fromHexString(daoId);
   proposalEntity.plugin = pluginEntityId;
   proposalEntity.pluginProposalId = pluginProposalId;
@@ -63,16 +61,16 @@ export function _handleProposalCreated(
   proposalEntity.allowFailureMap = event.params.allowFailureMap;
   proposalEntity.approvalReached = false;
 
-  let contract = TokenVoting.bind(pluginAddress);
-  let proposal = contract.try_getProposal(pluginProposalId);
+  const contract = TokenVoting.bind(pluginAddress);
+  const proposal = contract.try_getProposal(pluginProposalId);
 
   if (!proposal.reverted) {
     proposalEntity.open = proposal.value.value0;
     proposalEntity.executed = proposal.value.value1;
 
     // ProposalParameters
-    let parameters = proposal.value.value2;
-    let votingMode = VOTING_MODES.get(parameters.votingMode);
+    const parameters = proposal.value.value2;
+    const votingMode = VOTING_MODES.get(parameters.votingMode);
 
     if (!votingMode) {
       return;
@@ -89,19 +87,19 @@ export function _handleProposalCreated(
     proposalEntity.endDate = parameters.endDate;
 
     // Tally
-    let tally = proposal.value.value3;
+    const tally = proposal.value.value3;
     proposalEntity.abstain = tally.abstain;
     proposalEntity.yes = tally.yes;
     proposalEntity.no = tally.no;
 
     // Actions
-    let actions = proposal.value.value4;
+    const actions = proposal.value.value4;
     for (let index = 0; index < actions.length; index++) {
       const action = actions[index];
 
-      let actionId = generateActionEntityId(proposalEntityId, index);
+      const actionId = generateActionEntityId(proposalEntityId, index);
 
-      let actionEntity = new Action(actionId);
+      const actionEntity = new Action(actionId);
       actionEntity.to = action.to;
       actionEntity.value = action.value;
       actionEntity.data = action.data;
@@ -120,9 +118,9 @@ export function _handleProposalCreated(
   proposalEntity.save();
 
   // update vote length
-  let packageEntity = TokenVotingPlugin.load(pluginEntityId);
+  const packageEntity = TokenVotingPlugin.load(pluginEntityId);
   if (packageEntity) {
-    let voteLength = contract.try_proposalCount();
+    const voteLength = contract.try_proposalCount();
     if (!voteLength.reverted) {
       packageEntity.proposalCount = voteLength.value;
       packageEntity.save();
@@ -131,17 +129,20 @@ export function _handleProposalCreated(
 }
 
 export function handleVoteCast(event: VoteCast): void {
-  let pluginAddress = event.address;
-  let voterAddress = event.params.voter;
-  let voterEntityId = generateMemberEntityId(pluginAddress, voterAddress);
-  let pluginProposalId = event.params.proposalId;
-  let proposalEntityId = generateProposalEntityId(
+  const pluginAddress = event.address;
+  const voterAddress = event.params.voter;
+  const voterEntityId = generateMemberEntityId(pluginAddress, voterAddress);
+  const pluginProposalId = event.params.proposalId;
+  const proposalEntityId = generateProposalEntityId(
     pluginAddress,
     pluginProposalId
   );
-  let pluginEntityId = generatePluginEntityId(pluginAddress);
-  let voterVoteEntityId = generateVoteEntityId(voterAddress, proposalEntityId);
-  let voteOption = VOTER_OPTIONS.get(event.params.voteOption);
+  const pluginEntityId = generatePluginEntityId(pluginAddress);
+  const voterVoteEntityId = generateVoteEntityId(
+    voterAddress,
+    proposalEntityId
+  );
+  const voteOption = VOTER_OPTIONS.get(event.params.voteOption);
 
   if (voteOption === 'None') {
     return;
@@ -177,30 +178,30 @@ export function handleVoteCast(event: VoteCast): void {
   }
 
   // update count
-  let proposalEntity = TokenVotingProposal.load(proposalEntityId);
+  const proposalEntity = TokenVotingProposal.load(proposalEntityId);
   if (proposalEntity) {
-    let contract = TokenVoting.bind(pluginAddress);
-    let proposal = contract.try_getProposal(pluginProposalId);
+    const contract = TokenVoting.bind(pluginAddress);
+    const proposal = contract.try_getProposal(pluginProposalId);
 
     if (!proposal.reverted) {
-      let parameters = proposal.value.value2;
-      let tally = proposal.value.value3;
-      let totalVotingPowerCall = contract.try_totalVotingPower(
+      const parameters = proposal.value.value2;
+      const tally = proposal.value.value3;
+      const totalVotingPowerCall = contract.try_totalVotingPower(
         parameters.snapshotBlock
       );
 
       if (!totalVotingPowerCall.reverted) {
-        let abstain = tally.abstain;
-        let yes = tally.yes;
-        let no = tally.no;
-        let castedVotingPower = yes.plus(no).plus(abstain);
-        let totalVotingPower = totalVotingPowerCall.value;
-        let noVotesWorstCase = totalVotingPower.minus(yes).minus(abstain);
+        const abstain = tally.abstain;
+        const yes = tally.yes;
+        const no = tally.no;
+        const castedVotingPower = yes.plus(no).plus(abstain);
+        const totalVotingPower = totalVotingPowerCall.value;
+        const noVotesWorstCase = totalVotingPower.minus(yes).minus(abstain);
 
-        let supportThreshold = parameters.supportThreshold;
-        let minVotingPower = parameters.minVotingPower;
+        const supportThreshold = parameters.supportThreshold;
+        const minVotingPower = parameters.minVotingPower;
 
-        let BASE = BigInt.fromString(RATIO_BASE);
+        const BASE = BigInt.fromString(RATIO_BASE);
 
         proposalEntity.yes = yes;
         proposalEntity.no = no;
@@ -210,17 +211,17 @@ export function handleVoteCast(event: VoteCast): void {
         // check if the current vote results meet the conditions for the proposal to pass:
 
         // `(1 - supportThreshold) * N_yes > supportThreshold *  N_no,worst-case`
-        let supportThresholdReachedEarly = BASE.minus(supportThreshold)
+        const supportThresholdReachedEarly = BASE.minus(supportThreshold)
           .times(yes)
           .gt(supportThreshold.times(noVotesWorstCase));
 
         // `(1 - supportThreshold) * N_yes > supportThreshold *  N_no
-        let supportThresholdReached = BASE.minus(supportThreshold)
+        const supportThresholdReached = BASE.minus(supportThreshold)
           .times(yes)
           .gt(supportThreshold.times(no));
 
         // `N_yes + N_no + N_abstain >= minVotingPower = minParticipation * N_total`
-        let minParticipationReached = castedVotingPower.ge(minVotingPower);
+        const minParticipationReached = castedVotingPower.ge(minVotingPower);
 
         // Used when proposal has ended.
         proposalEntity.approvalReached =
@@ -238,13 +239,13 @@ export function handleVoteCast(event: VoteCast): void {
 }
 
 export function handleProposalExecuted(event: ProposalExecuted): void {
-  let pluginProposalId = event.params.proposalId;
-  let proposalEntityId = generateProposalEntityId(
+  const pluginProposalId = event.params.proposalId;
+  const proposalEntityId = generateProposalEntityId(
     event.address,
     pluginProposalId
   );
 
-  let proposalEntity = TokenVotingProposal.load(proposalEntityId);
+  const proposalEntity = TokenVotingProposal.load(proposalEntityId);
   if (proposalEntity) {
     proposalEntity.executed = true;
     proposalEntity.approvalReached = false;
@@ -258,11 +259,11 @@ export function handleProposalExecuted(event: ProposalExecuted): void {
 export function handleVotingSettingsUpdated(
   event: VotingSettingsUpdated
 ): void {
-  let packageEntity = TokenVotingPlugin.load(
+  const packageEntity = TokenVotingPlugin.load(
     generatePluginEntityId(event.address)
   );
   if (packageEntity) {
-    let votingMode = VOTING_MODES.get(event.params.votingMode);
+    const votingMode = VOTING_MODES.get(event.params.votingMode);
     if (!votingMode) {
       return;
     }
@@ -278,12 +279,12 @@ export function handleVotingSettingsUpdated(
 export function handleMembershipContractAnnounced(
   event: MembershipContractAnnounced
 ): void {
-  let token = event.params.definingContract;
-  let pluginEntityId = generatePluginEntityId(event.address);
-  let packageEntity = TokenVotingPlugin.load(pluginEntityId);
+  const token = event.params.definingContract;
+  const pluginEntityId = generatePluginEntityId(event.address);
+  const packageEntity = TokenVotingPlugin.load(pluginEntityId);
 
   if (packageEntity) {
-    let tokenAddress = identifyAndFetchOrCreateERC20TokenEntity(token);
+    const tokenAddress = identifyAndFetchOrCreateERC20TokenEntity(token);
     if (!tokenAddress) {
       return;
     }
@@ -292,7 +293,7 @@ export function handleMembershipContractAnnounced(
 
     // Both GovernanceWrappedERC20/GovernanceERC20 use the `Transfer` event, so
     // It's safe to create the same type of template for them.
-    let context = new DataSourceContext();
+    const context = new DataSourceContext();
     context.setString('pluginId', pluginEntityId);
     GovernanceERC20.createWithContext(event.params.definingContract, context);
   }

@@ -1,6 +1,5 @@
 import {
   SupportedNetworks,
-  getNetwork,
   getNetworkDeployments,
 } from '@aragon/osx-commons-configs';
 import dotenv from 'dotenv';
