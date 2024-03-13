@@ -38,7 +38,7 @@ echo ''
 echo '> Deploying subgraph: '$FULLNAME
 echo '> Subgraph version: '$SUBGRAPH_VERSION
 
-# check if address is null 
+# check if the repo address is null or zero address
 FILE=manifest/data/$SUBGRAPH_NETWORK_NAME'.json'
 
 address=$(jq -r '.dataSources.Plugin.address' "$FILE")
