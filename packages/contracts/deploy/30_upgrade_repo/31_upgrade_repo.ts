@@ -15,6 +15,10 @@ import path from 'path';
 
 type SemVer = [number, number, number];
 
+/**
+ * Upgrades the plugin repo to the latest implementation.
+ * @param {HardhatRuntimeEnvironment} hre
+ */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const [deployer] = await hre.ethers.getSigners();
   const productionNetworkName: string = getProductionNetworkName(hre);
