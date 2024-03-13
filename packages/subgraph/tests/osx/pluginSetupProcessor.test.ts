@@ -44,19 +44,8 @@ import {
   clearStore,
   test,
   describe,
-  beforeAll,
   beforeEach,
 } from 'matchstick-as';
-
-// Initialize a StaticArray<u8> with 4 predefined bytes
-function createFixedBytes(): ByteArray {
-  let bytes = new ByteArray(4);
-  bytes[0] = 15;
-  bytes[1] = 19;
-  bytes[2] = 9;
-  bytes[3] = 154;
-  return bytes;
-}
 
 describe('OSx', () => {
   beforeEach(() => {
