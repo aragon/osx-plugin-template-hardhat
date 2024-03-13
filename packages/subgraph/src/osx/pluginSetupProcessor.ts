@@ -45,7 +45,10 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
 }
 
 function createTokenVotingPlugin(plugin: Address, dao: Address): void {
-  const pluginGenerationResult = generatePluginInstallationEntityId(dao, plugin);
+  const pluginGenerationResult = generatePluginInstallationEntityId(
+    dao,
+    plugin
+  );
 
   if (!pluginGenerationResult) {
     log.error('Failed to generate pluginId', [
