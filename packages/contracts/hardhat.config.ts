@@ -17,9 +17,9 @@ import {
   HardhatNetworkAccountsUserConfig,
   HardhatRuntimeEnvironment,
 } from 'hardhat/types';
+import type {NetworkUserConfig} from 'hardhat/types';
 import {resolve} from 'path';
 import 'solidity-coverage';
-import type {NetworkUserConfig} from 'hardhat/types';
 
 const dotenvConfigPath: string = process.env.DOTENV_CONFIG_PATH || '../../.env';
 dotenvConfig({path: resolve(__dirname, dotenvConfigPath), override: true});
