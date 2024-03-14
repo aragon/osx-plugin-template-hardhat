@@ -1,14 +1,17 @@
 import {InstallationPrepared} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
-import {TokenVotingPlugin} from '../../generated/schema';
+import {TokenVotingPlugin as TokenVotingPluginEntity} from '../../generated/schema';
 import {TokenVoting} from '../../generated/templates';
-import {TokenVoting as TokenVotingContract} from '../../generated/templates/TokenVoting/TokenVoting';
+import {TokenVoting as TokenVotingPluginContract} from '../../generated/templates/TokenVoting/TokenVoting';
 import {PLUGIN_REPO_ADDRESS} from '../../imported/repo-address';
 import {
   fetchOrCreateERC20Entity,
   fetchOrCreateWrappedERC20Entity,
   supportsERC20Wrapped,
 } from '../utils/tokens/erc20';
-import {generatePluginInstallationEntityId} from '@aragon/osx-commons-subgraph';
+import {
+  generatePluginEntityId,
+  generatePluginInstallationEntityId,
+} from '@aragon/osx-commons-subgraph';
 import {
   Address,
   BigInt,
@@ -28,47 +31,55 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
     return;
   }
 
-  const dao = event.params.dao;
-  const plugin = event.params.plugin;
+  const daoAddress = event.params.dao;
+  const pluginAddress = event.params.plugin;
 
   // Generate a unique ID for the plugin installation.
-  const installationId = generatePluginInstallationEntityId(dao, plugin);
+  const installationId = generatePluginInstallationEntityId(
+    daoAddress,
+    pluginAddress
+  );
   // Log an error and exit if unable to generate the installation ID.
   if (!installationId) {
     log.error('Failed to generate installationId', [
-      dao.toHexString(),
-      plugin.toHexString(),
+      daoAddress.toHexString(),
+      pluginAddress.toHexString(),
     ]);
     return;
   }
-  createTokenVotingPlugin(plugin, dao);
+  createTokenVotingPlugin(pluginAddress, daoAddress);
 }
 
-function createTokenVotingPlugin(plugin: Address, dao: Address): void {
-  const pluginGenerationResult = generatePluginInstallationEntityId(
-    dao,
-    plugin
-  );
+function createTokenVotingPlugin(
+  pluginAddress: Address,
+  daoAddress: Address
+): void {
+  // pin this are we consistently generating this
+  //   const pluginGenerationResult = generatePluginInstallationEntityId(
+  //     daoAddress,
+  //     pluginAddress
+  //   );
 
-  if (!pluginGenerationResult) {
-    log.error('Failed to generate pluginId', [
-      dao.toHexString(),
-      plugin.toHexString(),
-    ]);
-    return;
-  }
+  //   if (!pluginGenerationResult) {
+  //     log.error('Failed to generate pluginId', [
+  //       daoAddress.toHexString(),
+  //       pluginAddress.toHexString(),
+  //     ]);
+  //     return;
+  //   }
 
-  const pluginId: string = pluginGenerationResult as string;
+  //   const pluginId: string = pluginGenerationResult as string;
 
-  let pluginEntity = TokenVotingPlugin.load(pluginId);
+  const pluginId = generatePluginEntityId(pluginAddress);
+  let pluginEntity = TokenVotingPluginEntity.load(pluginId);
 
   if (!pluginEntity) {
-    pluginEntity = new TokenVotingPlugin(pluginId);
-    pluginEntity.pluginAddress = plugin;
-    pluginEntity.daoAddress = Bytes.fromHexString(dao.toHexString());
+    pluginEntity = new TokenVotingPluginEntity(pluginId);
+    pluginEntity.pluginAddress = pluginAddress;
+    pluginEntity.daoAddress = Bytes.fromHexString(daoAddress.toHexString());
     pluginEntity.proposalCount = BigInt.zero();
 
-    const contract = TokenVotingContract.bind(plugin);
+    const contract = TokenVotingPluginContract.bind(pluginAddress);
     const supportThreshold = contract.try_supportThreshold();
     const minParticipation = contract.try_minParticipation();
     const minDuration = contract.try_minDuration();
@@ -103,8 +114,8 @@ function createTokenVotingPlugin(plugin: Address, dao: Address): void {
 
     // Create template
     const context = new DataSourceContext();
-    context.setString('daoAddress', dao.toHexString());
-    TokenVoting.createWithContext(plugin, context);
+    context.setString('daoAddress', daoAddress.toHexString());
+    TokenVoting.createWithContext(pluginAddress, context);
 
     pluginEntity.save();
   }

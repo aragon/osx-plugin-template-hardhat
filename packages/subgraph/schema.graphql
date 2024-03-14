@@ -61,7 +61,7 @@ type TokenVotingPlugin implements IPlugin @entity {
 }
 
 type TokenVotingMember @entity {
-  id: ID! # user address + TokenVotingPlugin pluginId.
+  id: ID! # pluginAddress + voterAddress
   address: Bytes!
   balance: BigInt!
   plugin: TokenVotingPlugin!
@@ -74,7 +74,7 @@ type TokenVotingMember @entity {
 }
 
 type TokenVotingVoter @entity {
-  id: ID! # address
+  id: ID! # pluginAddress + voterAddress
   address: String! # address as string to facilitate filtering by address on the UI
   proposals: [TokenVotingVote!]! @derivedFrom(field: "voter")
   plugin: TokenVotingPlugin!
@@ -83,7 +83,7 @@ type TokenVotingVoter @entity {
 
 type TokenVotingVote @entity {
   "VoterProposal for Many-to-Many"
-  id: ID! # voter + proposal
+  id: ID! # voterAddress + proposalEntityId
   voter: TokenVotingVoter!
   proposal: TokenVotingProposal!
   voteOption: VoteOption!
@@ -94,13 +94,13 @@ type TokenVotingVote @entity {
 }
 
 type TokenVotingProposal implements IProposal @entity {
-  id: ID! # package + proposalId
+  id: ID! # pluginAddress + proposalId (padded)
   daoAddress: Bytes!
   actions: [Action!]! @derivedFrom(field: "proposal")
   allowFailureMap: BigInt!
   failureMap: BigInt
   plugin: TokenVotingPlugin!
-  pluginProposalId: BigInt!
+  pluginProposalId: BigInt! # pluginAddress + proposalId padded
   creator: Bytes!
   metadata: String
 
@@ -133,7 +133,7 @@ type TokenVotingProposal implements IProposal @entity {
 # Executions
 
 type Action @entity {
-  id: ID!
+  id: ID! # proposalId + action index
   to: Bytes!
   value: BigInt!
   data: Bytes!

@@ -36,7 +36,6 @@ export function handleProposalCreated(event: ProposalCreated): void {
   _handleProposalCreated(event, daoId, metadata);
 }
 
-// work around: to bypass context and ipfs for testing, as they are not yet supported by matchstick
 export function _handleProposalCreated(
   event: ProposalCreated,
   daoId: string,
@@ -72,9 +71,9 @@ export function _handleProposalCreated(
     const parameters = proposal.value.value2;
     const votingMode = VOTING_MODES.get(parameters.votingMode);
 
-    if (!votingMode) {
-      return;
-    }
+    // if (!votingMode) {
+    //   return;
+    // }
 
     proposalEntity.votingMode = votingMode as string;
     proposalEntity.supportThreshold = parameters.supportThreshold;
@@ -168,7 +167,7 @@ export function handleVoteCast(event: VoteCast): void {
   let voterEntity = TokenVotingVoter.load(voterEntityId);
   if (!voterEntity) {
     voterEntity = new TokenVotingVoter(voterEntityId);
-    voterEntity.address = voterEntityId;
+    voterEntity.address = voterAddress.toHexString();
     voterEntity.plugin = pluginEntityId;
     voterEntity.lastUpdated = event.block.timestamp;
     voterEntity.save();
@@ -264,9 +263,9 @@ export function handleVotingSettingsUpdated(
   );
   if (packageEntity) {
     const votingMode = VOTING_MODES.get(event.params.votingMode);
-    if (!votingMode) {
-      return;
-    }
+    // if (!votingMode) {
+    //   return;
+    // }
     packageEntity.votingMode = votingMode as string;
     packageEntity.supportThreshold = event.params.supportThreshold;
     packageEntity.minParticipation = event.params.minParticipation;

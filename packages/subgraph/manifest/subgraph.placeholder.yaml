@@ -15,15 +15,26 @@ dataSources:
       startBlock: {{startBlock}}
     mapping:
       entities:
-        - PluginInstallation
-        - PluginPreparation
-        - PluginPermission
+        - TokenVotingPlugin
+        - TokenVotingMember
+        - TokenVotingVoter
+        - TokenVotingVote
+        - TokenVotingProposal
+        - Action
+        - ERC20Contract
+        - ERC20WrapperContract
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       abis:        
         - name: PluginSetupProcessor
           file: ./imported/PluginSetupProcessor.json
+        - name: ERC20
+          file: $PLUGIN_MODULE/contracts/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
+        - name: TokenVoting
+          file: $PLUGIN_MODULE/contracts/artifacts/src/TokenVoting.sol/TokenVoting.json
+        - name: GovernanceWrappedERC20
+          file: $PLUGIN_MODULE/contracts/artifacts/src/ERC20/governance/GovernanceWrappedERC20.sol/GovernanceWrappedERC20.json
       eventHandlers:
         - event: InstallationPrepared(indexed address,indexed address,bytes32,indexed address,(uint8,uint16),bytes,address,(address[],(uint8,address,address,address,bytes32)[]))
           handler: handleInstallationPrepared
@@ -41,7 +52,14 @@ templates:
       language: wasm/assemblyscript
       file: ./src/plugin/token-voting.ts
       entities:
-        - Dao
+        - TokenVotingPlugin
+        - TokenVotingMember
+        - TokenVotingVoter
+        - TokenVotingVote
+        - TokenVotingProposal
+        - Action
+        - ERC20Contract
+        - ERC20WrapperContract
       abis:
         - name: ERC20
           file: $PLUGIN_MODULE/contracts/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
@@ -71,7 +89,14 @@ templates:
       language: wasm/assemblyscript
       file: ./src/plugin/governance-erc20.ts
       entities:
-        - Dao
+        - TokenVotingPlugin
+        - TokenVotingMember
+        - TokenVotingVoter
+        - TokenVotingVote
+        - TokenVotingProposal
+        - Action
+        - ERC20Contract
+        - ERC20WrapperContract
       abis:
         - name: GovernanceERC20
           file: $PLUGIN_MODULE/contracts/artifacts/src/ERC20/governance/GovernanceERC20.sol/GovernanceERC20.json
