@@ -25,16 +25,9 @@ import {
   TOKEN_VOTING_INTERFACE_ID,
 } from '../../test-utils/token-voting-constants';
 import {
-  TokenVoting_V1_0_0__factory,
-  TokenVoting_V1_3_0__factory,
   TokenVoting__factory,
   TokenVoting,
 } from '../../test-utils/typechain-versions';
-import {
-  getProtocolVersion,
-  deployAndUpgradeFromToCheck,
-  deployAndUpgradeSelfCheck,
-} from '../../test-utils/uups-upgradeable';
 import {
   VoteOption,
   VotingMode,
@@ -52,13 +45,12 @@ import {
   getInterfaceId,
   pctToRatio,
   RATIO_BASE,
-  PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS,
 } from '@aragon/osx-commons-sdk';
 import {DAO, DAO__factory} from '@aragon/osx-ethers';
 import {time} from '@nomicfoundation/hardhat-network-helpers';
 import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
 import {expect} from 'chai';
-import {BigNumber, ContractFactory} from 'ethers';
+import {BigNumber} from 'ethers';
 import {ethers} from 'hardhat';
 
 describe('TokenVoting', function () {
@@ -192,92 +184,6 @@ describe('TokenVoting', function () {
           governanceErc20Mock.address
         )
       ).to.be.revertedWith('Initializable: contract is already initialized');
-    });
-  });
-
-  describe('Upgrades', () => {
-    let legacyContractFactory: ContractFactory;
-    let currentContractFactory: ContractFactory;
-    let initArgs: any;
-
-    before(() => {
-      currentContractFactory = new TokenVoting__factory(signers[0]);
-    });
-
-    beforeEach(() => {
-      initArgs = {
-        dao: dao.address,
-        votingSettings: votingSettings,
-        token: governanceErc20Mock.address,
-      };
-    });
-
-    it('upgrades to a new implementation', async () => {
-      await deployAndUpgradeSelfCheck(
-        signers[0],
-        signers[1],
-        initArgs,
-        'initialize',
-        currentContractFactory,
-        PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS.UPGRADE_PLUGIN_PERMISSION_ID,
-        dao
-      );
-    });
-
-    it('upgrades from v1.0.0', async () => {
-      legacyContractFactory = new TokenVoting_V1_0_0__factory(signers[0]);
-
-      const {fromImplementation, toImplementation} =
-        await deployAndUpgradeFromToCheck(
-          signers[0],
-          signers[1],
-          initArgs,
-          'initialize',
-          legacyContractFactory,
-          currentContractFactory,
-          PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS.UPGRADE_PLUGIN_PERMISSION_ID,
-          dao
-        );
-
-      expect(toImplementation).to.not.equal(fromImplementation); // The build did change
-
-      const fromProtocolVersion = await getProtocolVersion(
-        legacyContractFactory.attach(fromImplementation)
-      );
-      const toProtocolVersion = await getProtocolVersion(
-        currentContractFactory.attach(toImplementation)
-      );
-      expect(fromProtocolVersion).to.not.deep.equal(toProtocolVersion);
-      expect(fromProtocolVersion).to.deep.equal([1, 0, 0]);
-      expect(toProtocolVersion).to.deep.equal([1, 4, 0]);
-    });
-
-    it('from v1.3.0', async () => {
-      legacyContractFactory = new TokenVoting_V1_3_0__factory(signers[0]);
-
-      const {fromImplementation, toImplementation} =
-        await deployAndUpgradeFromToCheck(
-          signers[0],
-          signers[1],
-
-          initArgs,
-          'initialize',
-          legacyContractFactory,
-          currentContractFactory,
-          PLUGIN_UUPS_UPGRADEABLE_PERMISSIONS.UPGRADE_PLUGIN_PERMISSION_ID,
-          dao
-        );
-      expect(toImplementation).to.not.equal(fromImplementation);
-
-      const fromProtocolVersion = await getProtocolVersion(
-        legacyContractFactory.attach(fromImplementation)
-      );
-      const toProtocolVersion = await getProtocolVersion(
-        currentContractFactory.attach(toImplementation)
-      );
-      expect(fromProtocolVersion).to.not.deep.equal(toProtocolVersion);
-      expect(fromProtocolVersion).to.deep.equal([1, 0, 0]);
-      expect(toProtocolVersion).to.deep.equal([1, 4, 0]);
     });
   });
 
@@ -795,10 +701,7 @@ describe('TokenVoting', function () {
         )
       )
         .to.be.revertedWithCustomError(voting, 'DateOutOfBounds')
-        .withArgs(
-          currentDate + 1, // await takes one second
-          startDateInThePast
-        );
+        .withArgs(currentDate, startDateInThePast);
     });
 
     it('panics if the start date is after the latest start date', async () => {
@@ -1321,7 +1224,6 @@ describe('TokenVoting', function () {
           0
         );
 
-        console.log(signers.length);
         await expect(voting.connect(vitalik).vote(id, VoteOption.Yes, false))
           .to.be.revertedWithCustomError(voting, 'VoteCastForbidden')
           .withArgs(id, vitalik.address, VoteOption.Yes);

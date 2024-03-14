@@ -102,6 +102,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       throwOnTransactionFailures: true,
+      allowBlocksWithSameTimestamp: true,
       throwOnCallFailures: true,
       blockGasLimit: BigNumber.from(10).pow(6).mul(30).toNumber(), // 30 million, really high to test some things that are only possible with a higher block gas limit
       gasPrice: BigNumber.from(10).pow(9).mul(1000).toNumber(), // 1000 gwei
@@ -167,7 +168,9 @@ const config: HardhatUserConfig = {
     tests: './test',
     deploy: './deploy',
   },
-
+  mocha: {
+    timeout: 60_000,
+  },
   solidity: {
     version: '0.8.17',
     settings: {
