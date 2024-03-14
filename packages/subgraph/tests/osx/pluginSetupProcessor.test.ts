@@ -29,7 +29,10 @@ import {
   PLUGIN_SETUP_ID,
 } from '../utils/constants';
 import {createInstallationPreparedEvent} from '../utils/events';
-import {generatePluginInstallationEntityId} from '@aragon/osx-commons-subgraph';
+import {
+  generatePluginEntityId,
+  generatePluginInstallationEntityId,
+} from '@aragon/osx-commons-subgraph';
 import {
   Address,
   BigInt,
@@ -131,7 +134,7 @@ describe('OSx', () => {
 
         handleInstallationPrepared(event1);
 
-        assert.notInStore('TokenVotingPlugin', installationId!);
+        assert.notInStore('TokenVotingPlugin', pluginAddress!);
         assert.entityCount('TokenVotingPlugin', 0);
 
         const thisPluginRepoAddress = PLUGIN_REPO_ADDRESS;
@@ -150,13 +153,12 @@ describe('OSx', () => {
 
         handleInstallationPrepared(event2);
 
-        assert.entityCount('TokenVotingPlugin', 1);
-        assert.fieldEquals(
-          'TokenVotingPlugin',
-          installationId!,
-          'id',
-          installationId!
+        const pluginId = generatePluginEntityId(
+          Address.fromString(pluginAddress)
         );
+
+        assert.entityCount('TokenVotingPlugin', 1);
+        assert.fieldEquals('TokenVotingPlugin', pluginId, 'id', pluginId);
       });
     });
   });

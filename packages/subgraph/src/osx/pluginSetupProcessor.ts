@@ -3,16 +3,8 @@ import {TokenVotingPlugin as TokenVotingPluginEntity} from '../../generated/sche
 import {TokenVoting} from '../../generated/templates';
 import {TokenVoting as TokenVotingPluginContract} from '../../generated/templates/TokenVoting/TokenVoting';
 import {PLUGIN_REPO_ADDRESS} from '../../imported/repo-address';
-import {
-  fetchOrCreateERC20Entity,
-  fetchOrCreateWrappedERC20Entity,
-  identifyAndFetchOrCreateERC20TokenEntity,
-  supportsERC20Wrapped,
-} from '../utils/tokens/erc20';
-import {
-  generatePluginEntityId,
-  generatePluginInstallationEntityId,
-} from '@aragon/osx-commons-subgraph';
+import {identifyAndFetchOrCreateERC20TokenEntity} from '../utils/tokens/erc20';
+import {generatePluginEntityId} from '@aragon/osx-commons-subgraph';
 import {
   Address,
   BigInt,

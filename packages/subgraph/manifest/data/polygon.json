@@ -11,7 +11,7 @@
     ],
     "Plugin": {
       "name": "TokenVotingPlugin",
-      "address": null,
+      "address": "0xae67aea0B830ed4504B36670B5Fa70c5C386Bb58",
       "startBlock": 40817440
     }
   }
