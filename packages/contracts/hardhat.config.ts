@@ -59,10 +59,10 @@ function getHardhatNetworkAccountsConfig(
 
   const accountsConfig: HardhatNetworkAccountsUserConfig = accounts.map(
     privateKey => {
-      const oneEther = BigNumber.from(10).pow(18);
+      const balance = BigNumber.from(1_000_000).pow(18).toString(); 
       return {
         privateKey,
-        balance: oneEther.mul(1000).toString(),
+        balance,
       };
     }
   );
