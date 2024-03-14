@@ -6,6 +6,7 @@ import {PLUGIN_REPO_ADDRESS} from '../../imported/repo-address';
 import {
   fetchOrCreateERC20Entity,
   fetchOrCreateWrappedERC20Entity,
+  identifyAndFetchOrCreateERC20TokenEntity,
   supportsERC20Wrapped,
 } from '../utils/tokens/erc20';
 import {
@@ -17,7 +18,6 @@ import {
   BigInt,
   Bytes,
   DataSourceContext,
-  log,
 } from '@graphprotocol/graph-ts';
 
 export function handleInstallationPrepared(event: InstallationPrepared): void {
@@ -31,45 +31,13 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
     return;
   }
 
-  const daoAddress = event.params.dao;
-  const pluginAddress = event.params.plugin;
-
-  // Generate a unique ID for the plugin installation.
-  const installationId = generatePluginInstallationEntityId(
-    daoAddress,
-    pluginAddress
-  );
-  // Log an error and exit if unable to generate the installation ID.
-  if (!installationId) {
-    log.error('Failed to generate installationId', [
-      daoAddress.toHexString(),
-      pluginAddress.toHexString(),
-    ]);
-    return;
-  }
-  createTokenVotingPlugin(pluginAddress, daoAddress);
+  createTokenVotingPlugin(event.params.plugin, event.params.dao);
 }
 
 function createTokenVotingPlugin(
   pluginAddress: Address,
   daoAddress: Address
 ): void {
-  // pin this are we consistently generating this
-  //   const pluginGenerationResult = generatePluginInstallationEntityId(
-  //     daoAddress,
-  //     pluginAddress
-  //   );
-
-  //   if (!pluginGenerationResult) {
-  //     log.error('Failed to generate pluginId', [
-  //       daoAddress.toHexString(),
-  //       pluginAddress.toHexString(),
-  //     ]);
-  //     return;
-  //   }
-
-  //   const pluginId: string = pluginGenerationResult as string;
-
   const pluginId = generatePluginEntityId(pluginAddress);
   let pluginEntity = TokenVotingPluginEntity.load(pluginId);
 
@@ -94,29 +62,17 @@ function createTokenVotingPlugin(
     pluginEntity.minDuration = minDuration.reverted ? null : minDuration.value;
 
     if (!token.reverted) {
-      const tokenAddress = token.value;
-      if (supportsERC20Wrapped(tokenAddress)) {
-        const contract = fetchOrCreateWrappedERC20Entity(tokenAddress);
-        if (!contract) {
-          return;
-        }
-
-        pluginEntity.token = contract.id;
-      } else {
-        const contract = fetchOrCreateERC20Entity(tokenAddress);
-        if (!contract) {
-          return;
-        }
-
-        pluginEntity.token = contract.id;
+      const contract = identifyAndFetchOrCreateERC20TokenEntity(token.value);
+      if (!contract) {
+        return;
       }
+      pluginEntity.token = contract;
     }
 
     // Create template
     const context = new DataSourceContext();
     context.setString('daoAddress', daoAddress.toHexString());
     TokenVoting.createWithContext(pluginAddress, context);
-
     pluginEntity.save();
   }
 }
