@@ -68,7 +68,7 @@ yarn lint
 
 To be able to work on the contracts, make sure that you have created an `.env` file from the `.env.example` file and put in the API keys for
 
-- [Infura](https://www.infura.io/) that we use as the web3 provider
+- [Alchemy](https://www.alchemy.com) that we use as the web3 provider
 - [Alchemy Subgraphs](https://www.alchemy.com/subgraphs) that we use as the subgraph provider
 - the block explorer that you want to use depending on the networks that you want to deploy to
 
