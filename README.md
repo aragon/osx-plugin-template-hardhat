@@ -1,44 +1,13 @@
-# Aragon OSX Plugin Template [![Hardhat][hardhat-badge]][hardhat] [![License: AGPL v3][license-badge]][license]
+# Token Voting Plugin [![Hardhat][hardhat-badge]][hardhat] [![License: AGPL v3][license-badge]][license]
 
 [hardhat]: https://hardhat.org/
 [hardhat-badge]: https://img.shields.io/badge/Built%20with-Hardhat-FFDB1C.svg
 [license]: https://opensource.org/licenses/AGPL-v3
 [license-badge]: https://img.shields.io/badge/License-AGPL_v3-blue.svg
 
-## Quickstart
-
-After [creating a new repository from this template](https://github.com/new?template_name=osx-plugin-template-hardhat&template_owner=aragon), cloning, and opening it in your IDE, run
-
-```sh
-yarn install && cd packages/contracts && yarn install && yarn build && yarn typechain
-```
-
-Meanwhile, create an `.env` file from the `.env.example` file and put in the API keys for the services that you want to use.
-You can now develop a plugin by changing the `src/MyPlugin.sol` and `src/MyPluginSetup.sol` files. You can directly import contracts from [Aragon OSx](https://github.com/aragon/osx) as well as OpenZeppelin's [openzeppelin-contracts](https://github.com/OpenZeppelin/openzeppelin-contracts) and [openzeppelin-contracts-upgradeable](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable) that are already set up for you.
-
-```sol
-// SPDX-License-Identifier: AGPL-3.0-or-later
-pragma solidity ^0.8.17;
-
-import {IDAO, PluginUUPSUpgradeable} from "@aragon/osx/core/plugin/PluginUUPSUpgradeable.sol";
-import {SafeCastUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/math/SafeCastUpgradeable.sol';
-
-contract MyPlugin is PluginUUPSUpgradeable {
-    //...
-};
-```
-
-The initial `MyPlugin` and `MyPluginSetup` example comes with unit test, integration test, and test helpers in the `package/contracts/test` folder that you can reuse.
-
-To build and test your contracts, run
-
-```sh
-yarn clean && yarn build && yarn test
-```
-
 ## Project
 
-The root folder of the repo includes three subfolders:
+The root folder of the repo includes two subfolders:
 
 ```markdown
 .
@@ -99,7 +68,7 @@ yarn lint
 
 To be able to work on the contracts, make sure that you have created an `.env` file from the `.env.example` file and put in the API keys for
 
-- [Infura](https://www.infura.io/) that we use as the web3 provider
+- [Alchemy](https://www.alchemy.com) that we use as the web3 provider
 - [Alchemy Subgraphs](https://www.alchemy.com/subgraphs) that we use as the subgraph provider
 - the block explorer that you want to use depending on the networks that you want to deploy to
 
@@ -204,21 +173,37 @@ Deploy the contracts to the local Hardhat Network (being forked from the network
 yarn deploy --tags CreateRepo,NewVersion
 ```
 
-This will create a plugin repo and publish the the first version (`v1.1`) of your plugin.
-
-Deploy the contracts to sepolia with
+This will create a plugin repo and publish the first version (`v1.1`) of your plugin.
+By adding the tag `TransferOwnershipToManagmentDao`, the `ROOT_PERMISSION_ID`, `MAINTAINER_PERMISSION_ID`, and
+`UPGRADE_REPO_PERMISSION_ID` are granted to the management DAO and revoked from the deployer.
+You can do this directly
 
 ```sh
-yarn deploy --network sepolia --tags CreateRepo,NewVersion,Verification
+yarn deploy --tags CreateRepo,NewVersion,TransferOwnershipToManagmentDao
 ```
 
-This will create a plugin repo, publish the the first version (`v1.1`) of your plugin, and verfiy the contracts on sepolia.
+or at a later point by executing
+
+```sh
+yarn deploy --tags TransferOwnershipToManagmentDao
+```
+
+To deploy the contracts to a production network use the `--network` option, for example
+
+```sh
+yarn deploy --network sepolia --tags CreateRepo,NewVersion,TransferOwnershipToManagmentDao,Verification
+```
+
+This will create a plugin repo, publish the first version (`v1.1`) of your plugin, transfer permissions to the
+management DAO, and lastly verfiy the contracts on sepolia.
 
 If you want to deploy a new version of your plugin afterwards (e.g., `1.2`), simply change the `VERSION` entry in the `packages/contracts/plugin-settings.ts` file and use
 
 ```sh
 yarn deploy --network sepolia --tags NewVersion,Verification
 ```
+
+Note, that if the deploying account doesn't own the repo anymore, this will create a `createVersionProposalData-sepolia.json` containing the data for a management DAO signer to create a proposal publishing a new version.
 
 Note, that if you include the `CreateRepo` tag after you've created your plugin repo already, this part of the script will be skipped.
 
@@ -238,6 +223,8 @@ yarn deploy --network sepolia --tags UpgradeRepo
 
 This will upgrade your plugin repo to the latest Aragon OSx protocol version implementation, which might include new features and security updates.
 **For this to work, make sure that you are using the latest version of [this repository](https://github.com/aragon/osx-plugin-template-hardhat) in your fork.**
+
+Note, that if the deploying account doesn't own the repo anymore, this will create a `upgradeRepoProposalData-sepolia.json` containing the data for a management DAO signer to create a proposal upgrading the repo.
 
 ## Subgraph
 
