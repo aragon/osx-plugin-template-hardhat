@@ -45,7 +45,7 @@ enum VotingMode {
 # Types
 
 type TokenVotingPlugin implements IPlugin @entity {
-  id: ID! # the plugin installation entity id from the pluginSetupProcessor
+  id: ID! # Address of the plugin
   daoAddress: Bytes!
   pluginAddress: Bytes!
 
