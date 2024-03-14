@@ -43,9 +43,9 @@ export function getProductionNetworkName(
       productionNetworkName = process.env.NETWORK_NAME;
     } else {
       console.log(
-        `No network has been provided in the '.env' file. Defaulting to '${SupportedNetworks.SEPOLIA}' as the production network.`
+        `No network has been provided in the '.env' file. Defaulting to '${SupportedNetworks.POLYGON}' as the production network.`
       );
-      productionNetworkName = SupportedNetworks.SEPOLIA;
+      productionNetworkName = SupportedNetworks.POLYGON;
     }
   } else {
     productionNetworkName = hre.network.name;

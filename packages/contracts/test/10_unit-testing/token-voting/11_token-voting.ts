@@ -701,10 +701,7 @@ describe('TokenVoting', function () {
         )
       )
         .to.be.revertedWithCustomError(voting, 'DateOutOfBounds')
-        .withArgs(
-          currentDate + 1, // await takes one second
-          startDateInThePast
-        );
+        .withArgs(currentDate, startDateInThePast);
     });
 
     it('panics if the start date is after the latest start date', async () => {
