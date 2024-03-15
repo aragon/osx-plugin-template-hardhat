@@ -5,6 +5,7 @@ import {
 } from '../../src/plugin/governance-erc20';
 import {generateMemberEntityId} from '../../src/utils/ids';
 import {ExtendedTokenVotingMember} from '../helpers/extended-schema';
+import {createNewERC20TransferEventWithAddress, getBalanceOf} from '../utils';
 import {
   ADDRESS_ONE,
   ADDRESS_SIX,
@@ -16,12 +17,10 @@ import {
 } from '../utils/constants';
 import {
   createNewDelegateChangedEvent,
-  createNewERC20TransferEventWithAddress,
   createTokenVotingMember,
-  getBalanceOf,
   getDelegatee,
   getVotes,
-} from './utils';
+} from '../utils/voting';
 import {
   generateEntityIdFromAddress,
   generatePluginEntityId,

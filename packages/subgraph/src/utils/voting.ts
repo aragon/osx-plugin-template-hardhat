@@ -1,14 +1,8 @@
 import {TokenVotingMember} from '../../generated/schema';
 import {GovernanceERC20 as GovernanceERC20Contract} from '../../generated/templates/GovernanceERC20/GovernanceERC20';
-import {ADDRESS_ZERO} from '../utils/constants';
-import {generateMemberEntityId} from '../utils/ids';
+import {ADDRESS_ZERO} from './constants';
+import {generateMemberEntityId} from './ids';
 import {Address, BigInt} from '@graphprotocol/graph-ts';
-
-export function getERC20Balance(user: Address, tokenAddress: Address): BigInt {
-  const contract = GovernanceERC20Contract.bind(tokenAddress);
-  const balance = contract.balanceOf(user);
-  return balance;
-}
 
 export function getDelegation(
   user: Address,

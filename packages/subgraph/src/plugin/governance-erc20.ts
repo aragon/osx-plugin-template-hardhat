@@ -5,13 +5,13 @@ import {
   DelegateVotesChanged,
 } from '../../generated/templates/GovernanceERC20/GovernanceERC20';
 import {Transfer} from '../../generated/templates/TokenVoting/ERC20';
+import {getERC20Balance} from '../utils/erc20';
 import {generateMemberEntityId} from '../utils/ids';
 import {
   TokenVotingMemberResult,
   getDelegateeId,
-  getERC20Balance,
   getVotingPower,
-} from './utils';
+} from '../utils/voting';
 import {Address, BigInt, dataSource, store} from '@graphprotocol/graph-ts';
 
 function getOrCreateMember(

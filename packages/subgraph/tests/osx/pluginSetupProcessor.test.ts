@@ -4,18 +4,7 @@ import {
   GOVERNANCE_WRAPPED_ERC20_INTERFACE_ID,
   TOKEN_VOTING_INTERFACE_ID,
 } from '../../src/utils/constants';
-import {
-  createDecimalsCall,
-  createGetVotingTokenCall,
-  createMinDurationCall,
-  createMinParticipationCall,
-  createNameCall,
-  createSupportThresholdCall,
-  createSymbolCall,
-  createTotalSupplyCall,
-  getBalanceOf,
-  getSupportsInterface,
-} from '../plugin/utils';
+import {createInstallationPreparedEvent} from '../utils';
 import {
   ADDRESS_FIVE,
   ADDRESS_FOUR,
@@ -28,7 +17,18 @@ import {
   DAO_TOKEN_ADDRESS,
   PLUGIN_SETUP_ID,
 } from '../utils/constants';
-import {createInstallationPreparedEvent} from '../utils/events';
+import {
+  createDecimalsCall,
+  createGetVotingTokenCall,
+  createMinDurationCall,
+  createMinParticipationCall,
+  createNameCall,
+  createSupportThresholdCall,
+  createSymbolCall,
+  createTotalSupplyCall,
+  getBalanceOf,
+  getSupportsInterface,
+} from '../utils/voting';
 import {
   generatePluginEntityId,
   generatePluginInstallationEntityId,

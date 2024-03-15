@@ -1,3 +1,4 @@
+import {bigIntToBytes32} from './bytes';
 import {
   generateEntityIdFromAddress,
   generateEntityIdFromBytes,
@@ -44,4 +45,14 @@ export function generateVoteEntityId(
   proposalId: string
 ): string {
   return [generateEntityIdFromAddress(memberAddress), proposalId].join('_');
+}
+
+export function getProposalId(
+  plugin: Address,
+  pluginProposalId: BigInt
+): string {
+  return plugin
+    .toHexString()
+    .concat('_')
+    .concat(bigIntToBytes32(pluginProposalId));
 }

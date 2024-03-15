@@ -15,8 +15,8 @@ import {
   TokenVoting,
 } from '../../generated/templates/TokenVoting/TokenVoting';
 import {RATIO_BASE, VOTER_OPTIONS, VOTING_MODES} from '../utils/constants';
+import {identifyAndFetchOrCreateERC20TokenEntity} from '../utils/erc20';
 import {generateMemberEntityId, generateVoteEntityId} from '../utils/ids';
-import {identifyAndFetchOrCreateERC20TokenEntity} from '../utils/tokens/erc20';
 import {
   generateActionEntityId,
   generatePluginEntityId,

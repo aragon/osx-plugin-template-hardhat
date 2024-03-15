@@ -3,7 +3,6 @@ import {
   DelegateChanged,
   DelegateVotesChanged,
 } from '../../generated/templates/GovernanceERC20/GovernanceERC20';
-import {Transfer as ERC20TransferEvent} from '../../generated/templates/TokenVoting/ERC20';
 import {
   VotingSettingsUpdated,
   VoteCast,
@@ -27,12 +26,9 @@ import {
   TOTAL_VOTING_POWER,
   CREATED_AT,
   ALLOW_FAILURE_MAP,
-  DEFAULT_MOCK_EVENT_ADDRESS,
-} from '../utils/constants';
+} from './constants';
 import {Address, BigInt, Bytes, ethereum} from '@graphprotocol/graph-ts';
 import {createMockedFunction, newMockEvent} from 'matchstick-as';
-
-// events
 
 export function createNewProposalCreatedEvent(
   proposalId: string,
@@ -332,7 +328,7 @@ export function createTokenVotingProposalEntityState(
   earlyExecutable: boolean = false
 ): TokenVotingProposal {
   let tokenVotingProposal = new TokenVotingProposal(entityID);
-  tokenVotingProposal.dao = Bytes.fromHexString(dao);
+  tokenVotingProposal.daoAddress = Bytes.fromHexString(dao);
   tokenVotingProposal.plugin = Address.fromString(pkg).toHexString();
   tokenVotingProposal.pluginProposalId = BigInt.fromString(pluginProposalId);
   tokenVotingProposal.creator = Address.fromString(creator);
@@ -358,45 +354,6 @@ export function createTokenVotingProposalEntityState(
   tokenVotingProposal.save();
 
   return tokenVotingProposal;
-}
-
-export function createNewERC20TransferEvent(
-  from: string,
-  to: string,
-  amount: string
-): ERC20TransferEvent {
-  return createNewERC20TransferEventWithAddress(
-    from,
-    to,
-    amount,
-    DEFAULT_MOCK_EVENT_ADDRESS
-  );
-}
-
-export function createNewERC20TransferEventWithAddress(
-  from: string,
-  to: string,
-  amount: string,
-  contractAddress: string
-): ERC20TransferEvent {
-  let transferEvent = changetype<ERC20TransferEvent>(newMockEvent());
-  let fromParam = new ethereum.EventParam(
-    'from',
-    ethereum.Value.fromAddress(Address.fromString(from))
-  );
-  let toParam = new ethereum.EventParam(
-    'to',
-    ethereum.Value.fromAddress(Address.fromString(to))
-  );
-  let amountParam = new ethereum.EventParam(
-    'amount',
-    ethereum.Value.fromSignedBigInt(BigInt.fromString(amount))
-  );
-  transferEvent.address = Address.fromString(contractAddress);
-  transferEvent.parameters.push(fromParam);
-  transferEvent.parameters.push(toParam);
-  transferEvent.parameters.push(amountParam);
-  return transferEvent;
 }
 
 export function createTokenVotingMember(
@@ -607,83 +564,4 @@ export function createGetVotingTokenCall(
   )
     .withArgs([])
     .returns([ethereum.Value.fromAddress(Address.fromString(returns))]);
-}
-
-export function createNameCall(contractAddress: string, returns: string): void {
-  createMockedFunction(
-    Address.fromString(contractAddress),
-    'name',
-    'name():(string)'
-  )
-    .withArgs([])
-    .returns([ethereum.Value.fromString(returns)]);
-}
-
-export function createSymbolCall(
-  contractAddress: string,
-  returns: string
-): void {
-  createMockedFunction(
-    Address.fromString(contractAddress),
-    'symbol',
-    'symbol():(string)'
-  )
-    .withArgs([])
-    .returns([ethereum.Value.fromString(returns)]);
-}
-
-export function createDecimalsCall(
-  contractAddress: string,
-  returns: string
-): void {
-  createMockedFunction(
-    Address.fromString(contractAddress),
-    'decimals',
-    'decimals():(uint8)'
-  )
-    .withArgs([])
-    .returns([ethereum.Value.fromUnsignedBigInt(BigInt.fromString(returns))]);
-}
-
-export function createTotalSupplyCall(
-  contractAddress: string,
-  returns: string
-): void {
-  createMockedFunction(
-    Address.fromString(contractAddress),
-    'totalSupply',
-    'totalSupply():(uint256)'
-  )
-    .withArgs([])
-    .returns([ethereum.Value.fromSignedBigInt(BigInt.fromString(returns))]);
-}
-
-export function getBalanceOf(
-  contractAddress: string,
-  account: string,
-  returns: string
-): void {
-  createMockedFunction(
-    Address.fromString(contractAddress),
-    'balanceOf',
-    'balanceOf(address):(uint256)'
-  )
-    .withArgs([ethereum.Value.fromAddress(Address.fromString(account))])
-    .returns([ethereum.Value.fromSignedBigInt(BigInt.fromString(returns))]);
-}
-
-export function getSupportsInterface(
-  contractAddress: string,
-  interfaceId: string,
-  returns: boolean
-): void {
-  createMockedFunction(
-    Address.fromString(contractAddress),
-    'supportsInterface',
-    'supportsInterface(bytes4):(bool)'
-  )
-    .withArgs([
-      ethereum.Value.fromFixedBytes(Bytes.fromHexString(interfaceId) as Bytes),
-    ])
-    .returns([ethereum.Value.fromBoolean(returns)]);
 }

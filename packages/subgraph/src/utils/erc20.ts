@@ -1,10 +1,11 @@
-import {ERC20Contract, ERC20WrapperContract} from '../../../generated/schema';
-import {ERC20} from '../../../generated/templates/TokenVoting/ERC20';
-import {GovernanceWrappedERC20} from '../../../generated/templates/TokenVoting/GovernanceWrappedERC20';
-import {GOVERNANCE_WRAPPED_ERC20_INTERFACE_ID} from '../constants';
-import {supportsInterface} from '../erc165';
-import {generateTokenEntityId} from '../ids';
-import {Address} from '@graphprotocol/graph-ts';
+import {ERC20Contract, ERC20WrapperContract} from '../../generated/schema';
+import {GovernanceERC20 as GovernanceERC20Contract} from '../../generated/templates/GovernanceERC20/GovernanceERC20';
+import {ERC20} from '../../generated/templates/TokenVoting/ERC20';
+import {GovernanceWrappedERC20} from '../../generated/templates/TokenVoting/GovernanceWrappedERC20';
+import {GOVERNANCE_WRAPPED_ERC20_INTERFACE_ID} from './constants';
+import {supportsInterface} from './erc165';
+import {generateTokenEntityId} from './ids';
+import {Address, BigInt} from '@graphprotocol/graph-ts';
 
 export function supportsERC20Wrapped(token: Address): bool {
   // Double check that it's ERC20Wrapped by calling supportsInterface checks.
@@ -123,4 +124,10 @@ export function identifyAndFetchOrCreateERC20TokenEntity(
   }
 
   return tokenAddress;
+}
+
+export function getERC20Balance(user: Address, tokenAddress: Address): BigInt {
+  const contract = GovernanceERC20Contract.bind(tokenAddress);
+  const balance = contract.balanceOf(user);
+  return balance;
 }

@@ -4,7 +4,7 @@ import {
   handleVotingSettingsUpdated,
   _handleProposalCreated,
   handleMembershipContractAnnounced,
-} from '../../src/plugin/token-voting';
+} from '../../src/plugin/plugin';
 import {VOTING_MODES} from '../../src/utils/constants';
 import {GOVERNANCE_WRAPPED_ERC20_INTERFACE_ID} from '../../src/utils/constants';
 import {
