@@ -21,7 +21,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 
   console.log(
-    `Deployed contract '${PLUGIN_SETUP_CONTRACT_NAME}' at ${res.address}.`
+    `Deployed '${PLUGIN_SETUP_CONTRACT_NAME}' contract at '${res.address}'`
   );
 };
 

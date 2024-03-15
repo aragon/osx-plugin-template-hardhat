@@ -38,6 +38,17 @@ echo ''
 echo '> Deploying subgraph: '$FULLNAME
 echo '> Subgraph version: '$SUBGRAPH_VERSION
 
+# check if the repo address is null or zero address
+FILE=manifest/data/$SUBGRAPH_NETWORK_NAME'.json'
+
+address=$(jq -r '.dataSources.Plugin.address' "$FILE")
+
+if [ "$address" = "null" ] || [ "$address" = "0x0000000000000000000000000000000000000000" ];
+  then
+    echo "Repo address is not set properly, exiting..."
+    exit -1
+fi
+
 # Deploy subgraph
 if [ "$LOCAL" ]
 then

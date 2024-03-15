@@ -2,7 +2,7 @@ name: 'contracts'
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
     paths:
       - 'packages/contracts/**'
       - '.github/workflows/contracts-*.yml'
@@ -31,10 +31,10 @@ jobs:
       - name: 'Build the contracts'
         run: 'yarn build'
         env:
-          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
       - name: 'Test the contracts and generate the coverage report'
         run: 'yarn coverage'
         env:
           NETWORK_NAME: ${{ vars.NETWORK_NAME }}
-          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}

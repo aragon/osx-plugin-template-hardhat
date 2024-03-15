@@ -68,7 +68,7 @@ yarn lint
 
 To be able to work on the contracts, make sure that you have created an `.env` file from the `.env.example` file and put in the API keys for
 
-- [Infura](https://www.infura.io/) that we use as the web3 provider
+- [Alchemy](https://www.alchemy.com) that we use as the web3 provider
 - [Alchemy Subgraphs](https://www.alchemy.com/subgraphs) that we use as the subgraph provider
 - the block explorer that you want to use depending on the networks that you want to deploy to
 
@@ -268,6 +268,10 @@ and finally the subgraph itself with
 yarn build:subgraph
 ```
 
+When running `yarn build`, it requires a plugin address, which is obtained from the configuration file located
+at `subgraph/manifest/data/<network>.json`, based on the network specified in your `.env` file under the `SUBGRAPH_NETWORK_NAME` variable.
+You do not need to provide a plugin address for building or testing purposes, but it becomes necessary when deploying the subgraph.
+
 During development of the subgraph, you might want to clean outdated files that were build, imported, and generated. To do this, run
 
 ```sh
@@ -300,7 +304,8 @@ yarn coverage
 
 ### Deployment
 
-To deploy the subgraph to the subgraph provider, write your intended subgraph name and version into the `SUBGRAPH_NAME` and `SUBGRAPH_VERSION` variables [in the `.env` file that you created in the beginning](environment-variables) and pick a network name `SUBGRAPH_NETWORK_NAME` [being supported by the subgraph provider](https://docs.alchemy.com/reference/supported-subgraph-chains). Then run
+To deploy the subgraph to the subgraph provider, write your intended subgraph name and version into the `SUBGRAPH_NAME` and `SUBGRAPH_VERSION` variables [in the `.env` file that you created in the beginning](environment-variables) and pick a network name `SUBGRAPH_NETWORK_NAME` [being supported by the subgraph provider](https://docs.alchemy.com/reference/supported-subgraph-chains). Remember to place correctly the Plugin address on the network you are going to deploy to, you can do that by adding it on `subgraph/manifest/data/<network>.json`.
+Then run
 
 ```sh
 yarn deploy

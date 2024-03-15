@@ -8,6 +8,11 @@
         "address": "0xC24188a73dc09aA7C721f96Ad8857B469C01dC9f",
         "startBlock": 4415294
       }
-    ]
+    ],
+    "Plugin": {
+      "name": "MyPlugin",
+      "address": null,
+      "startBlock": 7727664
+    }
   }
 }
