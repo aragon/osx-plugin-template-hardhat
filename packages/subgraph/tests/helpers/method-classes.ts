@@ -30,6 +30,20 @@ import {
 } from '../../src/utils/constants';
 import {generateMemberEntityId} from '../../src/utils/ids';
 import {
+  createNewDelegateChangedEvent,
+  createNewDelegateVotesChangedEvent,
+  createNewMembershipContractAnnouncedEvent,
+  createNewProposalCreatedEvent,
+  createNewProposalExecutedEvent,
+  createNewVoteCastEvent,
+  createNewVotingSettingsUpdatedEvent,
+  delegatesCall,
+  getBalanceOf,
+  getProposalCountCall,
+  getSupportsInterface,
+} from '../utils';
+import {createGetProposalCall, createTotalVotingPowerCall} from '../utils';
+import {
   ADDRESS_ONE,
   ALLOW_FAILURE_MAP,
   CONTRACT_ADDRESS,
@@ -50,24 +64,7 @@ import {
   MIN_DURATION,
   DAO_TOKEN_ADDRESS,
   STRING_DATA,
-} from '../utils/constants';
-import {
-  createNewDelegateChangedEvent,
-  createNewDelegateVotesChangedEvent,
-  createNewMembershipContractAnnouncedEvent,
-  createNewProposalCreatedEvent,
-  createNewProposalExecutedEvent,
-  createNewVoteCastEvent,
-  createNewVotingSettingsUpdatedEvent,
-  delegatesCall,
-  getBalanceOf,
-  getProposalCountCall,
-  getSupportsInterface,
-} from '../utils/voting';
-import {
-  createGetProposalCall,
-  createTotalVotingPowerCall,
-} from '../utils/voting';
+} from '../utils';
 import {
   generateEntityIdFromAddress,
   generatePluginEntityId,

@@ -16,7 +16,7 @@ import {
   DAO_ADDRESS,
   DAO_TOKEN_ADDRESS,
   PLUGIN_SETUP_ID,
-} from '../utils/constants';
+} from '../utils';
 import {
   createDecimalsCall,
   createGetVotingTokenCall,
@@ -28,19 +28,12 @@ import {
   createTotalSupplyCall,
   getBalanceOf,
   getSupportsInterface,
-} from '../utils/voting';
+} from '../utils';
 import {
   generatePluginEntityId,
   generatePluginInstallationEntityId,
 } from '@aragon/osx-commons-subgraph';
-import {
-  Address,
-  BigInt,
-  ByteArray,
-  Bytes,
-  ethereum,
-  log,
-} from '@graphprotocol/graph-ts';
+import {Address, BigInt, Bytes, ethereum} from '@graphprotocol/graph-ts';
 import {
   assert,
   afterEach,
