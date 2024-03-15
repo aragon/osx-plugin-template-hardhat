@@ -10,8 +10,8 @@
       }
     ],
     "Plugin": {
-      "name": "MyPlugin",
-      "address": null,
+      "name": "TokenVotingRepo",
+      "address": "0xaCa70D8c462940B839DE386BcDD4CACf745632cA",
       "startBlock": 7727664
     }
   }
