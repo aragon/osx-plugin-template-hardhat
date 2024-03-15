@@ -101,7 +101,7 @@ async function fixture(): Promise<FixtureResult> {
   await deployments.fixture(tags);
   const [deployer] = await ethers.getSigners();
 
-  // Plugin repo
+  // Plugin Repo
   const {pluginRepo, ensDomain} = await findPluginRepo(env);
   if (pluginRepo === null) {
     throw `PluginRepo '${ensDomain}' does not exist yet.`;

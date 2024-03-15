@@ -72,10 +72,17 @@ export async function findPluginRepo(
 ): Promise<{pluginRepo: PluginRepo | null; ensDomain: string}> {
   const [deployer] = await hre.ethers.getSigners();
   const productionNetworkName: string = getProductionNetworkName(hre);
+  const network = getNetworkNameByAlias(productionNetworkName);
+  if (network === null) {
+    throw new UnsupportedNetworkError(productionNetworkName);
+  }
+  const networkDeployments = getLatestNetworkDeployment(network);
+  if (networkDeployments === null) {
+    throw `Deployments are not available on network ${network}.`;
+  }
 
   const registrar = ENSSubdomainRegistrar__factory.connect(
-    getLatestNetworkDeployment(getNetworkNameByAlias(productionNetworkName)!)!
-      .PluginENSSubdomainRegistrarProxy.address,
+    networkDeployments.PluginENSSubdomainRegistrarProxy.address,
     deployer
   );
 
@@ -186,6 +193,17 @@ export async function createVersion(
     throw new Error('Failed to get VersionCreatedEvent event log');
   }
   return tx;
+}
+
+export function generateRandomName(length: number): string {
+  const allowedCharacters = 'abcdefghijklmnopqrstuvwxyz-0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += allowedCharacters.charAt(
+      Math.floor(Math.random() * allowedCharacters.length)
+    );
+  }
+  return result;
 }
 
 export const AragonOSxAsciiArt =
