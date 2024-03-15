@@ -18,7 +18,7 @@ All community members are expected to adhere to our community guidelines. Please
 
 Unsure where to begin contributing to Aragon?
 
-You can start with a [Good First Issue](https://github.com/aragon/osx/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+You can start with a [Good First Issue](https://github.com/aragon/token-voting-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 > Good first issues are usually for small features, additional tests, spelling / grammar fixes, formatting changes, or other clean up.
 
@@ -30,7 +30,7 @@ Otherwise, you can also contribute through improving our documentation. You can 
 
 ## How to file an issue or report a bug
 
-If you see a problem, you can report it in our [issue tracker](https://github.com/aragon/osx/issues) (or [here](https://aragonteam.typeform.com/to/QJyKtESU)).
+If you see a problem, you can report it in our [issue tracker](https://github.com/aragon/token-voting-plugin/issues) (or [here](https://aragonteam.typeform.com/to/QJyKtESU)).
 
 Please take a quick look to see if the issue doesn't already exist before filing yours.
 
@@ -55,7 +55,7 @@ If the answer to either of those two questions are "yes", then you're probably d
 
 ## Fixing issues
 
-1. [Find an issue](https://github.com/aragon/osx/issues) that you are interested in.
+1. [Find an issue](https://github.com/aragon/token-voting-plugin/issues) that you are interested in.
    - You may want to ask on the GitHub issue or in our [developer channel](https://discord.com/channels/672466989217873929/742442842474938478) if anyone has already started working on the issue.
 2. Fork and clone a local copy of the repository.
 3. Make the appropriate changes for the issue you are trying to address or the feature that you want to add.
@@ -120,7 +120,7 @@ Due to the unconventional release process of smart contracts, this repo utilizes
 
 The main challenge is that smart contracts should be heavily scrutinized before a release, making the process cumbersome and unlike the release process for "normal" dependencies or apps. [See here](https://forum.aragon.org/t/git-branch-convention-for-aragon-repos/298/3) for a more detailed explanation.
 
-Thus, we use the following convention: any change that can be release immediately, base it on the [develop branch](https://github.com/aragon/osx/tree/develop).
+Thus, we use the following convention: any change that can be release immediately, base it on the [develop branch](https://github.com/aragon/token-voting-plugin/tree/develop).
 
 As `next` becomes ready, merge `next` onto `master` with a rebase.
 
