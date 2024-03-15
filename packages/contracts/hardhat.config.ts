@@ -72,7 +72,6 @@ function getHardhatNetworkAccountsConfig(
 
 // Add the accounts specified in the `.env` file to the networks from osx-commons-configs
 const networks: {[index: string]: NetworkUserConfig} = osxCommonsConfigNetworks;
-
 for (const network of Object.keys(networks) as SupportedNetworks[]) {
   networks[network].accounts = specifiedAccounts();
 }

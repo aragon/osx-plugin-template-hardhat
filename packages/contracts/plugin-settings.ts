@@ -16,7 +16,9 @@ export const VERSION: VersionTag = {
   build: 3, // Increment this number if non-breaking/compatible changes were made. Updates to newer builds are possible.
 };
 
-/* DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING */
+// The metadata associated with the plugin version you are currently working on.
+// For more details, visit https://devs.aragon.org/docs/osx/how-to-guides/plugin-development/publication/metadata.
+// Don't change this unless you know what you are doing.
 export const METADATA = {
   build: buildMetadata,
   release: releaseMetadata,
