@@ -1,8 +1,7 @@
 {
   "info": "# Do not edit subgraph.yaml,this is a generated file. \n# Instead, edit subgraph.placeholder.yaml and run: yarn manifest",
-  "network": "rinkeby",
+  "network": "sepolia",
   "PluginRepo": {
-    "ensDomain": "my.plugin.dao.eth",
     "address": null
   },
   "dataSources": {
