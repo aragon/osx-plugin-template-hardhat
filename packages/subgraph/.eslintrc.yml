@@ -8,3 +8,9 @@ ignorePatterns:
   - generated/
   - tests/
   - extended-schema.ts
+
+overrides:
+  - files: '*.ts'
+    rules:
+      # graphProtocol BigInt class is a valid type
+      '@typescript-eslint/ban-types': 'off'

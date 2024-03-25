@@ -1,9 +1,16 @@
 import {InstallationPrepared} from '../../generated/PluginSetupProcessor/PluginSetupProcessor';
-import {DaoPlugin} from '../../generated/schema';
-import {Plugin as PluginTemplate} from '../../generated/templates';
+import {TokenVotingPlugin as TokenVotingPluginEntity} from '../../generated/schema';
+import {TokenVoting} from '../../generated/templates';
+import {TokenVoting as TokenVotingPluginContract} from '../../generated/templates/TokenVoting/TokenVoting';
 import {PLUGIN_REPO_ADDRESS} from '../../imported/repo-address';
-import {generatePluginInstallationEntityId} from '@aragon/osx-commons-subgraph';
-import {Address, DataSourceContext, log} from '@graphprotocol/graph-ts';
+import {identifyAndFetchOrCreateERC20TokenEntity} from '../utils/erc20';
+import {generatePluginEntityId} from '@aragon/osx-commons-subgraph';
+import {
+  Address,
+  BigInt,
+  Bytes,
+  DataSourceContext,
+} from '@graphprotocol/graph-ts';
 
 export function handleInstallationPrepared(event: InstallationPrepared): void {
   const pluginRepo = event.params.pluginSetupRepo;
@@ -16,35 +23,48 @@ export function handleInstallationPrepared(event: InstallationPrepared): void {
     return;
   }
 
-  const dao = event.params.dao;
-  const plugin = event.params.plugin;
+  createTokenVotingPlugin(event.params.plugin, event.params.dao);
+}
 
-  // Generate a unique ID for the plugin installation.
-  const installationId = generatePluginInstallationEntityId(dao, plugin);
-  // Log an error and exit if unable to generate the installation ID.
-  if (!installationId) {
-    log.error('Failed to generate installationId', [
-      dao.toHexString(),
-      plugin.toHexString(),
-    ]);
-    return;
-  }
-  // Load or create a new entry for the this plugin using the generated installation ID.
-  let pluginEntity = DaoPlugin.load(installationId!);
+function createTokenVotingPlugin(
+  pluginAddress: Address,
+  daoAddress: Address
+): void {
+  const pluginId = generatePluginEntityId(pluginAddress);
+  let pluginEntity = TokenVotingPluginEntity.load(pluginId);
+
   if (!pluginEntity) {
-    pluginEntity = new DaoPlugin(installationId!);
+    pluginEntity = new TokenVotingPluginEntity(pluginId);
+    pluginEntity.pluginAddress = pluginAddress;
+    pluginEntity.daoAddress = Bytes.fromHexString(daoAddress.toHexString());
+    pluginEntity.proposalCount = BigInt.zero();
+
+    const contract = TokenVotingPluginContract.bind(pluginAddress);
+    const supportThreshold = contract.try_supportThreshold();
+    const minParticipation = contract.try_minParticipation();
+    const minDuration = contract.try_minDuration();
+    const token = contract.try_getVotingToken();
+
+    pluginEntity.supportThreshold = supportThreshold.reverted
+      ? null
+      : supportThreshold.value;
+    pluginEntity.minParticipation = minParticipation.reverted
+      ? null
+      : minParticipation.value;
+    pluginEntity.minDuration = minDuration.reverted ? null : minDuration.value;
+
+    if (!token.reverted) {
+      const contract = identifyAndFetchOrCreateERC20TokenEntity(token.value);
+      if (!contract) {
+        return;
+      }
+      pluginEntity.token = contract;
+    }
+
+    // Create template
+    const context = new DataSourceContext();
+    context.setString('daoAddress', daoAddress.toHexString());
+    TokenVoting.createWithContext(pluginAddress, context);
+    pluginEntity.save();
   }
-
-  // Set the DAO and plugin address for the plugin entity.
-  pluginEntity.dao = dao;
-  pluginEntity.pluginAddress = plugin;
-
-  // Initialize a context for the plugin data source to enable indexing from the moment of preparation.
-  const context = new DataSourceContext();
-  // Include the DAO address in the context for future reference.
-  context.setString('daoAddress', dao.toHexString());
-  // Deploy a template for the plugin to facilitate individual contract indexing.
-  PluginTemplate.createWithContext(plugin, context);
-
-  pluginEntity.save();
 }

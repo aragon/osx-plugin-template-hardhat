@@ -1,12 +1,11 @@
 {{info}}
 specVersion: 0.0.2
-description: A template for Plugin subgraphs
-repository: https://github.com/aragon/osx-plugin-subgraph
+description: the aragon token voting plugin
+repository: https://github.com/aragon/osx
 schema:
   file: ./schema.graphql
 dataSources:
   {{#dataSources.PluginSetupProcessors}}
-  # PluginSetupProcessor
   - kind: ethereum/contract
     name: {{name}}
     network: {{network}}
@@ -15,40 +14,96 @@ dataSources:
       address: '{{address}}'
       startBlock: {{startBlock}}
     mapping:
+      entities:
+        - TokenVotingPlugin
+        - TokenVotingMember
+        - TokenVotingVoter
+        - TokenVotingVote
+        - TokenVotingProposal
+        - Action
+        - ERC20Contract
+        - ERC20WrapperContract
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
-      entities:
-        - PluginInstallation
-        - PluginPreparation
-        - PluginPermission
       abis:        
         - name: PluginSetupProcessor
           file: ./imported/PluginSetupProcessor.json
+        - name: ERC20
+          file: $PLUGIN_MODULE/contracts/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
+        - name: TokenVoting
+          file: $PLUGIN_MODULE/contracts/artifacts/src/TokenVoting.sol/TokenVoting.json
+        - name: GovernanceWrappedERC20
+          file: $PLUGIN_MODULE/contracts/artifacts/src/ERC20/governance/GovernanceWrappedERC20.sol/GovernanceWrappedERC20.json
       eventHandlers:
         - event: InstallationPrepared(indexed address,indexed address,bytes32,indexed address,(uint8,uint16),bytes,address,(address[],(uint8,address,address,address,bytes32)[]))
           handler: handleInstallationPrepared
       file: ./src/osx/pluginSetupProcessor.ts
   {{/dataSources.PluginSetupProcessors}}
-# templates
 templates:
-  # Plugin (package)
-  - name: Plugin
+  - name: TokenVoting
     kind: ethereum/contract
     network: {{network}}
     source:
-      abi: Plugin
+      abi: TokenVoting
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
-      entities:
-        - Dao
-      abis:
-        - name: Plugin
-          file: $PLUGIN_MODULE/contracts/artifacts/src/MyPlugin.sol/MyPlugin.json
-      eventHandlers:
-        - event: NumberStored(uint256)
-          handler: handleNumberStored
       file: ./src/plugin/plugin.ts
-
+      entities:
+        - TokenVotingPlugin
+        - TokenVotingMember
+        - TokenVotingVoter
+        - TokenVotingVote
+        - TokenVotingProposal
+        - Action
+        - ERC20Contract
+        - ERC20WrapperContract
+      abis:
+        - name: ERC20
+          file: $PLUGIN_MODULE/contracts/artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json
+        - name: GovernanceWrappedERC20
+          file: $PLUGIN_MODULE/contracts/artifacts/src/ERC20/governance/GovernanceWrappedERC20.sol/GovernanceWrappedERC20.json
+        - name: TokenVoting
+          file: $PLUGIN_MODULE/contracts/artifacts/src/TokenVoting.sol/TokenVoting.json
+      eventHandlers:
+        - event: MembershipContractAnnounced(indexed address)
+          handler: handleMembershipContractAnnounced
+        - event: VoteCast(indexed uint256,indexed address,uint8,uint256)
+          handler: handleVoteCast
+        - event: ProposalExecuted(indexed uint256)
+          handler: handleProposalExecuted
+        - event: ProposalCreated(indexed uint256,indexed address,uint64,uint64,bytes,(address,uint256,bytes)[],uint256)
+          handler: handleProposalCreated
+        - event: VotingSettingsUpdated(uint8,uint32,uint32,uint64,uint256)
+          handler: handleVotingSettingsUpdated
+  - name: GovernanceERC20
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: GovernanceERC20
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/plugin/governance-erc20.ts
+      entities:
+        - TokenVotingPlugin
+        - TokenVotingMember
+        - TokenVotingVoter
+        - TokenVotingVote
+        - TokenVotingProposal
+        - Action
+        - ERC20Contract
+        - ERC20WrapperContract
+      abis:
+        - name: GovernanceERC20
+          file: $PLUGIN_MODULE/contracts/artifacts/src/ERC20/governance/GovernanceERC20.sol/GovernanceERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: DelegateChanged(indexed address,indexed address,indexed address)
+          handler: handleDelegateChanged
+        - event: DelegateVotesChanged(indexed address,uint256,uint256)
+          handler: handleDelegateVotesChanged

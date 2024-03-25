@@ -1,10 +1,160 @@
+## interfaces
+
+interface IPlugin {
+  id: ID! # plugin address
+  daoAddress: Bytes!
+  pluginAddress: Bytes!
+}
+
+interface IProposal {
+  id: ID! # package + proposalId
+  daoAddress: Bytes!
+  creator: Bytes!
+  metadata: String
+  actions: [Action!]! @derivedFrom(field: "proposal")
+  allowFailureMap: BigInt!
+  failureMap: BigInt
+  executed: Boolean!
+  createdAt: BigInt!
+  startDate: BigInt!
+  endDate: BigInt!
+  executionTxHash: Bytes
+}
+
+interface Token {
+  id: ID! # use address as id
+  name: String
+  symbol: String
+}
+
+# Enums
+
+enum VoteOption {
+  None
+  Abstain
+  Yes
+  No
+}
+
+enum VotingMode {
+  Standard
+  EarlyExecution
+  VoteReplacement
+}
+
 # Types
-type DaoPlugin @entity {
-  "OSX related data"
-  id: ID! # psp installationId
-  dao: Bytes!
+
+type TokenVotingPlugin implements IPlugin @entity {
+  id: ID! # Address of the plugin
+  daoAddress: Bytes!
   pluginAddress: Bytes!
 
-  "Set plugin specific related data below:"
-  number: BigInt
+  proposals: [TokenVotingProposal!]! @derivedFrom(field: "plugin")
+  votingMode: VotingMode
+  supportThreshold: BigInt
+  minParticipation: BigInt
+  minDuration: BigInt
+  minProposerVotingPower: BigInt
+  proposalCount: BigInt!
+  token: Token
+  members: [TokenVotingMember!]! @derivedFrom(field: "plugin")
+}
+
+type TokenVotingMember @entity {
+  id: ID! # pluginAddress + voterAddress
+  address: Bytes!
+  balance: BigInt!
+  plugin: TokenVotingPlugin!
+
+  # delegates
+  delegatee: TokenVotingMember
+  votingPower: BigInt
+  # we assume token owners and/or delegatees are members
+  delegators: [TokenVotingMember!]! @derivedFrom(field: "delegatee")
+}
+
+type TokenVotingVoter @entity {
+  id: ID! # pluginAddress + voterAddress
+  address: String! # address as string to facilitate filtering by address on the UI
+  proposals: [TokenVotingVote!]! @derivedFrom(field: "voter")
+  plugin: TokenVotingPlugin!
+  lastUpdated: BigInt
+}
+
+type TokenVotingVote @entity {
+  "VoterProposal for Many-to-Many"
+  id: ID! # voterAddress + proposalEntityId
+  voter: TokenVotingVoter!
+  proposal: TokenVotingProposal!
+  voteOption: VoteOption!
+  votingPower: BigInt!
+  createdAt: BigInt!
+  voteReplaced: Boolean!
+  updatedAt: BigInt!
+}
+
+type TokenVotingProposal implements IProposal @entity {
+  id: ID! # pluginAddress + proposalId (padded)
+  daoAddress: Bytes!
+  actions: [Action!]! @derivedFrom(field: "proposal")
+  allowFailureMap: BigInt!
+  failureMap: BigInt
+  plugin: TokenVotingPlugin!
+  pluginProposalId: BigInt! # pluginAddress + proposalId padded
+  creator: Bytes!
+  metadata: String
+
+  votingMode: VotingMode!
+  supportThreshold: BigInt!
+  minVotingPower: BigInt!
+  snapshotBlock: BigInt!
+
+  yes: BigInt
+  no: BigInt
+  abstain: BigInt
+  castedVotingPower: BigInt
+  totalVotingPower: BigInt!
+
+  voters: [TokenVotingVote!]! @derivedFrom(field: "proposal")
+  open: Boolean!
+  executed: Boolean!
+  createdAt: BigInt!
+  startDate: BigInt!
+  endDate: BigInt!
+  creationBlockNumber: BigInt!
+  approvalReached: Boolean!
+  isSignaling: Boolean!
+  earlyExecutable: Boolean
+  executionDate: BigInt
+  executionBlockNumber: BigInt
+  executionTxHash: Bytes
+}
+
+# Executions
+
+type Action @entity {
+  id: ID! # proposalId + action index
+  to: Bytes!
+  value: BigInt!
+  data: Bytes!
+  daoAddress: Bytes!
+  proposal: IProposal!
+  execResult: Bytes
+}
+
+# Token Contracts
+
+type ERC20Contract implements Token @entity(immutable: true) {
+  id: ID! # use address as id
+  name: String
+  symbol: String
+  decimals: Int!
+}
+
+type ERC20WrapperContract implements Token @entity(immutable: true) {
+  id: ID! # use address as id
+  name: String
+  symbol: String
+  decimals: Int!
+  underlyingToken: ERC20Contract!
 }
