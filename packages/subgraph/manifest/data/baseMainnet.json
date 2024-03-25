@@ -1,6 +1,9 @@
 {
   "info": "# Do not edit subgraph.yaml,this is a generated file. \n# Instead, edit subgraph.placeholder.yaml and run: yarn manifest",
   "network": "base",
+  "PluginRepo": {
+    "address": "0x2532570DcFb749A7F976136CC05648ef2a0f60b0"
+  },
   "dataSources": {
     "PluginSetupProcessors": [
       {
@@ -8,11 +11,6 @@
         "address": "0x91a851E9Ed7F2c6d41b15F76e4a88f5A37067cC9",
         "startBlock": 2094737
       }
-    ],
-    "Plugin": {
-      "name": "TokenVotingRepo",
-      "address": "0x2532570DcFb749A7F976136CC05648ef2a0f60b0",
-      "startBlock": 7727664
-    }
+    ]
   }
 }
