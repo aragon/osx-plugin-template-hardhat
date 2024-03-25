@@ -1,6 +1,10 @@
 {
   "info": "# Do not edit subgraph.yaml,this is a generated file. \n# Instead, edit subgraph.placeholder.yaml and run: yarn manifest",
   "network": "arbitrum-sepolia",
+  "PluginRepo": {
+    "ensDomain": "MyPlugin",
+    "address": null
+  },
   "dataSources": {
     "PluginSetupProcessors": [
       {
@@ -8,11 +12,6 @@
         "address": "0xC24188a73dc09aA7C721f96Ad8857B469C01dC9f",
         "startBlock": 2827173
       }
-    ],
-    "Plugin": {
-      "name": "MyPlugin",
-      "address": null,
-      "startBlock": 7727664
-    }
+    ]
   }
 }
