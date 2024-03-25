@@ -1,10 +1,86 @@
+interface IPlugin {
+  id: ID! # PluginEntityID
+  daoAddress: Bytes!
+  pluginAddress: Bytes!
+}
+
 # Types
-type DaoPlugin @entity {
-  "OSX related data"
-  id: ID! # psp installationId
-  dao: Bytes!
+type MultisigPlugin implements IPlugin @entity {
+  id: ID! # PluginEntityID
+  daoAddress: Bytes!
   pluginAddress: Bytes!
 
-  "Set plugin specific related data below:"
-  number: BigInt
+  # Plugin specific data"
+  proposalCount: BigInt
+  proposals: [MultisigProposal!]! @derivedFrom(field: "plugin")
+  members: [MultisigApprover!]! @derivedFrom(field: "plugin")
+
+  minApprovals: Int
+  onlyListed: Boolean
+}
+
+interface IProposal {
+  id: ID! # ProposalEntityId
+  daoAddress: Bytes!
+  creator: Bytes!
+  metadata: String
+  actions: [Action!]! @derivedFrom(field: "proposal")
+  allowFailureMap: BigInt!
+  failureMap: BigInt
+  executed: Boolean!
+  createdAt: BigInt!
+  startDate: BigInt!
+  endDate: BigInt!
+  executionTxHash: Bytes
+}
+
+type Action @entity {
+  id: ID! # ActionEntityId
+  to: Bytes!
+  value: BigInt!
+  data: Bytes!
+  daoAddress: Bytes!
+  proposal: IProposal!
+  execResult: Bytes
+}
+
+type MultisigApprover @entity {
+  id: ID! # plugin_address + member_address
+  address: String # address as string to facilitate filtering by address on the UI
+  proposals: [MultisigProposalApprover!]! @derivedFrom(field: "approver")
+  plugin: MultisigPlugin!
+}
+
+type MultisigProposalApprover @entity(immutable: true) {
+  "ApproverProposal for Many-to-Many"
+  id: ID! # approver + proposal
+  approver: MultisigApprover!
+  proposal: MultisigProposal!
+  createdAt: BigInt!
+}
+
+type MultisigProposal implements IProposal @entity {
+  id: ID! # plugin + proposalId
+  daoAddress: Bytes!
+  actions: [Action!]! @derivedFrom(field: "proposal")
+  allowFailureMap: BigInt!
+  failureMap: BigInt
+  plugin: MultisigPlugin!
+  pluginProposalId: BigInt!
+  creator: Bytes!
+  metadata: String
+  createdAt: BigInt!
+  startDate: BigInt!
+  endDate: BigInt!
+  creationBlockNumber: BigInt!
+  snapshotBlock: BigInt!
+  minApprovals: Int!
+  approvals: Int
+  approvalReached: Boolean!
+  isSignaling: Boolean!
+  executed: Boolean!
+  executionDate: BigInt
+  executionBlockNumber: BigInt
+  executionTxHash: Bytes
+  approvers: [MultisigProposalApprover!]! @derivedFrom(field: "proposal")
 }

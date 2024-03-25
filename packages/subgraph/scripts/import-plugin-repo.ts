@@ -27,7 +27,7 @@ function extractAndWriteAddressToTS(): void {
   const networkManifestPath = path.join(manifestsPath, `${network}.json`);
   let networkRepoAddress = JSON.parse(
     fs.readFileSync(networkManifestPath, 'utf8')
-  ).dataSources.Plugin.address;
+  ).PluginRepo.address;
 
   // check if address is null and throw warning and continue with zero address
   if (!networkRepoAddress) {
