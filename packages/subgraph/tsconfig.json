@@ -25,7 +25,6 @@
     "utils/**/*",
     "plugin-settings.ts",
     "commons/**/*",
-    "types",
-    "../../types"
+    "types/**/*"
   ]
 }
