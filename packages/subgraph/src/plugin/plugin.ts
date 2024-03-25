@@ -71,10 +71,6 @@ export function _handleProposalCreated(
     const parameters = proposal.value.value2;
     const votingMode = VOTING_MODES.get(parameters.votingMode);
 
-    // if (!votingMode) {
-    //   return;
-    // }
-
     proposalEntity.votingMode = votingMode as string;
     proposalEntity.supportThreshold = parameters.supportThreshold;
     proposalEntity.snapshotBlock = parameters.snapshotBlock;
@@ -263,9 +259,7 @@ export function handleVotingSettingsUpdated(
   );
   if (packageEntity) {
     const votingMode = VOTING_MODES.get(event.params.votingMode);
-    // if (!votingMode) {
-    //   return;
-    // }
+
     packageEntity.votingMode = votingMode as string;
     packageEntity.supportThreshold = event.params.supportThreshold;
     packageEntity.minParticipation = event.params.minParticipation;
