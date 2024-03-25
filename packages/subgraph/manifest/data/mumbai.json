@@ -1,6 +1,9 @@
 {
   "info": "# Do not edit subgraph.yaml,this is a generated file. \n# Instead, edit subgraph.placeholder.yaml and run: yarn manifest",
   "network": "mumbai",
+  "PluginRepo": {
+    "address": null
+  },
   "dataSources": {
     "PluginSetupProcessors": [
       {
@@ -8,11 +11,6 @@
         "address": "0x9227b311C5cecB416707F1C8B7Ca1b52649AabEc",
         "startBlock": 33514164
       }
-    ],
-    "Plugin": {
-      "name": "MyPlugin",
-      "address": null,
-      "startBlock": 7727664
-    }
+    ]
   }
 }
