@@ -31,7 +31,6 @@ import {
   Bytes,
   dataSource,
   DataSourceContext,
-  log,
 } from '@graphprotocol/graph-ts';
 
 export function handleProposalCreated(event: ProposalCreated): void {
