@@ -1,5 +1,5 @@
 import {
-  Action,
+  ProposalAction,
   TokenVotingPlugin,
   TokenVotingProposal,
   TokenVotingVoter,
@@ -16,17 +16,22 @@ import {
 } from '../../generated/templates/TokenVoting/TokenVoting';
 import {RATIO_BASE, VOTER_OPTIONS, VOTING_MODES} from '../utils/constants';
 import {identifyAndFetchOrCreateERC20TokenEntity} from '../utils/erc20';
-import {generateMemberEntityId, generateVoteEntityId} from '../utils/ids';
 import {
   generateActionEntityId,
+  generateMemberEntityId,
+  generateVoteEntityId,
+} from '../utils/ids';
+import {
   generatePluginEntityId,
   generateProposalEntityId,
 } from '@aragon/osx-commons-subgraph';
 import {
+  Address,
   BigInt,
   Bytes,
   dataSource,
   DataSourceContext,
+  log,
 } from '@graphprotocol/graph-ts';
 
 export function handleProposalCreated(event: ProposalCreated): void {
@@ -92,14 +97,20 @@ export function _handleProposalCreated(
     for (let index = 0; index < actions.length; index++) {
       const action = actions[index];
 
-      const actionId = generateActionEntityId(proposalEntityId, index);
+      const actionId = generateActionEntityId(
+        pluginAddress,
+        Address.fromString(daoId),
+        pluginProposalId.toString(),
+        index
+      );
 
-      const actionEntity = new Action(actionId);
+      const actionEntity = new ProposalAction(actionId);
       actionEntity.to = action.to;
       actionEntity.value = action.value;
       actionEntity.data = action.data;
       actionEntity.daoAddress = Bytes.fromHexString(daoId);
       actionEntity.proposal = proposalEntityId;
+      actionEntity.executed = false;
       actionEntity.save();
     }
     proposalEntity.isSignaling = actions.length == 0;
