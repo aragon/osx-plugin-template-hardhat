@@ -14,9 +14,9 @@ import {
   Approved,
   MultisigSettingsUpdated,
 } from '../../generated/templates/Plugin/Plugin';
+import {generateActionEntityId} from '../../tests/utils/ids';
 import {generateMemberEntityId, generateVoterEntityId} from './id';
 import {
-  generateActionEntityId,
   generatePluginEntityId,
   generateProposalEntityId,
 } from '@aragon/osx-commons-subgraph';
@@ -65,7 +65,12 @@ export function handleProposalCreated(event: ProposalCreated): void {
     for (let index = 0; index < actions.length; index++) {
       const action = actions[index];
 
-      const actionId = generateActionEntityId(proposalEntityId, index);
+      const actionId = generateActionEntityId(
+        pluginAddress,
+        Address.fromBytes(daoAddr),
+        pluginProposalId.toString(),
+        index
+      );
 
       const actionEntity = new Action(actionId);
       actionEntity.to = action.to;
