@@ -405,7 +405,6 @@ describe('Testing Actions', () => {
     assert.fieldEquals('ProposalAction', actionID, 'value', dummyActionValue);
     assert.fieldEquals('ProposalAction', actionID, 'data', dummyActionData);
     assert.fieldEquals('ProposalAction', actionID, 'proposal', proposal.id);
-    assert.fieldEquals('ProposalAction', actionID, 'executed', 'false');
   });
 
   test('We correctly generate the action ID', () => {

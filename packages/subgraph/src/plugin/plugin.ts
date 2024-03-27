@@ -109,7 +109,6 @@ export function _handleProposalCreated(
       actionEntity.data = action.data;
       actionEntity.daoAddress = Bytes.fromHexString(daoId);
       actionEntity.proposal = proposalEntityId;
-      actionEntity.executed = false;
       actionEntity.save();
     }
     proposalEntity.isSignaling = actions.length == 0;
