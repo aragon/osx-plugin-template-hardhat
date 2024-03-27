@@ -11,7 +11,7 @@ interface IProposal {
   daoAddress: Bytes!
   creator: Bytes!
   metadata: String
-  actions: [ProposalAction!]! @derivedFrom(field: "proposal")
+  actions: [Action!]! @derivedFrom(field: "proposal")
   allowFailureMap: BigInt!
   executed: Boolean!
   createdAt: BigInt!
@@ -103,7 +103,7 @@ type TokenVotingVote @entity {
 type TokenVotingProposal implements IProposal @entity {
   id: ID! # pluginAddress + proposalId (padded)
   daoAddress: Bytes!
-  actions: [ProposalAction!]! @derivedFrom(field: "proposal")
+  actions: [Action!]! @derivedFrom(field: "proposal")
   allowFailureMap: BigInt!
   plugin: TokenVotingPlugin!
   pluginProposalId: BigInt! # pluginAddress + proposalId padded
@@ -138,7 +138,7 @@ type TokenVotingProposal implements IProposal @entity {
 
 # Executions
 
-type ProposalAction implements IAction @entity(immutable: true) {
+type Action implements IAction @entity(immutable: true) {
   id: ID! # proposalId + action index
   to: Bytes!
   value: BigInt!
