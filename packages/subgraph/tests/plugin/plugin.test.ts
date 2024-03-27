@@ -402,7 +402,7 @@ describe('Testing Actions', () => {
     assert.fieldEquals('Action', actionID, 'proposal', proposal.id);
   });
 
-  test('We correctly generate the action ID', () => {
+  test('We correctly generate the action ID from the arguments', () => {
     let caller = PLUGIN_REPO_ADDRESS;
     let daoAddress = DAO_ADDRESS;
     let callId = 'c4ll me';
