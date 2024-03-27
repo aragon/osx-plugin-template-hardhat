@@ -1,5 +1,5 @@
 import {
-  ProposalAction,
+  Action,
   TokenVotingPlugin,
   TokenVotingProposal,
   TokenVotingVoter,
@@ -103,7 +103,7 @@ export function _handleProposalCreated(
         index
       );
 
-      const actionEntity = new ProposalAction(actionId);
+      const actionEntity = new Action(actionId);
       actionEntity.to = action.to;
       actionEntity.value = action.value;
       actionEntity.data = action.data;

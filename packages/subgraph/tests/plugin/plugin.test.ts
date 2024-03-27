@@ -312,7 +312,7 @@ function checksum(s: string): string {
 describe('Testing Actions', () => {
   test('A new proposal action is registered during the proposal creation', () => {
     // manual re-write so this approach can be ported to other plugins
-    assert.entityCount('ProposalAction', 0);
+    assert.entityCount('Action', 0);
     assert.entityCount('TokenVotingProposal', 0);
 
     let tokenVotingPlugin = new ExtendedTokenVotingPlugin().withDefaultValues();
@@ -386,7 +386,7 @@ describe('Testing Actions', () => {
     _handleProposalCreated(proposalEvent, DAO_ADDRESS, metadata);
 
     // step 3: check that the proposal action was created
-    assert.entityCount('ProposalAction', 1);
+    assert.entityCount('Action', 1);
     assert.entityCount('TokenVotingProposal', 1);
 
     // step 3.1: check that the action has the correct fields
@@ -396,15 +396,10 @@ describe('Testing Actions', () => {
       proposalId.toString(),
       0
     );
-    assert.fieldEquals(
-      'ProposalAction',
-      actionID,
-      'to',
-      dummyActionTo.toLowerCase()
-    );
-    assert.fieldEquals('ProposalAction', actionID, 'value', dummyActionValue);
-    assert.fieldEquals('ProposalAction', actionID, 'data', dummyActionData);
-    assert.fieldEquals('ProposalAction', actionID, 'proposal', proposal.id);
+    assert.fieldEquals('Action', actionID, 'to', dummyActionTo.toLowerCase());
+    assert.fieldEquals('Action', actionID, 'value', dummyActionValue);
+    assert.fieldEquals('Action', actionID, 'data', dummyActionData);
+    assert.fieldEquals('Action', actionID, 'proposal', proposal.id);
   });
 
   test('We correctly generate the action ID', () => {
