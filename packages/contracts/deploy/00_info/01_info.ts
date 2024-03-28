@@ -1,3 +1,4 @@
+import {PLUGIN_REPO_ENS_SUBDOMAIN_NAME} from '../../plugin-settings';
 import {
   AragonOSxAsciiArt,
   getProductionNetworkName,
@@ -51,6 +52,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     }' with a balance of ${hre.ethers.utils.formatEther(
       await deployer.getBalance()
     )} native tokens.`
+  );
+
+  console.log(
+    `Chosen PluginRepo ENS subdomain name: '${PLUGIN_REPO_ENS_SUBDOMAIN_NAME}'`
   );
 };
 
