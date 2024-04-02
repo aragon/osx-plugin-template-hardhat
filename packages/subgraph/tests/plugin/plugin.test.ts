@@ -9,7 +9,6 @@ import {
 } from '../../src/plugin/plugin';
 import {VOTING_MODES} from '../../src/utils/constants';
 import {GOVERNANCE_WRAPPED_ERC20_INTERFACE_ID} from '../../src/utils/constants';
-import {generateActionEntityId} from '../../src/utils/ids';
 import {
   ExtendedERC20Contract,
   ExtendedERC20WrapperContract,
@@ -28,7 +27,10 @@ import {
   ERC20_AMOUNT_FULL,
   DAO_ADDRESS,
 } from '../utils/constants';
-import {createDummyAction} from '@aragon/osx-commons-subgraph';
+import {
+  createDummyAction,
+  generateActionEntityId,
+} from '@aragon/osx-commons-subgraph';
 import {Address, bigInt, BigInt, ethereum} from '@graphprotocol/graph-ts';
 import {
   assert,
@@ -400,26 +402,5 @@ describe('Testing Actions', () => {
     assert.fieldEquals('Action', actionID, 'value', dummyActionValue);
     assert.fieldEquals('Action', actionID, 'data', dummyActionData);
     assert.fieldEquals('Action', actionID, 'proposal', proposal.id);
-  });
-
-  test('We correctly generate the action ID from the arguments', () => {
-    let caller = PLUGIN_REPO_ADDRESS;
-    let daoAddress = DAO_ADDRESS;
-    let callId = 'c4ll me';
-    let index = 255;
-
-    let actionId = generateActionEntityId(
-      Address.fromString(caller),
-      Address.fromString(daoAddress),
-      callId,
-      index
-    );
-
-    assert.stringEquals(
-      actionId,
-      [checksum(caller), checksum(daoAddress), callId, index.toString()].join(
-        '_'
-      )
-    );
   });
 });

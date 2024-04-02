@@ -16,14 +16,11 @@ import {
 } from '../../generated/templates/TokenVoting/TokenVoting';
 import {RATIO_BASE, VOTER_OPTIONS, VOTING_MODES} from '../utils/constants';
 import {identifyAndFetchOrCreateERC20TokenEntity} from '../utils/erc20';
-import {
-  generateActionEntityId,
-  generateMemberEntityId,
-  generateVoteEntityId,
-} from '../utils/ids';
+import {generateMemberEntityId, generateVoteEntityId} from '../utils/ids';
 import {
   generatePluginEntityId,
   generateProposalEntityId,
+  generateActionEntityId,
 } from '@aragon/osx-commons-subgraph';
 import {
   Address,
