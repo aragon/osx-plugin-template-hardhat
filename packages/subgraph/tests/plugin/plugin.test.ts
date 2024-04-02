@@ -37,10 +37,10 @@ import {
   END_DATE,
   ALLOW_FAILURE_MAP,
 } from '../utils/events';
-import {generateActionEntityId} from '../utils/ids';
 import {
   generatePluginEntityId,
   generateProposalEntityId,
+  generateActionEntityId,
   createDummyAction,
 } from '@aragon/osx-commons-subgraph';
 import {Address, BigInt, DataSourceContext} from '@graphprotocol/graph-ts';

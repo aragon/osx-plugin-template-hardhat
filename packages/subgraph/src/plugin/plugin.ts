@@ -14,9 +14,9 @@ import {
   Approved,
   MultisigSettingsUpdated,
 } from '../../generated/templates/Plugin/Plugin';
-import {generateActionEntityId} from '../../tests/utils/ids';
 import {generateMemberEntityId, generateVoterEntityId} from './id';
 import {
+  generateActionEntityId,
   generatePluginEntityId,
   generateProposalEntityId,
 } from '@aragon/osx-commons-subgraph';
