@@ -40,6 +40,7 @@ import {
 import {
   generatePluginEntityId,
   generateProposalEntityId,
+  generateActionEntityId,
   createDummyAction,
 } from '@aragon/osx-commons-subgraph';
 import {Address, BigInt, DataSourceContext} from '@graphprotocol/graph-ts';
@@ -53,7 +54,13 @@ import {
   test,
 } from 'matchstick-as/assembly/index';
 
-let actions = [createDummyAction(ADDRESS_THREE, '0', '0x00000000')];
+let dummyActionTo = ADDRESS_THREE;
+let dummyActionValue = '0';
+let dummyActionData = '0x00000000';
+
+let actions = [
+  createDummyAction(dummyActionTo, dummyActionValue, dummyActionData),
+];
 
 const pluginAddress = Address.fromString(CONTRACT_ADDRESS);
 const pluginEntityId = generatePluginEntityId(pluginAddress);
@@ -529,6 +536,69 @@ describe('Plugin', () => {
         'minApprovals',
         minApproval
       );
+    });
+  });
+
+  describe('Testing Actions', () => {
+    test('A new proposal action is registered during the proposal creation', () => {
+      // manual re-write so this approach can be ported to other plugins
+      assert.entityCount('Action', 0);
+      assert.entityCount('MultisigProposal', 0);
+      // create state
+      createMultisigPluginState();
+
+      // create calls
+      getProposalCountCall(CONTRACT_ADDRESS, '1');
+      createGetProposalCall(
+        CONTRACT_ADDRESS,
+        PLUGIN_PROPOSAL_ID,
+        false,
+
+        // ProposalParameters
+        START_DATE,
+        END_DATE,
+        ONE,
+        SNAPSHOT_BLOCK,
+
+        // approvals
+        ONE,
+
+        actions,
+
+        ALLOW_FAILURE_MAP
+      );
+
+      // create event
+      let event = createNewProposalCreatedEvent(
+        PLUGIN_PROPOSAL_ID,
+        ADDRESS_ONE,
+        START_DATE,
+        END_DATE,
+        METADATA,
+        actions,
+        ALLOW_FAILURE_MAP,
+        CONTRACT_ADDRESS
+      );
+
+      // handle event
+      handleProposalCreated(event);
+
+      // step 3: check that the proposal action was created
+      assert.entityCount('Action', 1);
+      assert.entityCount('MultisigProposal', 1);
+
+      // step 3.1: check that the action has the correct fields
+      const actionID = generateActionEntityId(
+        Address.fromString(CONTRACT_ADDRESS),
+        Address.fromString(DAO_ADDRESS),
+        PLUGIN_PROPOSAL_ID.toString(),
+        0
+      );
+      assert.fieldEquals('Action', actionID, 'to', dummyActionTo.toLowerCase());
+      assert.fieldEquals('Action', actionID, 'value', dummyActionValue);
+      assert.fieldEquals('Action', actionID, 'data', dummyActionData);
+      assert.fieldEquals('Action', actionID, 'daoAddress', DAO_ADDRESS);
+      assert.fieldEquals('Action', actionID, 'proposal', proposalEntityId);
     });
   });
 });

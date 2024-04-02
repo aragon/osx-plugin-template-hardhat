@@ -4,6 +4,14 @@ interface IPlugin {
   pluginAddress: Bytes!
 }
 
+interface IAction {
+  id: ID! # ActionEntityId
+  to: Bytes!
+  value: BigInt!
+  data: Bytes!
+  daoAddress: Bytes!
+}
+
 # Types
 type MultisigPlugin implements IPlugin @entity {
   id: ID! # PluginEntityID
@@ -26,7 +34,6 @@ interface IProposal {
   metadata: String
   actions: [Action!]! @derivedFrom(field: "proposal")
   allowFailureMap: BigInt!
-  failureMap: BigInt
   executed: Boolean!
   createdAt: BigInt!
   startDate: BigInt!
@@ -34,14 +41,15 @@ interface IProposal {
   executionTxHash: Bytes
 }
 
-type Action @entity {
+type Action implements IAction @entity(immutable: true) {
   id: ID! # ActionEntityId
   to: Bytes!
   value: BigInt!
   data: Bytes!
   daoAddress: Bytes!
+
+  # plugin specific data
   proposal: IProposal!
-  execResult: Bytes
 }
 
 type MultisigApprover @entity {
@@ -64,7 +72,6 @@ type MultisigProposal implements IProposal @entity {
   daoAddress: Bytes!
   actions: [Action!]! @derivedFrom(field: "proposal")
   allowFailureMap: BigInt!
-  failureMap: BigInt
   plugin: MultisigPlugin!
   pluginProposalId: BigInt!
   creator: Bytes!
