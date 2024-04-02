@@ -1,5 +1,4 @@
 import {MultisigApprover} from '../../generated/schema';
-import {ProposalCreated} from '../../generated/templates/Plugin/Plugin';
 import {
   generateMemberEntityId,
   generateVoterEntityId,
@@ -44,12 +43,7 @@ import {
   generateProposalEntityId,
   createDummyAction,
 } from '@aragon/osx-commons-subgraph';
-import {
-  Address,
-  BigInt,
-  DataSourceContext,
-  ethereum,
-} from '@graphprotocol/graph-ts';
+import {Address, BigInt, DataSourceContext} from '@graphprotocol/graph-ts';
 import {
   afterEach,
   assert,
@@ -57,7 +51,6 @@ import {
   clearStore,
   dataSourceMock,
   describe,
-  newMockEvent,
   test,
 } from 'matchstick-as/assembly/index';
 
