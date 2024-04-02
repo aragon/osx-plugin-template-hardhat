@@ -18,11 +18,12 @@ import {RATIO_BASE, VOTER_OPTIONS, VOTING_MODES} from '../utils/constants';
 import {identifyAndFetchOrCreateERC20TokenEntity} from '../utils/erc20';
 import {generateMemberEntityId, generateVoteEntityId} from '../utils/ids';
 import {
-  generateActionEntityId,
   generatePluginEntityId,
   generateProposalEntityId,
+  generateActionEntityId,
 } from '@aragon/osx-commons-subgraph';
 import {
+  Address,
   BigInt,
   Bytes,
   dataSource,
@@ -92,7 +93,12 @@ export function _handleProposalCreated(
     for (let index = 0; index < actions.length; index++) {
       const action = actions[index];
 
-      const actionId = generateActionEntityId(proposalEntityId, index);
+      const actionId = generateActionEntityId(
+        pluginAddress,
+        Address.fromString(daoId),
+        pluginProposalId.toString(),
+        index
+      );
 
       const actionEntity = new Action(actionId);
       actionEntity.to = action.to;

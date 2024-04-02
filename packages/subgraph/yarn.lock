@@ -9,10 +9,10 @@
   dependencies:
     tslib "^2.6.2"
 
-"@aragon/osx-commons-subgraph@^0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@aragon/osx-commons-subgraph/-/osx-commons-subgraph-0.0.4.tgz#2aa52f3089d21189c9152d2f3d14c0d7c66d129f"
-  integrity sha512-cqhusJ3HNvMx+t9lXfN+Hy/5ipefNs1Tdxe+y0GvD4qgBMVU4tCbsxOpB9U2JEJNBCzFQj4E/872FFLpIErB4w==
+"@aragon/osx-commons-subgraph@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@aragon/osx-commons-subgraph/-/osx-commons-subgraph-0.0.5.tgz#7e0c0f854e4ca52de1d937595c9bb6ef0370f840"
+  integrity sha512-M5edVTYyHbkcDLr2H8ySCbOpLA+5pUdN7tCYCif0pDP99Wb+/njgO23G2B2FjB4Q3hB0fCkLkQwNp9QplJjqGA==
   dependencies:
     "@graphprotocol/graph-ts" "0.31.0"
 

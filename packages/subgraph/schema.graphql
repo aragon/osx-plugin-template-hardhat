@@ -13,7 +13,6 @@ interface IProposal {
   metadata: String
   actions: [Action!]! @derivedFrom(field: "proposal")
   allowFailureMap: BigInt!
-  failureMap: BigInt
   executed: Boolean!
   createdAt: BigInt!
   startDate: BigInt!
@@ -25,6 +24,14 @@ interface Token {
   id: ID! # use address as id
   name: String
   symbol: String
+}
+
+interface IAction {
+  id: ID! # ActionEntityId
+  to: Bytes!
+  value: BigInt!
+  data: Bytes!
+  daoAddress: Bytes!
 }
 
 # Enums
@@ -98,7 +105,6 @@ type TokenVotingProposal implements IProposal @entity {
   daoAddress: Bytes!
   actions: [Action!]! @derivedFrom(field: "proposal")
   allowFailureMap: BigInt!
-  failureMap: BigInt
   plugin: TokenVotingPlugin!
   pluginProposalId: BigInt! # pluginAddress + proposalId padded
   creator: Bytes!
@@ -132,14 +138,15 @@ type TokenVotingProposal implements IProposal @entity {
 
 # Executions
 
-type Action @entity {
+type Action implements IAction @entity(immutable: true) {
   id: ID! # proposalId + action index
   to: Bytes!
   value: BigInt!
   data: Bytes!
   daoAddress: Bytes!
+
+  # proposal specific data
   proposal: IProposal!
-  execResult: Bytes
 }
 
 # Token Contracts
