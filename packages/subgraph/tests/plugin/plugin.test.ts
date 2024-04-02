@@ -307,10 +307,6 @@ describe('handleMembershipContractAnnounced', () => {
   });
 });
 
-function checksum(s: string): string {
-  return Address.fromHexString(s).toHexString();
-}
-
 describe('Testing Actions', () => {
   test('A new proposal action is registered during the proposal creation', () => {
     // manual re-write so this approach can be ported to other plugins

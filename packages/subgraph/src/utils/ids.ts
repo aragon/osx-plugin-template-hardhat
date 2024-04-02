@@ -1,7 +1,6 @@
 import {bigIntToBytes32} from './bytes';
 import {
   generateEntityIdFromAddress,
-  generateActionEntityId as _generateActionEntityId,
   generateEntityIdFromBytes,
 } from '@aragon/osx-commons-subgraph';
 import {Address, BigInt, Bytes} from '@graphprotocol/graph-ts';
