@@ -1,19 +1,20 @@
 import {PLUGIN_REPO_ADDRESS} from '../../imported/repo-address';
 import {handleInstallationPrepared} from '../../src/osx/pluginSetupProcessor';
 import {
-  ADDRESS_FIVE,
-  ADDRESS_FOUR,
-  ADDRESS_SIX,
-  ADDRESS_THREE,
-  ADDRESS_TWO,
   ADDRESS_ZERO,
+  ADDRESS_SIX,
   CONTRACT_ADDRESS,
   DAO_ADDRESS,
+  DAO_ADDRESS_STRING,
+  ADDRESS_TWO_STRING,
+  ADDRESS_THREE_STRING,
   PLUGIN_SETUP_ID,
+  ADDRESS_FOUR_STRING,
+  ADDRESS_FIVE_STRING,
 } from '../utils/constants';
 import {createInstallationPreparedEvent} from '../utils/events';
 import {generatePluginEntityId} from '@aragon/osx-commons-subgraph';
-import {Address, BigInt, Bytes, ethereum} from '@graphprotocol/graph-ts';
+import {BigInt, Bytes, ethereum} from '@graphprotocol/graph-ts';
 import {assert, afterEach, clearStore, test, describe} from 'matchstick-as';
 
 describe('OSx', () => {
@@ -25,11 +26,8 @@ describe('OSx', () => {
     describe('InstallationPrepared event', () => {
       test('it should store one plugin', () => {
         // Create event
-        const daoAddress = DAO_ADDRESS;
         const pluginAddress = CONTRACT_ADDRESS;
-        const pluginEntityId = generatePluginEntityId(
-          Address.fromString(pluginAddress)
-        );
+        const pluginEntityId = generatePluginEntityId(CONTRACT_ADDRESS);
         if (!pluginEntityId) {
           throw new Error('Failed to get pluginEntityId');
         }
@@ -44,32 +42,32 @@ describe('OSx', () => {
         let permissions = [
           [
             ethereum.Value.fromSignedBigInt(BigInt.fromString('0')),
-            ethereum.Value.fromAddress(Address.fromString(daoAddress)),
-            ethereum.Value.fromAddress(Address.fromString(pluginAddress)),
-            ethereum.Value.fromAddress(Address.fromString(ADDRESS_ZERO)),
+            ethereum.Value.fromAddress(DAO_ADDRESS),
+            ethereum.Value.fromAddress(pluginAddress),
+            ethereum.Value.fromAddress(ADDRESS_ZERO),
             ethereum.Value.fromBytes(Bytes.fromHexString('0x1234')),
           ],
 
           [
             ethereum.Value.fromSignedBigInt(BigInt.fromString('2')),
-            ethereum.Value.fromAddress(Address.fromString(daoAddress)),
-            ethereum.Value.fromAddress(Address.fromString(pluginAddress)),
-            ethereum.Value.fromAddress(Address.fromString(ADDRESS_SIX)),
+            ethereum.Value.fromAddress(DAO_ADDRESS),
+            ethereum.Value.fromAddress(pluginAddress),
+            ethereum.Value.fromAddress(ADDRESS_SIX),
             ethereum.Value.fromBytes(Bytes.fromHexString('0x5678')),
           ],
         ];
 
-        const otherPluginSetupRepo = ADDRESS_TWO;
+        const otherPluginSetupRepo = ADDRESS_TWO_STRING;
 
         const event1 = createInstallationPreparedEvent(
-          ADDRESS_THREE, // sender
-          daoAddress,
-          pluginAddress,
+          ADDRESS_THREE_STRING, // sender
+          DAO_ADDRESS_STRING,
+          pluginAddress.toHexString(),
           Bytes.fromHexString(setupId),
           otherPluginSetupRepo,
           versionTuple,
           Bytes.fromHexString('0x00'),
-          [ADDRESS_FOUR, ADDRESS_FIVE],
+          [ADDRESS_FOUR_STRING, ADDRESS_FIVE_STRING],
           permissions
         );
 
@@ -79,19 +77,17 @@ describe('OSx', () => {
         assert.entityCount('MultisigPlugin', 0);
 
         const thisPluginRepoAddress = PLUGIN_REPO_ADDRESS;
-        const pluginId = generatePluginEntityId(
-          Address.fromString(pluginAddress)
-        );
+        const pluginId = generatePluginEntityId(pluginAddress);
 
         const event2 = createInstallationPreparedEvent(
-          ADDRESS_THREE,
-          daoAddress,
-          pluginAddress,
+          ADDRESS_THREE_STRING,
+          DAO_ADDRESS_STRING,
+          pluginAddress.toHexString(),
           Bytes.fromHexString(setupId),
           thisPluginRepoAddress,
           versionTuple,
           Bytes.fromHexString('0x00'),
-          [ADDRESS_FOUR, ADDRESS_FIVE],
+          [ADDRESS_FOUR_STRING, ADDRESS_FIVE_STRING],
           permissions
         );
 

@@ -7,7 +7,12 @@ import {
   MembersRemoved,
   MultisigSettingsUpdated,
 } from '../../../generated/templates/Plugin/Plugin';
-import {ADDRESS_ONE, DAO_ADDRESS, CONTRACT_ADDRESS} from '../constants';
+import {
+  ADDRESS_ONE_STRING,
+  DAO_ADDRESS_STRING,
+  CONTRACT_ADDRESS,
+  CONTRACT_ADDRESS_STRING,
+} from '../constants';
 import {
   generatePluginEntityId,
   generateProposalEntityId,
@@ -269,11 +274,9 @@ export function createGetProposalCall(
 // state
 
 export function createMultisigPluginState(
-  entityID: string = generatePluginEntityId(
-    Address.fromString(CONTRACT_ADDRESS)
-  ),
-  dao: string = DAO_ADDRESS,
-  pluginAddress: string = CONTRACT_ADDRESS,
+  entityID: string = generatePluginEntityId(CONTRACT_ADDRESS),
+  dao: string = DAO_ADDRESS_STRING,
+  pluginAddress: string = CONTRACT_ADDRESS_STRING,
   proposalCount: string = ZERO,
   minApprovals: string = THREE,
   onlyListed: boolean = false
@@ -291,12 +294,12 @@ export function createMultisigPluginState(
 
 export function createMultisigProposalEntityState(
   entityID: string = generateProposalEntityId(
-    Address.fromString(CONTRACT_ADDRESS),
+    CONTRACT_ADDRESS,
     BigInt.fromString(PLUGIN_PROPOSAL_ID)
   ),
-  dao: string = DAO_ADDRESS,
-  plugin: string = CONTRACT_ADDRESS,
-  creator: string = ADDRESS_ONE,
+  dao: string = DAO_ADDRESS_STRING,
+  plugin: string = CONTRACT_ADDRESS_STRING,
+  creator: string = ADDRESS_ONE_STRING,
   pluginProposalId: string = PLUGIN_PROPOSAL_ID,
   minApprovals: string = TWO,
   startDate: string = START_DATE,

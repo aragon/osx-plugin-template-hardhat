@@ -14,9 +14,13 @@ import {
 import {
   ADDRESS_ONE,
   ADDRESS_TWO,
-  ADDRESS_THREE,
   CONTRACT_ADDRESS,
   DAO_ADDRESS,
+  ADDRESS_ONE_STRING,
+  ADDRESS_TWO_STRING,
+  ADDRESS_THREE_STRING,
+  CONTRACT_ADDRESS_STRING,
+  DAO_ADDRESS_STRING,
 } from '../utils/constants';
 import {
   createNewMembersAddedEvent,
@@ -54,7 +58,7 @@ import {
   test,
 } from 'matchstick-as/assembly/index';
 
-let dummyActionTo = ADDRESS_THREE;
+let dummyActionTo = ADDRESS_THREE_STRING;
 let dummyActionValue = '0';
 let dummyActionData = '0x00000000';
 
@@ -62,7 +66,7 @@ let actions = [
   createDummyAction(dummyActionTo, dummyActionValue, dummyActionData),
 ];
 
-const pluginAddress = Address.fromString(CONTRACT_ADDRESS);
+const pluginAddress = CONTRACT_ADDRESS;
 const pluginEntityId = generatePluginEntityId(pluginAddress);
 const pluginProposalId = BigInt.fromString(PLUGIN_PROPOSAL_ID);
 const proposalEntityId = generateProposalEntityId(
@@ -75,7 +79,7 @@ export const METADATA = 'Some String Data ...';
 describe('Plugin', () => {
   beforeEach(function () {
     let context = new DataSourceContext();
-    context.setString('daoAddress', DAO_ADDRESS);
+    context.setString('daoAddress', DAO_ADDRESS_STRING);
     dataSourceMock.setContext(context);
   });
 
@@ -85,13 +89,17 @@ describe('Plugin', () => {
 
   describe('handleProposalCreated', () => {
     test('handles the event', () => {
+      // check the entities are not in the store
+      assert.entityCount('MultisigProposal', 0);
+      assert.entityCount('Action', 0);
+
       // create state
       createMultisigPluginState();
 
       // create calls
-      getProposalCountCall(CONTRACT_ADDRESS, '1');
+      getProposalCountCall(CONTRACT_ADDRESS_STRING, '1');
       createGetProposalCall(
-        CONTRACT_ADDRESS,
+        CONTRACT_ADDRESS_STRING,
         PLUGIN_PROPOSAL_ID,
         false,
 
@@ -112,17 +120,21 @@ describe('Plugin', () => {
       // create event
       let event = createNewProposalCreatedEvent(
         PLUGIN_PROPOSAL_ID,
-        ADDRESS_ONE,
+        ADDRESS_ONE_STRING,
         START_DATE,
         END_DATE,
         METADATA,
         actions,
         ALLOW_FAILURE_MAP,
-        CONTRACT_ADDRESS
+        CONTRACT_ADDRESS_STRING
       );
 
       // handle event
       handleProposalCreated(event);
+
+      // check that the proposal action was created
+      assert.entityCount('Action', 1);
+      assert.entityCount('MultisigProposal', 1);
 
       // checks
       assert.fieldEquals(
@@ -135,7 +147,7 @@ describe('Plugin', () => {
         'MultisigProposal',
         proposalEntityId,
         'daoAddress',
-        DAO_ADDRESS
+        DAO_ADDRESS_STRING
       );
       assert.fieldEquals(
         'MultisigProposal',
@@ -153,7 +165,7 @@ describe('Plugin', () => {
         'MultisigProposal',
         proposalEntityId,
         'creator',
-        ADDRESS_ONE
+        ADDRESS_ONE_STRING
       );
       assert.fieldEquals(
         'MultisigProposal',
@@ -219,10 +231,22 @@ describe('Plugin', () => {
       // check MultisigPlugin
       assert.fieldEquals(
         'MultisigPlugin',
-        Address.fromString(CONTRACT_ADDRESS).toHexString(),
+        CONTRACT_ADDRESS.toHexString(),
         'proposalCount',
         '1'
       );
+
+      const actionID = generateActionEntityId(
+        CONTRACT_ADDRESS,
+        DAO_ADDRESS,
+        PLUGIN_PROPOSAL_ID.toString(),
+        0
+      );
+      assert.fieldEquals('Action', actionID, 'to', dummyActionTo.toLowerCase());
+      assert.fieldEquals('Action', actionID, 'value', dummyActionValue);
+      assert.fieldEquals('Action', actionID, 'data', dummyActionData);
+      assert.fieldEquals('Action', actionID, 'daoAddress', DAO_ADDRESS_STRING);
+      assert.fieldEquals('Action', actionID, 'proposal', proposalEntityId);
     });
   });
 
@@ -231,14 +255,14 @@ describe('Plugin', () => {
       // create state
       let proposal = createMultisigProposalEntityState(
         proposalEntityId,
-        DAO_ADDRESS,
-        CONTRACT_ADDRESS,
-        ADDRESS_ONE
+        DAO_ADDRESS_STRING,
+        CONTRACT_ADDRESS_STRING,
+        ADDRESS_ONE_STRING
       );
 
       // create calls
       createGetProposalCall(
-        CONTRACT_ADDRESS,
+        CONTRACT_ADDRESS_STRING,
         PLUGIN_PROPOSAL_ID,
         false,
 
@@ -258,14 +282,14 @@ describe('Plugin', () => {
       // create event
       let event = createNewApprovedEvent(
         PLUGIN_PROPOSAL_ID,
-        ADDRESS_ONE,
-        CONTRACT_ADDRESS
+        ADDRESS_ONE_STRING,
+        CONTRACT_ADDRESS_STRING
       );
 
       handleApproved(event);
 
       // checks
-      const memberAddress = Address.fromString(ADDRESS_ONE);
+      const memberAddress = ADDRESS_ONE;
 
       const memberEntityId = generateMemberEntityId(
         pluginAddress,
@@ -311,7 +335,7 @@ describe('Plugin', () => {
       // create 2nd approve, to test approvals
       // create calls
       createGetProposalCall(
-        CONTRACT_ADDRESS,
+        CONTRACT_ADDRESS_STRING,
         PLUGIN_PROPOSAL_ID,
         false,
 
@@ -331,8 +355,8 @@ describe('Plugin', () => {
       // create event
       let event2 = createNewApprovedEvent(
         PLUGIN_PROPOSAL_ID,
-        ADDRESS_TWO,
-        CONTRACT_ADDRESS
+        ADDRESS_TWO_STRING,
+        CONTRACT_ADDRESS_STRING
       );
 
       handleApproved(event2);
@@ -353,13 +377,13 @@ describe('Plugin', () => {
       // create state
       createMultisigProposalEntityState(
         proposalEntityId,
-        DAO_ADDRESS,
-        CONTRACT_ADDRESS,
-        ADDRESS_ONE
+        DAO_ADDRESS_STRING,
+        CONTRACT_ADDRESS_STRING,
+        ADDRESS_ONE_STRING
       );
 
       // create event
-      let event = createNewProposalExecutedEvent('0', CONTRACT_ADDRESS);
+      let event = createNewProposalExecutedEvent('0', CONTRACT_ADDRESS_STRING);
 
       // handle event
       handleProposalExecuted(event);
@@ -400,35 +424,33 @@ describe('Plugin', () => {
 
   describe('handleMembersAdded', () => {
     test('handles the event', () => {
-      let userArray = [
-        Address.fromString(ADDRESS_ONE),
-        Address.fromString(ADDRESS_TWO),
-      ];
+      let memberAddresses = [ADDRESS_ONE, ADDRESS_TWO];
 
       // create event
-      let event = createNewMembersAddedEvent(userArray, CONTRACT_ADDRESS);
+      let event = createNewMembersAddedEvent(
+        memberAddresses,
+        CONTRACT_ADDRESS_STRING
+      );
 
       // handle event
       handleMembersAdded(event);
 
       // checks
       let memberId =
-        Address.fromString(CONTRACT_ADDRESS).toHexString() +
-        '_' +
-        userArray[0].toHexString();
+        CONTRACT_ADDRESS.toHexString() + '_' + memberAddresses[0].toHexString();
 
       assert.fieldEquals('MultisigApprover', memberId, 'id', memberId);
       assert.fieldEquals(
         'MultisigApprover',
         memberId,
         'address',
-        userArray[0].toHexString()
+        memberAddresses[0].toHexString()
       );
       assert.fieldEquals(
         'MultisigApprover',
         memberId,
         'plugin',
-        Address.fromString(CONTRACT_ADDRESS).toHexString()
+        CONTRACT_ADDRESS.toHexString()
       );
     });
   });
@@ -436,41 +458,34 @@ describe('Plugin', () => {
   describe('handleMembersRemoved', () => {
     test('handles the event', () => {
       // create state
-      let memberAddresses = [
-        Address.fromString(ADDRESS_ONE),
-        Address.fromString(ADDRESS_TWO),
-      ];
+      let memberAddresses = [ADDRESS_ONE, ADDRESS_TWO];
 
-      for (let index = 0; index < memberAddresses.length; index++) {
-        const user = memberAddresses[index].toHexString();
-        const pluginId = Address.fromString(CONTRACT_ADDRESS).toHexString();
-        let memberId = pluginId + '_' + user;
-        let userEntity = new MultisigApprover(memberId);
-        userEntity.plugin = Address.fromString(CONTRACT_ADDRESS).toHexString();
-        userEntity.save();
-      }
+      // create event
+      let addEvent = createNewMembersAddedEvent(
+        memberAddresses,
+        CONTRACT_ADDRESS_STRING
+      );
+
+      // handle event
+      handleMembersAdded(addEvent);
 
       // checks
       let memberId1 =
-        Address.fromString(CONTRACT_ADDRESS).toHexString() +
-        '_' +
-        memberAddresses[0].toHexString();
+        CONTRACT_ADDRESS.toHexString() + '_' + memberAddresses[0].toHexString();
       let memberId2 =
-        Address.fromString(CONTRACT_ADDRESS).toHexString() +
-        '_' +
-        memberAddresses[1].toHexString();
+        CONTRACT_ADDRESS.toHexString() + '_' + memberAddresses[1].toHexString();
 
       assert.fieldEquals('MultisigApprover', memberId1, 'id', memberId1);
       assert.fieldEquals('MultisigApprover', memberId2, 'id', memberId2);
 
       // create event
-      let event = createNewMembersRemovedEvent(
+      let removeEvent = createNewMembersRemovedEvent(
         [memberAddresses[1]],
-        CONTRACT_ADDRESS
+        CONTRACT_ADDRESS_STRING
       );
 
       // handle event
-      handleMembersRemoved(event);
+      handleMembersRemoved(removeEvent);
 
       // checks
       assert.fieldEquals('MultisigApprover', memberId1, 'id', memberId1);
@@ -490,7 +505,7 @@ describe('Plugin', () => {
       let event = createNewMultisigSettingsUpdatedEvent(
         onlyListed,
         minApproval,
-        CONTRACT_ADDRESS
+        CONTRACT_ADDRESS_STRING
       );
 
       // handle event
@@ -517,7 +532,7 @@ describe('Plugin', () => {
       event = createNewMultisigSettingsUpdatedEvent(
         onlyListed,
         minApproval,
-        CONTRACT_ADDRESS
+        CONTRACT_ADDRESS_STRING
       );
 
       // handle event
@@ -548,9 +563,9 @@ describe('Plugin', () => {
       createMultisigPluginState();
 
       // create calls
-      getProposalCountCall(CONTRACT_ADDRESS, '1');
+      getProposalCountCall(CONTRACT_ADDRESS_STRING, '1');
       createGetProposalCall(
-        CONTRACT_ADDRESS,
+        CONTRACT_ADDRESS_STRING,
         PLUGIN_PROPOSAL_ID,
         false,
 
@@ -571,13 +586,13 @@ describe('Plugin', () => {
       // create event
       let event = createNewProposalCreatedEvent(
         PLUGIN_PROPOSAL_ID,
-        ADDRESS_ONE,
+        ADDRESS_ONE_STRING,
         START_DATE,
         END_DATE,
         METADATA,
         actions,
         ALLOW_FAILURE_MAP,
-        CONTRACT_ADDRESS
+        CONTRACT_ADDRESS_STRING
       );
 
       // handle event
@@ -589,15 +604,15 @@ describe('Plugin', () => {
 
       // step 3.1: check that the action has the correct fields
       const actionID = generateActionEntityId(
-        Address.fromString(CONTRACT_ADDRESS),
-        Address.fromString(DAO_ADDRESS),
+        CONTRACT_ADDRESS,
+        DAO_ADDRESS,
         PLUGIN_PROPOSAL_ID.toString(),
         0
       );
       assert.fieldEquals('Action', actionID, 'to', dummyActionTo.toLowerCase());
       assert.fieldEquals('Action', actionID, 'value', dummyActionValue);
       assert.fieldEquals('Action', actionID, 'data', dummyActionData);
-      assert.fieldEquals('Action', actionID, 'daoAddress', DAO_ADDRESS);
+      assert.fieldEquals('Action', actionID, 'daoAddress', DAO_ADDRESS_STRING);
       assert.fieldEquals('Action', actionID, 'proposal', proposalEntityId);
     });
   });
