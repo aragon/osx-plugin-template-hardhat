@@ -23,6 +23,17 @@ import {
 import {Address, dataSource, store} from '@graphprotocol/graph-ts';
 
 export function handleProposalCreated(event: ProposalCreated): void {
+  const context = dataSource.context();
+  const daoAddress = context.getString('daoAddress');
+  const metadata = event.params.metadata.toString();
+  _handleProposalCreated(event, daoAddress, metadata);
+}
+
+export function _handleProposalCreated(
+  event: ProposalCreated,
+  daoAddress: string,
+  metadata: string
+): void {
   const pluginProposalId = event.params.proposalId;
   const pluginAddress = event.address;
   const proposalEntityId = generateProposalEntityId(
@@ -33,14 +44,11 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
   const proposalEntity = new MultisigProposal(proposalEntityId);
 
-  const context = dataSource.context();
-  const daoAddr = Address.fromHexString(context.getString('daoAddress'));
-
-  proposalEntity.daoAddress = daoAddr;
+  proposalEntity.daoAddress = Address.fromHexString(daoAddress);
   proposalEntity.plugin = pluginEntityId;
   proposalEntity.pluginProposalId = pluginProposalId;
   proposalEntity.creator = event.params.creator;
-  proposalEntity.metadata = event.params.metadata.toString();
+  proposalEntity.metadata = metadata;
   proposalEntity.createdAt = event.block.timestamp;
   proposalEntity.creationBlockNumber = event.block.number;
   proposalEntity.startDate = event.params.startDate;
@@ -67,7 +75,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
 
       const actionId = generateActionEntityId(
         pluginAddress,
-        Address.fromBytes(daoAddr),
+        Address.fromString(daoAddress),
         pluginProposalId.toString(),
         index
       );
@@ -76,7 +84,7 @@ export function handleProposalCreated(event: ProposalCreated): void {
       actionEntity.to = action.to;
       actionEntity.value = action.value;
       actionEntity.data = action.data;
-      actionEntity.daoAddress = daoAddr;
+      actionEntity.daoAddress = Address.fromHexString(daoAddress);
       actionEntity.proposal = proposalEntityId;
       actionEntity.save();
     }
