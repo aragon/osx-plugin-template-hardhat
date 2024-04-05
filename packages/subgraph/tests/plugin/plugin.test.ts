@@ -92,6 +92,7 @@ describe('Plugin', () => {
       // check the entities are not in the store
       assert.entityCount('MultisigProposal', 0);
       assert.entityCount('Action', 0);
+      assert.entityCount('MultisigPlugin', 0);
 
       // create state
       createMultisigPluginState();
@@ -135,6 +136,7 @@ describe('Plugin', () => {
       // check that the proposal action was created
       assert.entityCount('Action', 1);
       assert.entityCount('MultisigProposal', 1);
+      assert.entityCount('MultisigPlugin', 1);
 
       // checks
       assert.fieldEquals(
@@ -252,6 +254,10 @@ describe('Plugin', () => {
 
   describe('handleApproved', () => {
     test('handles the event', () => {
+      // check the entities are not in the store
+      assert.entityCount('MultisigProposalApprover', 0);
+      assert.entityCount('MultisigProposal', 0);
+
       // create state
       let proposal = createMultisigProposalEntityState(
         proposalEntityId,
@@ -287,6 +293,10 @@ describe('Plugin', () => {
       );
 
       handleApproved(event);
+
+      // check if the proposal was approved
+      assert.entityCount('MultisigProposal', 1);
+      assert.entityCount('MultisigProposalApprover', 1);
 
       // checks
       const memberAddress = ADDRESS_ONE;
@@ -361,6 +371,10 @@ describe('Plugin', () => {
 
       handleApproved(event2);
 
+      // check if the proposal was approved
+      assert.entityCount('MultisigProposal', 1);
+      assert.entityCount('MultisigProposalApprover', 2);
+
       // Check
       assert.fieldEquals('MultisigProposal', proposal.id, 'approvals', TWO);
       assert.fieldEquals(
@@ -374,6 +388,9 @@ describe('Plugin', () => {
 
   describe('handleProposalExecuted', () => {
     test('handles the event', () => {
+      // check the entities are not in the store
+      assert.entityCount('MultisigProposal', 0);
+
       // create state
       createMultisigProposalEntityState(
         proposalEntityId,
@@ -388,12 +405,21 @@ describe('Plugin', () => {
       // handle event
       handleProposalExecuted(event);
 
+      // check the proposal was executed
+      assert.entityCount('MultisigProposal', 1);
+
       // checks
       assert.fieldEquals(
         'MultisigProposal',
         proposalEntityId,
         'id',
         proposalEntityId
+      );
+      assert.fieldEquals(
+        'MultisigProposal',
+        proposalEntityId,
+        'approvalReached',
+        'false'
       );
       assert.fieldEquals(
         'MultisigProposal',
@@ -424,6 +450,9 @@ describe('Plugin', () => {
 
   describe('handleMembersAdded', () => {
     test('handles the event', () => {
+      // check the entities are not in the store
+      assert.entityCount('MultisigApprover', 0);
+
       let memberAddresses = [ADDRESS_ONE, ADDRESS_TWO];
 
       // create event
@@ -434,6 +463,9 @@ describe('Plugin', () => {
 
       // handle event
       handleMembersAdded(event);
+
+      // check members were added
+      assert.entityCount('MultisigApprover', 2);
 
       // checks
       let memberId =
@@ -457,6 +489,9 @@ describe('Plugin', () => {
 
   describe('handleMembersRemoved', () => {
     test('handles the event', () => {
+      // check the entities are not in the store
+      assert.entityCount('MultisigProposal', 0);
+
       // create state
       let memberAddresses = [ADDRESS_ONE, ADDRESS_TWO];
 
@@ -468,6 +503,9 @@ describe('Plugin', () => {
 
       // handle event
       handleMembersAdded(addEvent);
+
+      // check members were added
+      assert.entityCount('MultisigApprover', 2);
 
       // checks
       let memberId1 =
@@ -487,6 +525,9 @@ describe('Plugin', () => {
       // handle event
       handleMembersRemoved(removeEvent);
 
+      // check members were removed
+      assert.entityCount('MultisigApprover', 1);
+
       // checks
       assert.fieldEquals('MultisigApprover', memberId1, 'id', memberId1);
       assert.notInStore('MultisigApprover', memberId2);
@@ -495,6 +536,9 @@ describe('Plugin', () => {
 
   describe('handleMultisigSettingsUpdated', () => {
     test('handles the event', () => {
+      // check the entities are not in the store
+      assert.entityCount('MultisigPlugin', 0);
+
       // create state
       let entityID = createMultisigPluginState().id;
 
@@ -510,6 +554,9 @@ describe('Plugin', () => {
 
       // handle event
       handleMultisigSettingsUpdated(event);
+
+      // check the entities are updated
+      assert.entityCount('MultisigPlugin', 1);
 
       // checks
       assert.fieldEquals(
