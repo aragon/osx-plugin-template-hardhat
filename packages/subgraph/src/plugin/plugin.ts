@@ -24,14 +24,15 @@ import {Address, dataSource, store} from '@graphprotocol/graph-ts';
 
 export function handleProposalCreated(event: ProposalCreated): void {
   const context = dataSource.context();
-  const daoAddress = context.getString('daoAddress');
+  const daoAddressString = context.getString('daoAddress');
+  const daoAddress = Address.fromString(daoAddressString);
   const metadata = event.params.metadata.toString();
   _handleProposalCreated(event, daoAddress, metadata);
 }
 
 export function _handleProposalCreated(
   event: ProposalCreated,
-  daoAddress: string,
+  daoAddress: Address,
   metadata: string
 ): void {
   const pluginProposalId = event.params.proposalId;
@@ -44,7 +45,7 @@ export function _handleProposalCreated(
 
   const proposalEntity = new MultisigProposal(proposalEntityId);
 
-  proposalEntity.daoAddress = Address.fromHexString(daoAddress);
+  proposalEntity.daoAddress = daoAddress;
   proposalEntity.plugin = pluginEntityId;
   proposalEntity.pluginProposalId = pluginProposalId;
   proposalEntity.creator = event.params.creator;
@@ -75,7 +76,7 @@ export function _handleProposalCreated(
 
       const actionId = generateActionEntityId(
         pluginAddress,
-        Address.fromString(daoAddress),
+        daoAddress,
         pluginProposalId.toString(),
         index
       );
@@ -84,7 +85,7 @@ export function _handleProposalCreated(
       actionEntity.to = action.to;
       actionEntity.value = action.value;
       actionEntity.data = action.data;
-      actionEntity.daoAddress = Address.fromString(daoAddress);
+      actionEntity.daoAddress = daoAddress;
       actionEntity.proposal = proposalEntityId;
       actionEntity.save();
     }

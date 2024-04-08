@@ -260,7 +260,7 @@ describe('Plugin', () => {
       // create state
       let proposal = createMultisigProposalEntityState(
         proposalEntityId,
-        DAO_ADDRESS_STRING,
+        DAO_ADDRESS,
         CONTRACT_ADDRESS_STRING,
         ADDRESS_ONE_STRING
       );
@@ -393,7 +393,7 @@ describe('Plugin', () => {
       // create state
       createMultisigProposalEntityState(
         proposalEntityId,
-        DAO_ADDRESS_STRING,
+        DAO_ADDRESS,
         CONTRACT_ADDRESS_STRING,
         ADDRESS_ONE_STRING
       );

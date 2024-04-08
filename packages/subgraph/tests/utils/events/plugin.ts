@@ -9,7 +9,7 @@ import {
 } from '../../../generated/templates/Plugin/Plugin';
 import {
   ADDRESS_ONE_STRING,
-  DAO_ADDRESS_STRING,
+  DAO_ADDRESS,
   CONTRACT_ADDRESS,
   CONTRACT_ADDRESS_STRING,
 } from '../constants';
@@ -275,15 +275,15 @@ export function createGetProposalCall(
 
 export function createMultisigPluginState(
   entityID: string = generatePluginEntityId(CONTRACT_ADDRESS),
-  dao: string = DAO_ADDRESS_STRING,
-  pluginAddress: string = CONTRACT_ADDRESS_STRING,
+  dao: Address = DAO_ADDRESS,
+  pluginAddress: Address = CONTRACT_ADDRESS,
   proposalCount: string = ZERO,
   minApprovals: string = THREE,
   onlyListed: boolean = false
 ): MultisigPlugin {
   let multisigPlugin = new MultisigPlugin(entityID);
-  multisigPlugin.daoAddress = Bytes.fromHexString(dao);
-  multisigPlugin.pluginAddress = Bytes.fromHexString(pluginAddress);
+  multisigPlugin.daoAddress = dao;
+  multisigPlugin.pluginAddress = pluginAddress;
   multisigPlugin.proposalCount = BigInt.fromString(proposalCount);
   multisigPlugin.minApprovals = parseInt(minApprovals) as i32;
   multisigPlugin.onlyListed = onlyListed;
@@ -297,7 +297,7 @@ export function createMultisigProposalEntityState(
     CONTRACT_ADDRESS,
     BigInt.fromString(PLUGIN_PROPOSAL_ID)
   ),
-  dao: string = DAO_ADDRESS_STRING,
+  dao: Address = DAO_ADDRESS,
   plugin: string = CONTRACT_ADDRESS_STRING,
   creator: string = ADDRESS_ONE_STRING,
   pluginProposalId: string = PLUGIN_PROPOSAL_ID,
@@ -314,7 +314,7 @@ export function createMultisigProposalEntityState(
   creationBlockNumber: BigInt = new BigInt(0)
 ): MultisigProposal {
   let multisigProposal = new MultisigProposal(entityID);
-  multisigProposal.daoAddress = Address.fromHexString(dao);
+  multisigProposal.daoAddress = dao;
   multisigProposal.plugin = Address.fromString(plugin).toHexString();
   multisigProposal.pluginProposalId = BigInt.fromString(pluginProposalId);
   multisigProposal.creator = Address.fromString(creator);
