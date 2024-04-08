@@ -132,10 +132,6 @@ export async function getPastVersionCreatedEvents(
   });
 }
 
-export function hashHelpers(helpers: string[]) {
-  return keccak256(defaultAbiCoder.encode(['address[]'], [helpers]));
-}
-
 export type LatestVersion = {
   versionTag: VersionTag;
   pluginSetupContract: string;
