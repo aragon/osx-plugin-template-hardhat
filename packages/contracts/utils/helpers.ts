@@ -17,7 +17,8 @@ import {
   PluginRepoEvents,
   PluginRepo__factory,
 } from '@aragon/osx-ethers';
-import {ContractTransaction, ethers} from 'ethers';
+import {ContractTransaction} from 'ethers';
+import {ethers} from 'hardhat';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
 export function isLocal(hre: HardhatRuntimeEnvironment): boolean {
