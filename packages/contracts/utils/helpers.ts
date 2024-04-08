@@ -17,9 +17,7 @@ import {
   PluginRepoEvents,
   PluginRepo__factory,
 } from '@aragon/osx-ethers';
-import {ContractTransaction} from 'ethers';
-import {LogDescription, defaultAbiCoder, keccak256} from 'ethers/lib/utils';
-import {ethers} from 'hardhat';
+import {ContractTransaction, ethers} from 'ethers';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
 export function isLocal(hre: HardhatRuntimeEnvironment): boolean {
@@ -108,7 +106,7 @@ export async function findPluginRepo(
 }
 
 export type EventWithBlockNumber = {
-  event: LogDescription;
+  event: ethers.utils.LogDescription;
   blockNumber: number;
 };
 
