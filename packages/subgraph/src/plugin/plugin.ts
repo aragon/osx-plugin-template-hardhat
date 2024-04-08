@@ -84,7 +84,7 @@ export function _handleProposalCreated(
       actionEntity.to = action.to;
       actionEntity.value = action.value;
       actionEntity.data = action.data;
-      actionEntity.daoAddress = Address.fromHexString(daoAddress);
+      actionEntity.daoAddress = Address.fromString(daoAddress);
       actionEntity.proposal = proposalEntityId;
       actionEntity.save();
     }
