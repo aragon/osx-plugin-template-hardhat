@@ -1,4 +1,3 @@
-import {MultisigApprover} from '../../generated/schema';
 import {
   generateMemberEntityId,
   generateVoterEntityId,
@@ -47,7 +46,7 @@ import {
   generateActionEntityId,
   createDummyAction,
 } from '@aragon/osx-commons-subgraph';
-import {Address, BigInt, DataSourceContext} from '@graphprotocol/graph-ts';
+import {BigInt, DataSourceContext} from '@graphprotocol/graph-ts';
 import {
   afterEach,
   assert,
