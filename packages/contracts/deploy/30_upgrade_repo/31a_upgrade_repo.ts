@@ -8,7 +8,7 @@ import {HardhatRuntimeEnvironment} from 'hardhat/types';
  * @param {HardhatRuntimeEnvironment} hre
  */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const {deployer, pluginRepo, latestPluginRepoImplementation, current} =
+  const {deployer, pluginRepo, latestPluginRepoImplementation} =
     await upgradeCommon(hre);
 
   // Check if deployer has the permission to upgrade the plugin repo
