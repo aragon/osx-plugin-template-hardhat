@@ -1,4 +1,4 @@
-import {upgradeCommon, skipUpgrade} from './_common';
+import {commonUpgradeSteps, skipUpgrade} from './_common';
 import {PLUGIN_REPO_PERMISSIONS} from '@aragon/osx-commons-sdk';
 import {DeployFunction} from 'hardhat-deploy/types';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
@@ -9,7 +9,7 @@ import {HardhatRuntimeEnvironment} from 'hardhat/types';
  */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployer, pluginRepo, latestPluginRepoImplementation} =
-    await upgradeCommon(hre);
+    await commonUpgradeSteps(hre);
 
   // Check if deployer has the permission to upgrade the plugin repo
   if (
