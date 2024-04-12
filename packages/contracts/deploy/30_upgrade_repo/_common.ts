@@ -19,7 +19,7 @@ type Result = {
   latest: SemVer;
 };
 
-export async function upgradeCommon(
+export async function commonUpgradeSteps(
   hre: HardhatRuntimeEnvironment
 ): Promise<Result> {
   const [deployer] = await hre.ethers.getSigners();

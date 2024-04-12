@@ -1,4 +1,4 @@
-import {upgradeCommon as commonUpgradeSteps, skipUpgrade} from './_common';
+import {commonUpgradeSteps, skipUpgrade} from './_common';
 import {PLUGIN_REPO_PERMISSIONS} from '@aragon/osx-commons-sdk';
 import {BytesLike} from 'ethers';
 import {DeployFunction} from 'hardhat-deploy/types';
