@@ -6,6 +6,8 @@ import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
 /**
  * Upgrades the plugin repo to the latest implementation and reinitializes the proxy.
+ * This script MUST be called if the contract requires reinitialization  -- otherwise
+ * the proxy is left unreinitialized.
  * @param {HardhatRuntimeEnvironment} hre
  */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {

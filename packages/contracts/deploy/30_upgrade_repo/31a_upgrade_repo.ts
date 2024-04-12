@@ -5,6 +5,9 @@ import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
 /**
  * Upgrades the plugin repo to the latest implementation.
+ * This script CAN be called if the contract does not require reinitialization.
+ * It MUST NOY be called if the contract requires reinitialization, because this
+ * would leave the proxy unreinitialized.
  * @param {HardhatRuntimeEnvironment} hre
  */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
