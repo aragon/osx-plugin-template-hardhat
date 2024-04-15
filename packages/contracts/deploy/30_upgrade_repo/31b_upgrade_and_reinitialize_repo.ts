@@ -1,4 +1,4 @@
-import {commonUpgradeSteps, skipUpgrade} from './_common';
+import {fetchData, skipUpgrade} from './_common';
 import {PLUGIN_REPO_PERMISSIONS} from '@aragon/osx-commons-sdk';
 import {BytesLike} from 'ethers';
 import {DeployFunction} from 'hardhat-deploy/types';
@@ -12,7 +12,7 @@ import {HardhatRuntimeEnvironment} from 'hardhat/types';
  */
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployer, pluginRepo, latestPluginRepoImplementation, current} =
-    await commonUpgradeSteps(hre);
+    await fetchData(hre);
 
   // Define the `_initData` arguments
   const initData: BytesLike[] = [];

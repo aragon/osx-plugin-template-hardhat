@@ -11,17 +11,18 @@ import path from 'path';
 
 export type SemVer = [number, number, number];
 
-type Result = {
+type FetchedData = {
   deployer: SignerWithAddress;
   pluginRepo: PluginRepo;
   latestPluginRepoImplementation: PluginRepo;
+  ensDomain: string;
   current: SemVer;
   latest: SemVer;
 };
 
-export async function commonUpgradeSteps(
+export async function fetchData(
   hre: HardhatRuntimeEnvironment
-): Promise<Result> {
+): Promise<FetchedData> {
   const [deployer] = await hre.ethers.getSigners();
   const productionNetworkName: string = getProductionNetworkName(hre);
   const network = getNetworkNameByAlias(productionNetworkName);
@@ -68,6 +69,7 @@ export async function commonUpgradeSteps(
     deployer,
     pluginRepo,
     latestPluginRepoImplementation,
+    ensDomain,
     current,
     latest,
   };
@@ -80,36 +82,7 @@ export async function commonUpgradeSteps(
 export const skipUpgrade = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`\n🏗️  ${path.basename(__filename)}:`);
 
-  const [deployer] = await hre.ethers.getSigners();
-  const productionNetworkName: string = getProductionNetworkName(hre);
-  const network = getNetworkNameByAlias(productionNetworkName);
-  if (network === null) {
-    throw new UnsupportedNetworkError(productionNetworkName);
-  }
-  const networkDeployments = getLatestNetworkDeployment(network);
-  if (networkDeployments === null) {
-    throw `Deployments are not available on network ${network}.`;
-  }
-
-  // Get the latest `PluginRepo` implementation as the upgrade target
-  const latestPluginRepoImplementation = PluginRepo__factory.connect(
-    networkDeployments.PluginRepoBase.address,
-    deployer
-  );
-
-  const {pluginRepo, ensDomain} = await findPluginRepo(hre);
-  if (pluginRepo === null) {
-    throw `PluginRepo '${ensDomain}' does not exist yet.`;
-  }
-
-  // Compare the current protocol version of the `PluginRepo`
-  let current: SemVer;
-  try {
-    current = await pluginRepo.protocolVersion();
-  } catch {
-    current = [1, 0, 0];
-  }
-  const target: SemVer = await latestPluginRepoImplementation.protocolVersion();
+  const {ensDomain, pluginRepo, current, latest: target} = await fetchData(hre);
 
   // Throw an error if attempting to upgrade to an earlier version
   if (
