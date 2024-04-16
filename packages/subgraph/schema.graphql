@@ -8,11 +8,3 @@ type DaoPlugin @entity {
   "Set plugin specific related data below:"
   number: BigInt
 }
-
-type IAction @entity {
-    id: ID! #action entity id
-    daoAddress: Bytes!
-    to: Bytes!
-    value: BigInt!
-    data: Bytes!
-}
