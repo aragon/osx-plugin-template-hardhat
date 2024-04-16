@@ -8,3 +8,4 @@ type DaoPlugin @entity {
   "Set plugin specific related data below:"
   number: BigInt
 }
+
