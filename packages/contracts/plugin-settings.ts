@@ -1,7 +1,17 @@
 import buildMetadata from './src/build-metadata.json';
 import releaseMetadata from './src/release-metadata.json';
-import {generateRandomName} from './utils/helpers';
 import {VersionTag} from '@aragon/osx-commons-sdk';
+
+export function generateRandomName(length: number): string {
+  const allowedCharacters = 'abcdefghijklmnopqrstuvwxyz-0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += allowedCharacters.charAt(
+      Math.floor(Math.random() * allowedCharacters.length)
+    );
+  }
+  return result;
+}
 
 // Specify your plugin implementation and plugin setup contract name.
 export const PLUGIN_CONTRACT_NAME = 'MyPlugin'; // See `packages/contracts/src/MyPlugin.sol`.
