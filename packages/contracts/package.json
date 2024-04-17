@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@aragon/osx-commons-contracts": "1.4.0-alpha.3",
-    "@openzeppelin/contracts": "^4.9.5",
-    "@openzeppelin/contracts-upgradeable": "^4.9.5"
+    "@openzeppelin/contracts": "^4.9.6",
+    "@openzeppelin/contracts-upgradeable": "^4.9.6"
   },
   "devDependencies": {
     "@aragon/osx-commons-configs": "0.4.0",
