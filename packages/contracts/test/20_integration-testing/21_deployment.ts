@@ -9,7 +9,6 @@ import {
   PERMISSION_MANAGER_FLAGS,
   PLUGIN_REPO_PERMISSIONS,
   UnsupportedNetworkError,
-  toHex,
   uploadToIPFS,
 } from '@aragon/osx-commons-sdk';
 import {
@@ -80,7 +79,9 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
         JSON.stringify(METADATA.build, null, 2)
       )}`;
 
-      expect(results.buildMetadata).to.equal(toHex(buildMetadataURI));
+      expect(results.buildMetadata).to.equal(
+        ethers.utils.hexlify(ethers.utils.toUtf8Bytes(buildMetadataURI))
+      );
     });
   });
 });
