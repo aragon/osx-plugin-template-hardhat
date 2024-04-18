@@ -14,7 +14,7 @@
     "clean": "rimraf ./artifacts ./cache ./coverage ./typechain ./types ./coverage.json && yarn typechain"
   },
   "dependencies": {
-    "@aragon/osx-commons-contracts": "1.4.0-alpha.3",
+    "@aragon/osx-commons-contracts": "1.4.0-alpha.4",
     "@openzeppelin/contracts": "^4.9.6",
     "@openzeppelin/contracts-upgradeable": "^4.9.6"
   },
