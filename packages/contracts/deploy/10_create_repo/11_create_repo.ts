@@ -58,8 +58,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Get the PluginRepo address and deployment block number from the txn and event therein
   const eventLog =
-    await findEventTopicLog<PluginRepoRegistryEvents.PluginRepoRegisteredEvent>(
-      tx,
+    findEventTopicLog<PluginRepoRegistryEvents.PluginRepoRegisteredEvent>(
+      await tx.wait(),
       PluginRepoRegistry__factory.createInterface(),
       'PluginRepoRegistered'
     );

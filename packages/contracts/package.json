@@ -14,14 +14,14 @@
     "clean": "rimraf ./artifacts ./cache ./coverage ./typechain ./types ./coverage.json && yarn typechain"
   },
   "dependencies": {
-    "@aragon/osx-commons-contracts": "1.4.0-alpha.3",
-    "@openzeppelin/contracts": "^4.9.5",
-    "@openzeppelin/contracts-upgradeable": "^4.9.5"
+    "@aragon/osx-commons-contracts": "1.4.0-alpha.4",
+    "@openzeppelin/contracts": "^4.9.6",
+    "@openzeppelin/contracts-upgradeable": "^4.9.6"
   },
   "devDependencies": {
     "@aragon/osx-commons-configs": "0.4.0",
     "@aragon/osx-ethers": "1.4.0-alpha.0",
-    "@aragon/osx-commons-sdk": "0.0.1-alpha.5",
+    "@aragon/osx-commons-sdk": "0.0.1-alpha.8",
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/abstract-signer": "^5.7.0",
     "@ethersproject/bignumber": "^5.7.0",
