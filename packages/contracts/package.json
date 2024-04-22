@@ -21,7 +21,7 @@
   "devDependencies": {
     "@aragon/osx-commons-configs": "0.4.0",
     "@aragon/osx-ethers": "1.4.0-alpha.0",
-    "@aragon/osx-commons-sdk": "0.0.1-alpha.8",
+    "@aragon/osx-commons-sdk": "0.0.1-alpha.9",
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/abstract-signer": "^5.7.0",
     "@ethersproject/bignumber": "^5.7.0",
