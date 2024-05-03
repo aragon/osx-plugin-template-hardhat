@@ -99,7 +99,9 @@ The standard deploy scripts in the `packages/contracts/deploy` should already be
   - Fetches the plugin setup and implementation contract and queues it for block explorer verification.
 - `20_new_version/23_publish.ts`
   - Publishes the plugin setup contract on the plugin repo created in `10_repo/11_create_repo.ts`
-- `30_upgrade_repo/31_upgrade_repo.ts`
+- `30_upgrade_repo/31a_upgrade_and_reinitialize_repo.ts`
+  - Upgrades the plugin repo to the latest Aragon OSx protocol version and reinitializes it.
+- `30_upgrade_repo/31b_upgrade_repo.ts`
   - Upgrades the plugin repo to the latest Aragon OSx protocol version.
 - `40_conclude/41_conclude.ts`
   - Prints information on the used account's balance after deployment.
@@ -142,7 +144,7 @@ GRAPH_KEY="zzzzzzzzzzzz"
 ## Subgraph
 SUBGRAPH_NAME="osx"
 SUBGRAPH_VERSION="v1.0.0"
-SUBGRAPH_NETWORK_NAME="mainnet" #  ["mainnet", "goerli", "sepolia", "polygon", "polygonMumbai", "base", "baseSepolia", "arbitrum", "arbitrumSepolia"]
+SUBGRAPH_NETWORK_NAME="mainnet" #  ["mainnet", "sepolia", "polygon", "base", "arbitrum"]
 ```
 
 - `GRAPH_KEY`: This key will be used for deploying the subgraph.

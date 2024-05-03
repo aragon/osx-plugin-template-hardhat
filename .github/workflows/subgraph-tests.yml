@@ -2,7 +2,7 @@ name: 'subgraph'
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
     paths:
       - 'packages/subgraph/**'
       - 'packages/contracts/**'
@@ -41,7 +41,7 @@ jobs:
         working-directory: packages/subgraph
         env:
           SUBGRAPH_NETWORK_NAME: ${{ vars.SUBGRAPH_NETWORK_NAME }}
-          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
       - name: 'Test the subgraph'
         run: yarn test

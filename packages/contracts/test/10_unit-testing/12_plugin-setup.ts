@@ -9,7 +9,6 @@ import {
 } from '../../typechain';
 import {STORE_PERMISSION_ID, defaultInitData} from './11_plugin';
 import {
-  ADDRESS,
   Operation,
   PERMISSION_MANAGER_FLAGS,
   getNamedTypesFromMetadata,
@@ -111,7 +110,7 @@ describe(PLUGIN_SETUP_CONTRACT_NAME, function () {
       const {pluginSetup, daoMock, prepareUninstallationInputs} =
         await loadFixture(fixture);
 
-      const dummyAddr = ADDRESS.ZERO;
+      const dummyAddr = ethers.constants.AddressZero;
 
       const permissions = await pluginSetup.callStatic.prepareUninstallation(
         daoMock.address,

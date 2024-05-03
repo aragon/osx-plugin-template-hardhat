@@ -1,7 +1,6 @@
 import {
-  NetworkConfigs,
-  NetworkConfig,
-  networks,
+  addRpcUrlToNetwork,
+  networks as osxCommonsConfigNetworks,
   SupportedNetworks,
 } from '@aragon/osx-commons-configs';
 import '@nomicfoundation/hardhat-chai-matchers';
@@ -18,14 +17,18 @@ import {
   HardhatNetworkAccountsUserConfig,
   HardhatRuntimeEnvironment,
 } from 'hardhat/types';
+import type {NetworkUserConfig} from 'hardhat/types';
 import {resolve} from 'path';
 import 'solidity-coverage';
 
 const dotenvConfigPath: string = process.env.DOTENV_CONFIG_PATH || '../../.env';
 dotenvConfig({path: resolve(__dirname, dotenvConfigPath), override: true});
 
-if (!process.env.INFURA_API_KEY) {
-  throw new Error('INFURA_API_KEY in .env not set');
+// check alchemy Api key existence
+if (process.env.ALCHEMY_API_KEY) {
+  addRpcUrlToNetwork(process.env.ALCHEMY_API_KEY);
+} else {
+  throw new Error('ALCHEMY_API_KEY in .env not set');
 }
 
 // Fetch the accounts specified in the .env file
@@ -67,15 +70,10 @@ function getHardhatNetworkAccountsConfig(
   return accountsConfig;
 }
 
-type HardhatNetworksExtension = NetworkConfig & {
-  accounts?: string[];
-};
-
 // Add the accounts specified in the `.env` file to the networks from osx-commons-configs
-const osxCommonsConfigNetworks: NetworkConfigs<HardhatNetworksExtension> =
-  networks;
+const networks: {[index: string]: NetworkUserConfig} = osxCommonsConfigNetworks;
 for (const network of Object.keys(networks) as SupportedNetworks[]) {
-  osxCommonsConfigNetworks[network].accounts = specifiedAccounts();
+  networks[network].accounts = specifiedAccounts();
 }
 
 // Extend HardhatRuntimeEnvironment
@@ -110,21 +108,17 @@ const config: HardhatUserConfig = {
         Object.keys(namedAccounts).length
       ),
     },
-    ...osxCommonsConfigNetworks,
+    ...networks,
   },
 
   defaultNetwork: 'hardhat',
   etherscan: {
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY || '',
-      goerli: process.env.ETHERSCAN_API_KEY || '',
       sepolia: process.env.ETHERSCAN_API_KEY || '',
       polygon: process.env.POLYGONSCAN_API_KEY || '',
-      polygonMumbai: process.env.POLYGONSCAN_API_KEY || '',
       base: process.env.BASESCAN_API_KEY || '',
-      baseGoerli: process.env.BASESCAN_API_KEY || '',
       arbitrumOne: process.env.ARBISCAN_API_KEY || '',
-      arbitrumGoerli: process.env.ARBISCAN_API_KEY || '',
     },
     customChains: [
       {
@@ -141,14 +135,6 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://api.basescan.org/api',
           browserURL: 'https://basescan.org',
-        },
-      },
-      {
-        network: 'baseGoerli',
-        chainId: 84531,
-        urls: {
-          apiURL: 'https://api-goerli.basescan.org/api',
-          browserURL: 'https://goerli.basescan.org',
         },
       },
     ],

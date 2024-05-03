@@ -7,13 +7,12 @@
 
 ## Quickstart
 
-After [creating a new repository from this template](https://github.com/new?template_name=osx-plugin-template-hardhat&template_owner=aragon), cloning, and opening it in your IDE, run
+After [creating a new repository from this template](https://github.com/new?template_name=osx-plugin-template-hardhat&template_owner=aragon), cloning, and opening it in your IDE, create an `.env` file from the `.env.example` file and put in the Alchemy API key. Feel free to add other API keys for the services that you want to use. Now run,
 
 ```sh
 yarn install && cd packages/contracts && yarn install && yarn build && yarn typechain
 ```
 
-Meanwhile, create an `.env` file from the `.env.example` file and put in the API keys for the services that you want to use.
 You can now develop a plugin by changing the `src/MyPlugin.sol` and `src/MyPluginSetup.sol` files. You can directly import contracts from [Aragon OSx](https://github.com/aragon/osx) as well as OpenZeppelin's [openzeppelin-contracts](https://github.com/OpenZeppelin/openzeppelin-contracts) and [openzeppelin-contracts-upgradeable](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable) that are already set up for you.
 
 ```sol
@@ -38,7 +37,7 @@ yarn clean && yarn build && yarn test
 
 ## Project
 
-The root folder of the repo includes three subfolders:
+The root folder of the repo includes two subfolders:
 
 ```markdown
 .
@@ -99,7 +98,7 @@ yarn lint
 
 To be able to work on the contracts, make sure that you have created an `.env` file from the `.env.example` file and put in the API keys for
 
-- [Infura](https://www.infura.io/) that we use as the web3 provider
+- [Alchemy](https://www.alchemy.com) that we use as the web3 provider
 - [Alchemy Subgraphs](https://www.alchemy.com/subgraphs) that we use as the subgraph provider
 - the block explorer that you want to use depending on the networks that you want to deploy to
 
@@ -202,7 +201,7 @@ Deploy the contracts to the local Hardhat Network (being forked from the network
 yarn deploy --tags CreateRepo,NewVersion
 ```
 
-This will create a plugin repo and publish the the first version (`v1.1`) of your plugin.
+This will create a plugin repo and publish the first version (`v1.1`) of your plugin.
 
 Deploy the contracts to sepolia with
 
@@ -210,7 +209,7 @@ Deploy the contracts to sepolia with
 yarn deploy --network sepolia --tags CreateRepo,NewVersion,Verification
 ```
 
-This will create a plugin repo, publish the the first version (`v1.1`) of your plugin, and verfiy the contracts on sepolia.
+This will create a plugin repo, publish the first version (`v1.1`) of your plugin, and verfiy the contracts on sepolia.
 
 If you want to deploy a new version of your plugin afterwards (e.g., `1.2`), simply change the `VERSION` entry in the `packages/contracts/plugin-settings.ts` file and use
 
@@ -281,6 +280,10 @@ and finally the subgraph itself with
 yarn build:subgraph
 ```
 
+When running `yarn build`, it requires a plugin address, which is obtained from the configuration file located
+at `subgraph/manifest/data/<network>.json`, based on the network specified in your `.env` file under the `SUBGRAPH_NETWORK_NAME` variable.
+You do not need to provide a plugin address for building or testing purposes, but it becomes necessary when deploying the subgraph.
+
 During development of the subgraph, you might want to clean outdated files that were build, imported, and generated. To do this, run
 
 ```sh
@@ -313,7 +316,8 @@ yarn coverage
 
 ### Deployment
 
-To deploy the subgraph to the subgraph provider, write your intended subgraph name and version into the `SUBGRAPH_NAME` and `SUBGRAPH_VERSION` variables [in the `.env` file that you created in the beginning](environment-variables) and pick a network name `SUBGRAPH_NETWORK_NAME` [being supported by the subgraph provider](https://docs.alchemy.com/reference/supported-subgraph-chains). Then run
+To deploy the subgraph to the subgraph provider, write your intended subgraph name and version into the `SUBGRAPH_NAME` and `SUBGRAPH_VERSION` variables [in the `.env` file that you created in the beginning](environment-variables) and pick a network name `SUBGRAPH_NETWORK_NAME` [being supported by the subgraph provider](https://docs.alchemy.com/reference/supported-subgraph-chains). Remember to place correctly the Plugin address on the network you are going to deploy to, you can do that by adding it on `subgraph/manifest/data/<network>.json`.
+Then run
 
 ```sh
 yarn deploy

@@ -1,12 +1,15 @@
 {
   "info": "# Do not edit subgraph.yaml,this is a generated file. \n# Instead, edit subgraph.placeholder.yaml and run: yarn manifest",
-  "network": "goerli",
+  "network": "base",
+  "PluginRepo": {
+    "address": null
+  },
   "dataSources": {
     "PluginSetupProcessors": [
       {
         "name": "PluginSetupProcessor",
-        "address": "0xE8B5d8D66a02CD1b9Bd32a4064D7ABa45F51305e",
-        "startBlock": 8548226
+        "address": "0x91a851E9Ed7F2c6d41b15F76e4a88f5A37067cC9",
+        "startBlock": 2094737
       }
     ]
   }

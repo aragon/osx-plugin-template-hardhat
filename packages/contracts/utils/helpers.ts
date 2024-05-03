@@ -4,11 +4,7 @@ import {
   getLatestNetworkDeployment,
   getNetworkNameByAlias,
 } from '@aragon/osx-commons-configs';
-import {
-  UnsupportedNetworkError,
-  VersionTag,
-  findEvent,
-} from '@aragon/osx-commons-sdk';
+import {UnsupportedNetworkError, findEvent} from '@aragon/osx-commons-sdk';
 import {
   ENSSubdomainRegistrar__factory,
   ENS__factory,
@@ -17,8 +13,7 @@ import {
   PluginRepoEvents,
   PluginRepo__factory,
 } from '@aragon/osx-ethers';
-import {ContractTransaction} from 'ethers';
-import {LogDescription, defaultAbiCoder, keccak256} from 'ethers/lib/utils';
+import {ContractTransaction, utils} from 'ethers';
 import {ethers} from 'hardhat';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 
@@ -108,7 +103,7 @@ export async function findPluginRepo(
 }
 
 export type EventWithBlockNumber = {
-  event: LogDescription;
+  event: utils.LogDescription;
   blockNumber: number;
 };
 
@@ -132,12 +127,8 @@ export async function getPastVersionCreatedEvents(
   });
 }
 
-export function hashHelpers(helpers: string[]) {
-  return keccak256(defaultAbiCoder.encode(['address[]'], [helpers]));
-}
-
 export type LatestVersion = {
-  versionTag: VersionTag;
+  versionTag: PluginRepo.VersionStruct;
   pluginSetupContract: string;
   releaseMetadata: string;
   buildMetadata: string;
@@ -166,12 +157,11 @@ export async function createVersion(
 
   await tx.wait();
 
-  const versionCreatedEvent =
-    await findEvent<PluginRepoEvents.VersionCreatedEvent>(
-      tx,
-      pluginRepo.interface.events['VersionCreated(uint8,uint16,address,bytes)']
-        .name
-    );
+  const versionCreatedEvent = findEvent<PluginRepoEvents.VersionCreatedEvent>(
+    await tx.wait(),
+    pluginRepo.interface.events['VersionCreated(uint8,uint16,address,bytes)']
+      .name
+  );
 
   // Check if versionCreatedEvent is not undefined
   if (versionCreatedEvent) {
