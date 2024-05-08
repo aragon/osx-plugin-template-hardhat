@@ -65,11 +65,6 @@ describe(`Deployment on network '${productionNetworkName}'`, function () {
     it('registers the setup', async () => {
       const {pluginRepo} = await loadFixture(fixture);
 
-      await pluginRepo['getVersion((uint8,uint16))']({
-        release: VERSION.release,
-        build: VERSION.build,
-      });
-
       const results = await pluginRepo['getVersion((uint8,uint16))']({
         release: VERSION.release,
         build: VERSION.build,
